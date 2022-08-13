@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Badge, Button, Card, Col, Row, Table } from 'react-bootstrap'
+import { Badge, Button, Col, Row, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import BaseChart from '../../components/base-chart';
 import HomePage from '../../components/home/HomePage'
-import BasicTable from '../../components/table';
 import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, loadStatisticalReadersByDay, loadStatisticalReadersExpired, statisticalDsDaySelector, statisticalDsSelector, statisticalReaderExpiredSelector, statisticalReadersDaySelector, statisticalReadersSelector } from '../../reducers/statistical';
 import ReactToPrint from 'react-to-print';
 import DatePicker from "react-datepicker";
+import convertDate from '../../utils/convertDate';
 
 const tabStyle = {
-    height: 'auto',
+    height: 600,
     maxHeight: 'auto',
     // width: "80%",
     overflowY: "scroll",
@@ -117,8 +117,9 @@ const StatisticalPage = () => {
     const statisticalDS = useSelector(statisticalDsSelector)
     const statisticalReaders = useSelector(statisticalReadersSelector)
     const statisticalReaderExpired = useSelector(statisticalReaderExpiredSelector)
-    const [startDateDs, setStartDateDs] = useState(new Date());
-    const [endDateDs, setEndDateDs] = useState(new Date());
+
+    const [startDateDs, setStartDateDs] = useState(new Date((new Date()).getFullYear(), 0, 1));
+    const [endDateDs, setEndDateDs] = useState(new Date((new Date()).getFullYear(), 12, 0));
 
     const [startDateReaders, setStartDateReaders] = useState(new Date());
     const [endDateReaders, setEndDateReaders] = useState(new Date());
@@ -129,69 +130,35 @@ const StatisticalPage = () => {
     // const statisticalDsDay = useSelector(statisticalDsDaySelector)
 
     useEffect(() => {
-        dispatch(loadStatisticalDS())
+        dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(endDateDs)}))
+    }, [dispatch, startDateDs, endDateDs])
+
+    useEffect(() => {
         dispatch(loadStatisticalReaders())
         dispatch(loadStatisticalBookByDay())
         dispatch(loadStatisticalReadersByDay())
         dispatch(loadStatisticalReadersExpired())
     }, [dispatch])
 
-    const columnsDS = [
-        {
-            name: "name_book",
-            label: "Tên sách",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
-        {
-            name: "amount_book",
-            label: "Số lượng được mượn",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <div className='pb-0'>
-                            <Badge bg="info">{value}</Badge>
-                        </div>
-                    );
-                }
-            }
-        }
-    ];
-
-    const columnsReaders = [
-        {
-            name: "name_reader",
-            label: "Tên độc giả",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
-        {
-            name: "amount_readers",
-            label: "Số lượng sách đã mượn",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <div className='pb-0'>
-                            <Badge bg="info">{value}</Badge>
-                        </div>
-                    );
-                }
-            }
-        }
-    ];
-
     const componentRef1 = useRef();
     const componentRef2 = useRef();
     const componentRef3 = useRef();
-    console.log(statisticalReaderExpired)
+
+
+    const onChangeValue = (date, keyName1, keyName2) => {
+        if (keyName1 === 'ds') {
+            if (keyName2 === 'start') {
+                setStartDateDs(date)
+                dispatch(loadStatisticalDS({ startDate: convertDate(date), endDate: convertDate(endDateDs) }))
+                // console.log(convertDate(date))
+            } else {
+                setEndDateDs(date)
+                dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(date) }))
+                // console.log(convertDate(date))
+            }
+        }
+    }
+    // console.log(statisticalReaderExpired)
     return (
         <>
             <HomePage>
@@ -211,8 +178,13 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={startDateDs}
-                                                onChange={(date) => setStartDateDs(date)}
+                                                onChange={(date) => onChangeValue(date, 'ds', 'start')}
+                                                dateFormat="dd/MM/yyyy"
                                                 selectsStart
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
                                                 startDate={startDateDs}
                                                 endDate={endDateDs}
                                             />
@@ -220,8 +192,13 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={endDateDs}
-                                                onChange={(date) => setEndDateDs(date)}
+                                                onChange={(date) => onChangeValue(date, 'ds', 'end')}
                                                 selectsEnd
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
+                                                dateFormat="dd/MM/yyyy"
                                                 startDate={startDateDs}
                                                 endDate={endDateDs}
                                                 minDate={startDateDs}
@@ -253,6 +230,7 @@ const StatisticalPage = () => {
                                                 selected={startDateReaders}
                                                 onChange={(date) => setStartDateReaders(date)}
                                                 selectsStart
+                                                dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReaders}
                                                 endDate={endDateReaders}
                                             />
@@ -260,8 +238,9 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={endDateReaders}
-                                                onChange={(date) => setStartDateReaders(date)}
+                                                onChange={(date) => setEndDateReaders(date)}
                                                 selectsEnd
+                                                dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReaders}
                                                 endDate={endDateReaders}
                                                 minDate={startDateReaders}
@@ -292,6 +271,7 @@ const StatisticalPage = () => {
                                                 selected={startDateReadersExpire}
                                                 onChange={(date) => setStartDateReadersExpire(date)}
                                                 selectsStart
+                                                dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReadersExpire}
                                                 endDate={endDateReadersExpire}
                                             />
@@ -299,8 +279,9 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={endDateReadersExpire}
-                                                onChange={(date) => setStartDateReadersExpire(date)}
+                                                onChange={(date) => setEndDateReadersExpire(date)}
                                                 selectsEnd
+                                                dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReadersExpire}
                                                 endDate={endDateReadersExpire}
                                                 minDate={startDateReadersExpire}

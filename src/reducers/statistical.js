@@ -3,10 +3,10 @@ import axios from 'axios'
 
 export const loadStatisticalDS = createAsyncThunk(
     "statistical/loadStatisticalDS",
-    async () => {
+    async (date) => {
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/v0/statistical/tk`
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/statistical/tk`, date
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }

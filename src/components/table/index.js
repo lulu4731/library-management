@@ -69,6 +69,7 @@ const BasicTable = ({ columns, data, titleButton, setModalShow, titleTable, onRo
             console.log(rowData)
         },
         // pagination: true,
+        selectableRows: 'none',
         onRowClick: (rowData) => onRowClick(rowData),
         // onSearch: (data) => {}
         onRowsDelete: (data) => {
@@ -76,10 +77,10 @@ const BasicTable = ({ columns, data, titleButton, setModalShow, titleTable, onRo
         },
         search: true,
         download: false,
-        print: true,
+        print: false,
         viewColumns: false,
         filter: false,
-        jumpToPage: true,
+        // jumpToPage: true,
         filterType: "dropdown",
         responsive: 'standard',
         rowsPerPageOptions: [5, 10, 15, 20],
@@ -107,11 +108,11 @@ const BasicTable = ({ columns, data, titleButton, setModalShow, titleTable, onRo
                 title: "BỘ LỌC",
                 reset: "RESET",
             },
-            selectedRows: {
-                text: "(hàng) đã chọn. Bạn có chắc chắn muốn xóa không?",
-                delete: "Xóa",
-                deleteAria: "Delete Selected Rows",
-            },
+            // selectedRows: {
+            //     text: "(hàng) đã chọn. Bạn có chắc chắn muốn xóa không?",
+            //     delete: "Xóa",
+            //     deleteAria: "Delete Selected Rows",
+            // },
             // customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage) => (
             //     <TableFooter>
             //         <TableRow>
