@@ -43,7 +43,7 @@ const AuthorsModal = ({ modalShow, setModalShow, value }) => {
         e.preventDefault()
         const newAuthor = { ...author }
         delete newAuthor['id_author']
-        newAuthor['date_of_birth'] = convertDate(author.date_of_birth)
+        newAuthor['date_of_birth'] = author.date_of_birth.toISOString().split('T')[0]
 
         if (author.id_author === 0) {
             dispatch(addAuthors(newAuthor))

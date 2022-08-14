@@ -71,8 +71,8 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
         newBorrow['id_readers'] = borrow.id_readers.value
         delete newBorrow['expired']
         newBorrow['books'] = borrow.books.map(item => {
-           
-            return { id_book: item.value, expired: convertDate(borrow.expired) }
+
+            return { id_book: item.value, expired: borrow.expired.toISOString().split('T')[0] }
         })
 
         // console.log(borrow)

@@ -4,6 +4,7 @@ import AuthorsModal from '../modal/authors-modal'
 import { useDispatch, useSelector } from 'react-redux';
 import { authorsSelector, loadAuthors } from '../../reducers/authors';
 import HomePage from '../../components/home/HomePage';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 const AuthorsPage = () => {
     const [modalShow, setModalShow] = useState(false);
@@ -61,7 +62,7 @@ const AuthorsPage = () => {
                 sort: true,
                 customBodyRender: (value, tableMeta, updateValue) => {
                     return (
-                        <p>{value.toString().split('T')[0]}</p>
+                        <p>{convertTimesTamp(value)}</p>
                     );
                 }
             }

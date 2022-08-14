@@ -9,6 +9,7 @@ import { components } from "react-select"
 import convertDate from '../../utils/convertDate';
 import { addBorrows, dsBorrowsSelector, loadDsBorrows, renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
 import renewalDate from '../../utils/renewalDate';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 
 const PayModal = ({ modalShow, setModalShow, value }) => {
@@ -101,7 +102,7 @@ const PayModal = ({ modalShow, setModalShow, value }) => {
                                                 </Col>
                                                 <Col className="mb-3">
                                                     <Form.Label>Hạn trả</Form.Label>
-                                                    <Form.Control disabled value={item.expired.toString().split('T')[0]} />
+                                                    <Form.Control disabled value={convertTimesTamp(item.expired)} />
                                                 </Col>
                                                 <Col className="mb-3">
                                                     <Form.Label className='ml-3'>Thao tác</Form.Label>

@@ -7,6 +7,7 @@ import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, lo
 import ReactToPrint from 'react-to-print';
 import DatePicker from "react-datepicker";
 import convertDate from '../../utils/convertDate';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 const tabStyle = {
     height: 600,
@@ -100,7 +101,7 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
                             props.value.map((item, index) => (
                                 <tr key={index}>
                                     <td>{item.name_reader}</td>
-                                    <td>{item?.expired.toString().split('T')[0]}</td>
+                                    <td>{convertTimesTamp(item?.expired)}</td>
                                     <td>{item.day.days}</td>
                                     <td>{item.phone}</td>
                                 </tr>
@@ -121,23 +122,29 @@ const StatisticalPage = () => {
     const [startDateDs, setStartDateDs] = useState(new Date((new Date()).getFullYear(), 0, 1));
     const [endDateDs, setEndDateDs] = useState(new Date((new Date()).getFullYear(), 12, 0));
 
-    const [startDateReaders, setStartDateReaders] = useState(new Date());
-    const [endDateReaders, setEndDateReaders] = useState(new Date());
+    const [startDateReaders, setStartDateReaders] = useState(new Date((new Date()).getFullYear(), 0, 1));
+    const [endDateReaders, setEndDateReaders] = useState(new Date((new Date()).getFullYear(), 12, 0));
 
-    const [startDateReadersExpire, setStartDateReadersExpire] = useState(new Date());
-    const [endDateReadersExpire, setEndDateReadersExpire] = useState(new Date());
+    const [startDateReadersExpire, setStartDateReadersExpire] = useState(new Date((new Date()).getFullYear(), 0, 1));
+    const [endDateReadersExpire, setEndDateReadersExpire] = useState(new Date((new Date()).getFullYear(), 12, 0));
     // const statisticalReadersDay = useSelector(statisticalReadersDaySelector)
     // const statisticalDsDay = useSelector(statisticalDsDaySelector)
 
     useEffect(() => {
-        dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(endDateDs)}))
+        dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(endDateDs) }))
     }, [dispatch, startDateDs, endDateDs])
 
     useEffect(() => {
-        dispatch(loadStatisticalReaders())
+        dispatch(loadStatisticalReaders({ startDate: convertDate(startDateReaders), endDate: convertDate(endDateReaders) }))
+    }, [dispatch, startDateReaders, endDateReaders])
+
+    useEffect(() => {
+        dispatch(loadStatisticalReadersExpired({ startDate: convertDate(startDateReadersExpire), endDate: convertDate(endDateReadersExpire) }))
+    }, [dispatch, startDateReadersExpire, endDateReadersExpire])
+
+    useEffect(() => {
         dispatch(loadStatisticalBookByDay())
         dispatch(loadStatisticalReadersByDay())
-        dispatch(loadStatisticalReadersExpired())
     }, [dispatch])
 
     const componentRef1 = useRef();
@@ -150,15 +157,29 @@ const StatisticalPage = () => {
             if (keyName2 === 'start') {
                 setStartDateDs(date)
                 dispatch(loadStatisticalDS({ startDate: convertDate(date), endDate: convertDate(endDateDs) }))
-                // console.log(convertDate(date))
             } else {
                 setEndDateDs(date)
                 dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(date) }))
-                // console.log(convertDate(date))
+            }
+        } else if (keyName1 === 'readers') {
+            if (keyName2 === 'start') {
+                setStartDateReaders(date)
+                dispatch(loadStatisticalDS({ startDate: convertDate(date), endDate: convertDate(endDateReaders) }))
+            } else {
+                setEndDateReaders(date)
+                dispatch(loadStatisticalDS({ startDate: convertDate(startDateReaders), endDate: convertDate(date) }))
+            }
+        } else {
+            if (keyName2 === 'start') {
+                setStartDateReadersExpire(date)
+                dispatch(loadStatisticalReadersExpired({ startDate: convertDate(date), endDate: convertDate(endDateReadersExpire) }))
+            } else {
+                setEndDateReadersExpire(date)
+                dispatch(loadStatisticalDS({ startDate: convertDate(startDateReadersExpire), endDate: convertDate(date) }))
             }
         }
     }
-    // console.log(statisticalReaderExpired)
+
     return (
         <>
             <HomePage>
@@ -228,8 +249,12 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={startDateReaders}
-                                                onChange={(date) => setStartDateReaders(date)}
+                                                onChange={(date) => onChangeValue(date, 'readers', 'start')}
                                                 selectsStart
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
                                                 dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReaders}
                                                 endDate={endDateReaders}
@@ -238,9 +263,13 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={endDateReaders}
-                                                onChange={(date) => setEndDateReaders(date)}
+                                                onChange={(date) => onChangeValue(date, 'readers', 'end')}
                                                 selectsEnd
                                                 dateFormat="dd/MM/yyyy"
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
                                                 startDate={startDateReaders}
                                                 endDate={endDateReaders}
                                                 minDate={startDateReaders}
@@ -269,9 +298,13 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={startDateReadersExpire}
-                                                onChange={(date) => setStartDateReadersExpire(date)}
+                                                onChange={(date) => onChangeValue(date, 'expire', 'start')}
                                                 selectsStart
                                                 dateFormat="dd/MM/yyyy"
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
                                                 startDate={startDateReadersExpire}
                                                 endDate={endDateReadersExpire}
                                             />
@@ -279,8 +312,12 @@ const StatisticalPage = () => {
                                         <Col>
                                             <DatePicker
                                                 selected={endDateReadersExpire}
-                                                onChange={(date) => setEndDateReadersExpire(date)}
+                                                onChange={(date) => onChangeValue(date, 'expire', 'end')}
                                                 selectsEnd
+                                                showYearDropdown
+                                                peekNextMonth
+                                                showMonthDropdown
+                                                dropdownMode="select"
                                                 dateFormat="dd/MM/yyyy"
                                                 startDate={startDateReadersExpire}
                                                 endDate={endDateReadersExpire}

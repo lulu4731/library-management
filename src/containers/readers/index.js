@@ -6,6 +6,8 @@ import { loadReaders, readersSelector } from '../../reducers/readers';
 // import { checkLogin } from '../../reducers/librarian'
 import HomePage from '../../components/home/HomePage';
 import { Badge } from 'react-bootstrap';
+import convertTime from '../../utils/convertTime';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 const ReadersPage = () => {
     const dispatch = useDispatch()
@@ -88,7 +90,7 @@ const ReadersPage = () => {
                 sort: true,
                 customBodyRender: (value, tableMeta, updateValue) => {
                     return (
-                        <p>{value.toString().split('T')[0]}</p>
+                        <p>{convertTimesTamp(value)}</p>
                     );
                 }
             }
@@ -114,15 +116,20 @@ const ReadersPage = () => {
         const temps = readers.find((item) => item.citizen_identification === data[0])
         setReader({
             ...temps,
-            date_of_birth: new Date(temps.date_of_birth.toString().split('T')[0])
+            date_of_birth: new Date(convertTime(temps.day))
         })
         setModalShow(true)
     }
+
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" setModalShow={setModalShow} titleTable="QUẢN LÝ ĐỘC GIẢ" />
-                <ReadersModal modalShow={modalShow} setModalShow={setModalShow} value={reader} />
+                {
+                    readers && <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" setModalShow={setModalShow} titleTable="QUẢN LÝ ĐỘC GIẢ" />
+                }
+                {
+                    modalShow && <ReadersModal modalShow={modalShow} setModalShow={setModalShow} value={reader} setValue={setReader} />
+                }
             </HomePage>
         </>
     )

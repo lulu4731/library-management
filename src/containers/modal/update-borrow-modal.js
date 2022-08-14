@@ -9,6 +9,8 @@ import { components } from "react-select"
 import convertDate from '../../utils/convertDate';
 import { addBorrows, dsBorrowsSelector, loadDsBorrows, renewalBook, returnBook, returnBookAll, updateBorrows } from '../../reducers/borrow';
 import renewalDate from '../../utils/renewalDate';
+import convertTime from '../../utils/convertTimesTamp';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 
 const UpdateModal = ({ modalShow, setModalShow, value }) => {
@@ -77,7 +79,7 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
         newBorrow['id_readers'] = borrow.reader.value
         newBorrow['books'] = borrow.books.map(item => {
             // dispatch(setDsBorrow(item.value))
-            return { ...item, id_book: item.ds.value, expired: convertDate(new Date(item.expired)) }
+            return { ...item, id_book: item.ds.value, expired: item.expired.split('T')[0] }
         })
 
         dispatch(updateBorrows(newBorrow))
@@ -150,8 +152,8 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
                                                     <Form.Label>Hạn trả</Form.Label>
                                                     {/* <Form.Control disabled value={item.expired.toString().split('T')[0]} /> */}
                                                     <DatePicker
-                                                        selected={new Date(item.expired.toString().split('T')[0])}
-                                                        onChange={(date) => onChangeValue(index, date.toISOString(), 'expired')}
+                                                        selected={new Date(item.expired)}
+                                                        onChange={(date) => onChangeValue(index, convertTimesTamp(date.toISOString()), 'expired')}
                                                         dateFormat="dd/MM/yyyy"
                                                         withPortal
                                                         showYearDropdown

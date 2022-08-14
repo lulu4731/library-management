@@ -7,6 +7,7 @@ import BorrowModal from '../modal/borrow-modal';
 import PayModal from '../modal/pay-modal';
 import HomePage from '../../components/home/HomePage';
 import UpdateModal from '../modal/update-borrow-modal';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 
 const Borrow = () => {
     const [modalShow, setModalShow] = useState(false)
@@ -70,7 +71,7 @@ const Borrow = () => {
                     const time = new Date()
                     time.setDate(time.getDate() - 1)
                     const borrow_status = JSON.parse(value).find(item => item.borrow_status === 0)
-                    const date_status = JSON.parse(value).find(item => time > new Date(item.expired.toString().split('T')[0]))
+                    const date_status = JSON.parse(value).find(item => time > new Date(convertTimesTamp(item.expired)))
 
                     return (
                         <div className='pb-0' >
@@ -83,9 +84,9 @@ const Borrow = () => {
                                         <span className="pr-2">{JSON.parse(value)[0].ds?.label}</span>
 
                                         <ul className='mr-3 pl-4'>
-                                            <li className={JSON.parse(value)[0].borrow_status === 0 ? 'text-left' : 'mb-2 text-left'}>Ngày hết hạn: {JSON.parse(value)[0].expired.toString().split('T')[0]}</li>
+                                            <li className={JSON.parse(value)[0].borrow_status === 0 ? 'text-left' : 'mb-2 text-left'}>Ngày hết hạn: {convertTimesTamp(JSON.parse(value)[0].expired)}</li>
                                             {
-                                                JSON.parse(value)[0].date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {JSON.parse(value)[0].date_return_book.toString().split('T')[0]}</li>
+                                                JSON.parse(value)[0].date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(JSON.parse(value)[0].date_return_book)}</li>
                                             }
                                             {/* <li className='text-left'>Trạng thái: {JSON.parse(value)[0].borrow_status === 0 ? 'Chưa trả' : JSON.parse(value)[0].borrow_status === 1 ? "Đã trả" : "Đã mất sách"}</li> */}
                                             {
@@ -107,9 +108,9 @@ const Borrow = () => {
                                                 <div key={index} className="dropdown-item-list">
                                                     {item?.ds.label}
                                                     <ul className='mr-3 pl-4'>
-                                                        <li className='mb-2 text-left'>Ngày hết hạn: {item.expired.toString().split('T')[0]}</li>
+                                                        <li className='mb-2 text-left'>Ngày hết hạn: {convertTimesTamp(item.expired)}</li>
                                                         {
-                                                            item.date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {item.date_return_book.toString().split('T')[0]}</li>
+                                                            item.date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(item.date_return_book)}</li>
                                                         }
                                                         {/* <li className='text-left'>Trạng thái: {item.borrow_status === 0 ? 'Chưa trả' : item.borrow_status === 1 ? "Đã trả" : "Đã mất sách"}</li> */}
                                                         {

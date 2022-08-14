@@ -20,10 +20,10 @@ export const loadStatisticalDS = createAsyncThunk(
 
 export const loadStatisticalReaders = createAsyncThunk(
     "statistical/loadStatisticalReaders",
-    async () => {
+    async (date) => {
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/v0/statistical/readers`
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/statistical/readers`, date
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }
@@ -71,10 +71,10 @@ export const loadStatisticalReadersByDay = createAsyncThunk(
 
 export const loadStatisticalReadersExpired = createAsyncThunk(
     "statistical/loadStatisticalReadersExpired",
-    async () => {
+    async (date) => {
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/v0/statistical/readers/expired`
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/statistical/readers/expired`, date
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }

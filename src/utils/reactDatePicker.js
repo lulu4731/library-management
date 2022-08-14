@@ -1,7 +1,7 @@
 import DatePicker from "react-datepicker";
 
 const range = (startYear, endYear) => {
-    console.log(startYear, endYear)
+    // console.log(startYear, endYear)
     let data = [startYear]
     for (let i = 1; i < endYear; i++) {
         data = [...data, startYear + i]
