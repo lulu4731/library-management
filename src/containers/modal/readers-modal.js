@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { addReaders, updateReaders } from '../../reducers/readers';
 import convertDate from '../../utils/convertDate';
 
-const ReadersModal = ({ modalShow, setModalShow, value, setValue }) => {
+const ReadersModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
 
     const defaultValue = {
@@ -31,12 +31,6 @@ const ReadersModal = ({ modalShow, setModalShow, value, setValue }) => {
             }
         }
     }, [value])
-
-    const onClose = () => {
-        setModalShow(false)
-        setReader(defaultValue)
-        setValue(defaultValue)
-    }
 
     const onValueChange = (keyValue, keyName) => {
         const newReader = { ...reader }
@@ -68,7 +62,7 @@ const ReadersModal = ({ modalShow, setModalShow, value, setValue }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { addAuthors, updateAuthors } from '../../reducers/authors';
-import convertDate from '../../utils/convertDate';
 import ReactDatePicker from '../../utils/reactDatePicker';
 
-const AuthorsModal = ({ modalShow, setModalShow, value }) => {
+const AuthorsModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
 
     const defaultValue = {
@@ -14,11 +13,6 @@ const AuthorsModal = ({ modalShow, setModalShow, value }) => {
         last_name: '',
         gender: 0,
         date_of_birth: new Date()
-    }
-
-    const onClose = () => {
-        setModalShow(false)
-        setAuthor(defaultValue)
     }
 
     const [author, setAuthor] = useState(defaultValue)
@@ -62,7 +56,7 @@ const AuthorsModal = ({ modalShow, setModalShow, value }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >

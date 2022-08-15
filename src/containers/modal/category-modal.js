@@ -3,17 +3,12 @@ import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { addCategory, updateCategory } from '../../reducers/category';
 
-const CategoryModal = ({ modalShow, setModalShow, value }) => {
+const CategoryModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
 
     const defaultValue = {
         id_category: 0,
         name_category: '',
-    }
-
-    const onClose = () => {
-        setModalShow(false)
-        setCategory(defaultValue)
     }
 
     const [category, setCategory] = useState(defaultValue)
@@ -55,7 +50,7 @@ const CategoryModal = ({ modalShow, setModalShow, value }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadCategory = createAsyncThunk(
     "category/loadCategory",
@@ -51,6 +52,23 @@ export const updateCategory = createAsyncThunk(
         }
     }
 )
+
+export const deleteCategory = createAsyncThunk(
+    "category/deleteCategory",
+    async (id_category) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v0/category/${id_category}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_category }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 const category = createSlice({
     name: 'category',
     initialState: {
@@ -69,19 +87,31 @@ const category = createSlice({
             .addCase(addCategory.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.category.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
             .addCase(updateCategory.fulfilled, (state, action) => {
-                console.log(action.payload.data)
                 if (action.payload.status === 200) {
                     state.category = state.category.map((item) =>
                         item.id_category === action.payload.data.id_category
                             ? action.payload.data
                             : item
                     )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
-
+            .addCase(deleteCategory.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.category = state.category.filter(item => item.id_category !== action.payload.id_category)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
     }
 })
 

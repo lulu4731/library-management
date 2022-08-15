@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadAuthors = createAsyncThunk(
     "authors/loadAuthors",
@@ -51,6 +52,23 @@ export const updateAuthors = createAsyncThunk(
         }
     }
 )
+
+export const deleteAuthors = createAsyncThunk(
+    "authors/deleteAuthors",
+    async (id_author) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v0/author/${id_author}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_author }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 const authors = createSlice({
     name: 'authors',
     initialState: {
@@ -69,6 +87,9 @@ const authors = createSlice({
             .addCase(addAuthors.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.authors.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
             .addCase(updateAuthors.fulfilled, (state, action) => {
@@ -78,9 +99,20 @@ const authors = createSlice({
                             ? action.payload.data
                             : item
                     )
+
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
-
+            .addCase(deleteAuthors.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.authors = state.authors.filter(item => item.id_author !== action.payload.id_author)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
     }
 })
 
