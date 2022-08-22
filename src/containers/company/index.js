@@ -3,30 +3,24 @@ import React, { useEffect, useState } from 'react'
 import BasicTable from '../../components/table'
 // import ReadersModal from '../modal/readers-modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { companySelector, loadCompany } from '../../reducers/company';
+import { companySelector, deleteCompany, loadCompany } from '../../reducers/company';
 import HomePage from '../../components/home/HomePage'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import CompanyModal from '../modal/company-modal';
 
 const CompanyPage = () => {
     const dispatch = useDispatch()
     const company = useSelector(companySelector)
-    // const [modalShow, setModalShow] = useState(false);
-    // const [companyItem, setCompanyItem] = useState()
+    const [isOpen, setIsOpen] = useState(false);
+    const [companyItem, setCompanyItem] = useState()
 
     useEffect(() => {
         dispatch(loadCompany())
     }, [dispatch])
 
     const onRowClick = (data) => {
-        // setReader({
-        //     id_readers: data[0],
-        //     first_name: data[1],
-        //     last_name: data[2],
-        //     address: data[4],
-        //     gender: data[5].props.children === 'Nam' ? 0 : 1,
-        //     email: data[3],
-        //     date_of_birth: new Date(data[6].props.children)
-        // })
-        // setModalShow(true)
+        const temps = company.find(item => item.id_publishing_company === data[0])
+        setCompanyItem(temps)
     }
     const columns = [
         {
@@ -69,14 +63,62 @@ const CompanyPage = () => {
                 sort: true,
             }
         },
+        {
+            name: "id_publishing_company",
+            label: "Hành động",
+            options: {
+                filter: true,
+                sort: true,
+                customBodyRender: (value) => {
+                    return (
+                        <div className='pb-0'>
+                            <OverlayTrigger
+                                key={'bottom-edit'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-edit`}>
+                                        Cập nhật
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                            </OverlayTrigger>
+                            <OverlayTrigger
+                                key={'bottom-delete'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-delete`}>
+                                        Xóa
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='danger' onClick={() => onDelete(value)}><i className="fa-solid fa-trash-can"></i></Button>
+                            </OverlayTrigger>
+                        </div>
+                    )
+                }
+            }
+        },
     ];
 
+    const onDelete = (id_publishing_company) => {
+        dispatch(deleteCompany(id_publishing_company))
+    }
+
+    const onClose = () => {
+        setIsOpen(false)
+        setCompanyItem()
+    }
     // console.log(readers)
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} data={company} titleButton="Thêm nhà xuất bản" titleTable="QUẢN LÝ NHÀ XUẤT BẢN" />
-                {/* <ReadersModal modalShow={modalShow} setModalShow={setModalShow} value={reader} /> */}
+                {
+                    company && <BasicTable onRowClick={onRowClick} setIsOpen={setIsOpen} columns={columns} data={company} titleButton="Thêm nhà xuất bản" titleTable="QUẢN LÝ NHÀ XUẤT BẢN" />
+                }
+                {
+                    isOpen && <CompanyModal isOpen={isOpen} onClose={onClose} value={companyItem} />
+                }
             </HomePage>
         </>
     )

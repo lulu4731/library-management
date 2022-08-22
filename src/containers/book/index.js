@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { Badge } from 'react-bootstrap'
+import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import BasicTable from '../../components/table'
 import { booksSelector, loadBooks } from '../../reducers/book';
-import ReadersModal from '../modal/readers-modal';
 import HomePage from '../../components/home/HomePage';
+import BookModal from '../modal/book_modal';
 
 const Book = () => {
-    const [modalShow, setModalShow] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch()
     const books = useSelector(booksSelector)
+    const [book, setBook] = useState()
 
     useEffect(() => {
         dispatch(loadBooks())
     }, [dispatch])
 
+    const onClose = () => {
+        setIsOpen(false)
+        setBook()
+    }
     const columns = [
         {
             name: "id_book",
@@ -77,12 +82,49 @@ const Book = () => {
                 }
             },
         },
+        {
+            name: "id_book",
+            label: "Hành động",
+            options: {
+                filter: true,
+                sort: true,
+                customBodyRender: (value) => {
+                    return (
+                        <div className='pb-0'>
+                            <OverlayTrigger
+                                key={'bottom-edit'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-edit`}>
+                                        Cập nhật
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                            </OverlayTrigger>
+                        </div>
+                    )
+                }
+            }
+        },
     ];
+
+    const onRowClick = (data) => {
+        const temps = books.find(item => item.id_book === data[0])
+        setBook({
+            id_book: temps.id_book,
+            position: temps.position || ""
+        })
+    }
     return (
         <>
             <HomePage>
-                <BasicTable columns={columns} data={books} titleButton="Thêm độc giả" setModalShow={setModalShow} titleTable="QUẢN LÝ ĐỘC GIẢ" />
-                <ReadersModal modalShow={modalShow} setModalShow={setModalShow} />
+                {
+                    books && <BasicTable onRowClick={onRowClick} columns={columns} data={books} titleTable="QUẢN LÝ ĐỘC GIẢ" />
+                }
+                {
+                    isOpen && <BookModal isOpen={isOpen} onClose={onClose} value={book} />
+                }
             </HomePage>
         </>
     )

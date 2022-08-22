@@ -5,7 +5,7 @@ import { loadTitle, titlesSelector } from '../../reducers/title';
 import Select from 'react-select';
 import { addReceipt, updateReceipt } from '../../reducers/receipt';
 
-const ReceiptModal = ({ modalShow, setModalShow, value }) => {
+const ReceiptModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const ds = useSelector(titlesSelector)
 
@@ -50,17 +50,6 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
 
     const [dsOptions, setDsOptions] = useState([])
 
-    const onClose = () => {
-        setModalShow(false)
-        setReceipts(defaultValue)
-        setDsOptions(ds.map(item => {
-            return {
-                value: item.isbn,
-                label: item.name_book
-            }
-        }))
-    }
-
     const onAdd = () => {
         let tempsReceipt = receipts.data.map(item => item.ds.value)
         let tempsDS = dsOptions
@@ -68,6 +57,8 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
             tempsDS = tempsDS.filter(item => item.value !== i)
         }
         setDsOptions(tempsDS)
+        console.log(tempsReceipt)
+        console.log(tempsDS)
         if (tempsReceipt[tempsReceipt.length - 1] !== 0) {
             setReceipts({
                 ...receipts,
@@ -81,8 +72,6 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
 
                 }]
             })
-        } else {
-            //Chua nhap du thong tin dong tren
         }
     }
 
@@ -92,6 +81,12 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
             ...receipts,
             data: temps
         })
+        setDsOptions(ds.map(item => {
+            return {
+                value: item.isbn,
+                label: item.name_book
+            }
+        }))
     }
     // console.log(receipts)
     const onChangeValue = (id, keyValue, keyName) => {
@@ -100,6 +95,8 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
         // if (keyName === "ds") {
         //     setDsOptions(dsOptions.filter(item => keyValue.value !== item.value))
         // }
+
+        // console.log(typeof(keyValue.p))
 
         const newReceipts = { ...receipts.data[id] }
 
@@ -129,7 +126,7 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >
@@ -141,13 +138,20 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
             </Modal.Header>
             <Form className="form-modal" onSubmit={onSubmit}>
                 <Modal.Body>
+                    <Row>
+                        <Col><Form.Label>Chọn đầu sách</Form.Label></Col>
+                        <Col><Form.Label>Số lượng</Form.Label></Col>
+                        <Col><Form.Label>Giá</Form.Label></Col>
+                        <Col><Form.Label>Thành tiền</Form.Label></Col>
+                        <div className='mr-5'>
+                        </div>
+                    </Row>
                     {
                         receipts.data.length > 0 && (
                             receipts.data.map((item, index) => (
                                 <Form.Group key={index}>
                                     <Row>
                                         <Col>
-                                            <Form.Label>Chọn đầu sách</Form.Label>
                                             <Select
                                                 options={dsOptions}
                                                 value={item.ds}
@@ -155,19 +159,16 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
                                             />
                                         </Col>
                                         <Col>
-                                            <Form.Label>Số lượng</Form.Label>
                                             <Form.Control type="number" require="true" value={item.number_book} onChange={(e) => onChangeValue(index, +e.target.value, 'number_book')} />
                                         </Col>
                                         <Col>
-                                            <Form.Label>Giá</Form.Label>
-                                            <Form.Control type="number" require="true" value={item.price} onChange={(e) => onChangeValue(index, +e.target.value, 'price')} />
+                                            <Form.Control type="tel" require="true" value={(+item.price).toLocaleString()} onChange={(e) => onChangeValue(index, e.target.value.replace(/\D/g, ''), 'price')} />
                                         </Col>
                                         <Col>
-                                            <Form.Label>Thành tiền</Form.Label>
                                             <Form.Control type="text" disabled value={(item.price * item.number_book).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
                                         </Col>
-                                        <div className='mt-3'>
-                                            <Button variant='link' className='text-decoration-none mt-3 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
+                                        <div className=''>
+                                            <Button variant='link' className='text-decoration-none p-2 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
                                         </div>
                                     </Row>
                                     <br />
@@ -179,7 +180,7 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
                         <Col md={8}>
                             <Button variant='link' className='text-decoration-none' onClick={onAdd}><i className="fa-solid fa-plus"></i> Thêm đầu sách</Button>
                         </Col>
-                        <Col style={{ marginRight: '55px', marginLeft: '55px' }}>
+                        <Col style={{ marginRight: '48px', marginLeft: '60px' }}>
                             <Form.Label>Tổng tiền</Form.Label>
                             <Form.Control type="text" disabled value={receipts.data.reduce(
                                 (previousValue, currentValue) => previousValue + (currentValue.number_book * currentValue.price),
@@ -190,7 +191,7 @@ const ReceiptModal = ({ modalShow, setModalShow, value }) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                    <Button variant="primary" type='submit'>Add</Button>
+                    <Button variant="primary" type='submit'>{receipts.id_receipt === 0 ? 'Thêm' : "Sửa"}</Button>
                 </Modal.Footer>
             </Form>
         </Modal>

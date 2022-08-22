@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { borrowsSelector, loadBorrows } from '../../reducers/borrow';
-import { Badge, Button } from 'react-bootstrap';
+import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import BasicTable from '../../components/table';
 import BorrowModal from '../modal/borrow-modal';
 import PayModal from '../modal/pay-modal';
@@ -153,8 +153,30 @@ const Borrow = () => {
                     if (borrow_status) {
                         return (
                             <div className='pb-0'>
-                                <Button variant='warning' className='mr-2' onClick={() => setPayModal(true)}>Trả sách</Button>
-                                <Button variant='primary' onClick={() => setUpdateModal(true)}>Cập nhật</Button>
+                                {/* <Button variant='warning' className='mr-2' onClick={() => setPayModal(true)}>Trả sách</Button> */}
+                                {/* <Button variant='primary' onClick={() => setUpdateModal(true)}>Cập nhật</Button> */}
+                                <OverlayTrigger
+                                    key={'bottom-pay'}
+                                    placement={'bottom'}
+                                    overlay={
+                                        <Tooltip id={`tooltip-pay`}>
+                                            Trả sách
+                                        </Tooltip>
+                                    }
+                                >
+                                    <Button variant='warning mr-3' onClick={() => setPayModal(true)}><i className="fa-solid fa-book"></i></Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                    key={'bottom-edit'}
+                                    placement={'bottom'}
+                                    overlay={
+                                        <Tooltip id={`tooltip-edit`}>
+                                            Cập nhật
+                                        </Tooltip>
+                                    }
+                                >
+                                    <Button variant='primary' onClick={() => setUpdateModal(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                </OverlayTrigger>
                             </div>
                         );
                     } else {
@@ -186,7 +208,7 @@ const Borrow = () => {
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} setModalShow={setModalShow} data={borrows} titleButton="Thêm phiếu mượn" titleTable="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" />
+                <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setModalShow} data={borrows} titleButton="Thêm phiếu mượn" titleTable="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" />
                 {
                     modalShow && (<BorrowModal modalShow={modalShow} setModalShow={setModalShow} />)
                 }

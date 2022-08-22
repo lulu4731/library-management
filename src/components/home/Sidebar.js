@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -18,13 +18,13 @@ const Sidebar = ({ toggle }) => {
         <div className={`navigation${toggle}`}>
             <ul>
                 <li>
-                    <Link to='/'>
+                    <Link to='/statistical'>
                         <span className='icon'><i className="fa-solid fa-book-open ion-icon"></i></span>
                         <span className='title' style={{ fontWeight: 'bold' }}>QUẢN LÝ THƯ VIỆN</span>
                     </Link>
                 </li>
                 <li className={hovered === 1 ? 'hovered' : ''} onClick={() => dispatch(setHovered(1))}>
-                    <Link to='/' >
+                    <Link to='/statistical' >
                         <span className='icon'><i className="fa-solid fa-chart-line ion-icon"></i></span>
                         <span className='title' style={{ fontWeight: 'bold' }}>Thống kê</span>
                     </Link>
@@ -45,6 +45,23 @@ const Sidebar = ({ toggle }) => {
                     <Link to='/category'>
                         <span className='icon'><i className="fa-solid fa-shapes ion-icon"></i></span>
                         <span className='title' style={{ fontWeight: 'bold' }}>Quản lý thể loại</span>
+                    </Link>
+                </li>
+                <li className={hovered === 10 ? 'hovered' : ''} onClick={() => dispatch(setHovered(10))}>
+                    <Link to='/company'>
+                        <OverlayTrigger
+                            delay={{ hide: 100, show: 100 }}
+                            overlay={(props) => (
+                                <Tooltip {...props} id="button-tooltip">
+                                    Nhà xuất bản
+                                </Tooltip>
+                            )}
+                            placement="right"
+                            onEntering={entering}
+                        >
+                            <span className='icon'><i className="fa-solid fa-house ion-icon"></i></span>
+                        </OverlayTrigger>
+                        <span className='title' style={{ fontWeight: 'bold' }}>Nhà xuất bản</span>
                     </Link>
                 </li>
                 <li className={hovered === 5 ? 'hovered' : ''} onClick={() => dispatch(setHovered(5))}>
@@ -77,25 +94,8 @@ const Sidebar = ({ toggle }) => {
                         <span className='title' style={{ fontWeight: 'bold' }}>Phiếu mượn sách</span>
                     </Link>
                 </li>
-                <li className={hovered === 10 ? 'hovered' : ''} onClick={() => dispatch(setHovered(10))}>
-                    <Link to='/company'>
-                        <OverlayTrigger
-                            delay={{ hide: 100, show: 100 }}
-                            overlay={(props) => (
-                                <Tooltip {...props} id="button-tooltip">
-                                    Nhà xuất bản
-                                </Tooltip>
-                            )}
-                            placement="right"
-                            onEntering={entering}
-                        >
-                            <span className='icon'><i className="fa-solid fa-house ion-icon"></i></span>
-                        </OverlayTrigger>
-                        <span className='title' style={{ fontWeight: 'bold' }}>Nhà xuất bản</span>
-                    </Link>
-                </li>
                 <li onClick={() => dispatch(setLogout())}>
-                    <Link to='/login'>
+                    <Link to='/'>
                         <span className='icon'><i className="fa-solid fa-right-from-bracket ion-icon"></i></span>
                         <span className='title' style={{ fontWeight: 'bold' }}>Đăng xuất</span>
                     </Link>

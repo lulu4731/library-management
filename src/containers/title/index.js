@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import TitleModal from '../modal/title-modal';
 import { loadTitle, titlesSelector } from '../../reducers/title';
 import HomePage from '../../components/home/HomePage'
+import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap'
 
 const Title = () => {
     const [modalShow, setModalShow] = useState(false);
@@ -130,6 +131,42 @@ const Title = () => {
         //         sort: true,
         //     }
         // },
+        {
+            name: "isbn",
+            label: "Hành động",
+            options: {
+                filter: true,
+                sort: true,
+                customBodyRender: (value) => {
+                    return (
+                        <div className='pb-0'>
+                            <OverlayTrigger
+                                key={'bottom-edit'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-edit`}>
+                                        Cập nhật
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='primary mr-3'><i className="fa-solid fa-pen-to-square"></i></Button>
+                            </OverlayTrigger>
+                            <OverlayTrigger
+                                key={'bottom-delete'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-delete`}>
+                                        Xóa
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='danger' onClick={() => onDelete(value)}><i className="fa-solid fa-trash-can"></i></Button>
+                            </OverlayTrigger>
+                        </div>
+                    )
+                }
+            }
+        },
     ];
 
     const onRowClick = (data) => {
@@ -144,10 +181,13 @@ const Title = () => {
         setModalShow(true)
     }
 
+    const onDelete = (value) => {
+
+    }
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} setModalShow={setModalShow} data={titles} titleButton="Thêm đầu sách" titleTable="QUẢN LÝ ĐẦU SÁCH" />
+                <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setModalShow} data={titles} titleButton="Thêm đầu sách" titleTable="QUẢN LÝ ĐẦU SÁCH" />
                 <TitleModal modalShow={modalShow} setModalShow={setModalShow} value={title} />
             </HomePage>
         </>

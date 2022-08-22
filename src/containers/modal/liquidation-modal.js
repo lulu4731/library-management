@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { addLiquidations, bookLiquidationsSelector, loadBookLiquidations, updateLiquidations } from '../../reducers/liquidation';
 
-const LiquidationModal = ({ modalShow, setModalShow, value, setValue }) => {
+const LiquidationModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const bookLiquidation = useSelector(bookLiquidationsSelector)
-    
+
     const defaultValue = {
         id_liquidation: 0,
         books: []
@@ -27,12 +27,6 @@ const LiquidationModal = ({ modalShow, setModalShow, value, setValue }) => {
             }
         }
     }, [value])
-
-    const onClose = () => {
-        setLiquidation(defaultValue)
-        setValue(defaultValue)
-        setModalShow(false)
-    }
 
     const styles = {
         multiValue: (base, state) => {
@@ -76,7 +70,7 @@ const LiquidationModal = ({ modalShow, setModalShow, value, setValue }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >
@@ -91,7 +85,7 @@ const LiquidationModal = ({ modalShow, setModalShow, value, setValue }) => {
                     <Form.Group>
                         <Row>
                             <Col>
-                                <Form.Label>Tác giả</Form.Label> 
+                                <Form.Label>Tác giả</Form.Label>
                                 <Select
                                     closeMenuOnSelect={false}
                                     isMulti

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import BasicTable from '../../components/table'
-import AuthorsModal from '../modal/authors-modal'
 import { useDispatch, useSelector } from 'react-redux';
 import { liquidationsSelector, loadLiquidations } from '../../reducers/liquidation';
 import HomePage from '../../components/home/HomePage';
-import { Badge, Button } from 'react-bootstrap';
+import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import LiquidationModal from '../modal/liquidation-modal';
 
 const Liquidation = () => {
-    const [modalShow, setModalShow] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch()
     const liquidations = useSelector(liquidationsSelector)
     const [liquidation, setLiquidation] = useState()
@@ -96,15 +95,25 @@ const Liquidation = () => {
             }
         },
         {
-            name: "a",
+            name: "id_liquidation",
             label: "Hành động",
             options: {
                 filter: true,
                 sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                customBodyRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Button variant='primary' onClick={() => setModalShow(true)}>Cập nhật</Button>
+                            <OverlayTrigger
+                                key={'bottom-edit'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-edit`}>
+                                        Cập nhật
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                            </OverlayTrigger>
                         </div>
                     )
                 }
@@ -118,15 +127,20 @@ const Liquidation = () => {
             id_liquidation: temps.id_liquidation,
             books: JSON.parse(temps.books)
         })
-        // setModalShow(true)
+    }
+
+    const onClose = () => {
+        setIsOpen(false)
+        setLiquidation()
     }
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" setModalShow={setModalShow} titleTable="QUẢN LÝ PHIẾU THANH LÝ" />
-                {/* <AuthorsModal modalShow={modalShow} setModalShow={setModalShow} value={author} /> */}
                 {
-                    modalShow && (<LiquidationModal modalShow={modalShow} setModalShow={setModalShow} value={liquidation} setValue={setLiquidation}/>)
+                    liquidations && (<BasicTable onRowClick={onRowClick} columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" setIsOpen={setIsOpen} titleTable="QUẢN LÝ PHIẾU THANH LÝ" />)
+                }
+                {
+                    isOpen && (<LiquidationModal isOpen={isOpen} onClose={onClose} value={liquidation} />)
                 }
             </HomePage>
         </>

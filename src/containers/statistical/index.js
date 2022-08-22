@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Badge, Button, Col, Row, Table } from 'react-bootstrap'
+import { Button, Col, Row, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import BaseChart from '../../components/base-chart';
 import HomePage from '../../components/home/HomePage'
-import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, loadStatisticalReadersByDay, loadStatisticalReadersExpired, statisticalDsDaySelector, statisticalDsSelector, statisticalReaderExpiredSelector, statisticalReadersDaySelector, statisticalReadersSelector } from '../../reducers/statistical';
+import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, loadStatisticalReadersByDay, loadStatisticalReadersExpired, statisticalDsSelector, statisticalReaderExpiredSelector, statisticalReadersDaySelector, statisticalReadersSelector } from '../../reducers/statistical';
 import ReactToPrint from 'react-to-print';
 import DatePicker from "react-datepicker";
 import convertDate from '../../utils/convertDate';
-import convertTimesTamp from '../../utils/convertTimesTamp';
+import { checkLogin, librarianSelector } from '../../reducers/librarian';
 
 const tabStyle = {
     height: 600,
@@ -21,6 +20,20 @@ export const ComponentToPrintDs = React.forwardRef((props, ref) => {
     return (
         <div style={tabStyle} className="mt-3">
             <div className='m-3' ref={ref}>
+                <Row>
+                    <Col>
+                        <div className='float-left'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>THƯ VIỆN HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Cơ sở tại TP. Hồ Chí Minh</h6>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Độc lập - Tự do - Hạnh phúc</h6>
+                        </div>
+                    </Col>
+                </Row>
                 <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ LƯỢNG SÁCH ĐƯỢC MƯỢN</h4>
                 <Table striped bordered={true} hover>
                     <thead>
@@ -44,13 +57,23 @@ export const ComponentToPrintDs = React.forwardRef((props, ref) => {
                                         </tr>
                                     )
                                 }
-
                             })
                         )}
                     </tbody>
                 </Table>
+
+                <Row>
+                    <Col></Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                        </div>
+                    </Col>
+                </Row>
             </div>
-        </div >
+        </div>
     );
 });
 
@@ -58,6 +81,20 @@ export const ComponentToPrintReader = React.forwardRef((props, ref) => {
     return (
         <div style={tabStyle} className="mt-3">
             <div className='m-3' ref={ref}>
+                <Row>
+                    <Col>
+                        <div className='float-left'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>THƯ VIỆN HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Cơ sở tại TP. Hồ Chí Minh</h6>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Độc lập - Tự do - Hạnh phúc</h6>
+                        </div>
+                    </Col>
+                </Row>
                 <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ SÁCH MÀ ĐỘC GIẢ ĐÃ MƯỢN</h4>
                 <Table striped bordered={true} hover>
                     <thead>
@@ -77,8 +114,18 @@ export const ComponentToPrintReader = React.forwardRef((props, ref) => {
                         )}
                     </tbody>
                 </Table>
+                <Row>
+                    <Col></Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                        </div>
+                    </Col>
+                </Row>
             </div>
-        </div >
+        </div>
     );
 });
 
@@ -86,31 +133,56 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
     return (
         <div style={tabStyle} className="mt-3">
             <div className='m-3' ref={ref}>
+                <Row>
+                    <Col>
+                        <div className='float-left'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>THƯ VIỆN HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Cơ sở tại TP. Hồ Chí Minh</h6>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="text-center mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Độc lập - Tự do - Hạnh phúc</h6>
+                        </div>
+                    </Col>
+                </Row>
                 <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ ĐỘC GIẢ QUÁ HẠN TRẢ SÁCH</h4>
                 <Table striped bordered={true} hover>
                     <thead>
                         <tr>
                             <th>Tên độc giả</th>
                             <th>Hạn trả sách</th>
-                            <th>Số ngày quá hạn</th>
                             <th>Số điện thoại</th>
+                            <th>Số ngày quá hạn</th>
                         </tr>
                     </thead>
                     <tbody>
                         {props.value.length > 0 && (
                             props.value.map((item, index) => (
                                 <tr key={index}>
+                                    <td>{item.name_book}</td>
                                     <td>{item.name_reader}</td>
-                                    <td>{convertTimesTamp(item?.expired)}</td>
-                                    <td>{item.day.days}</td>
+                                    {/* <td>{convertTimesTamp(item?.expired)}</td> */}
                                     <td>{item.phone}</td>
+                                    <td>{item.day.days}</td>
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </Table>
+                <Row>
+                    <Col></Col>
+                    <Col>
+                        <div className='float-right'>
+                            <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                        </div>
+                    </Col>
+                </Row>
             </div>
-        </div >
+        </div>
     );
 });
 const StatisticalPage = () => {
@@ -118,6 +190,7 @@ const StatisticalPage = () => {
     const statisticalDS = useSelector(statisticalDsSelector)
     const statisticalReaders = useSelector(statisticalReadersSelector)
     const statisticalReaderExpired = useSelector(statisticalReaderExpiredSelector)
+    const librarian = useSelector(librarianSelector)
 
     const [startDateDs, setStartDateDs] = useState(new Date((new Date()).getFullYear(), 0, 1));
     const [endDateDs, setEndDateDs] = useState(new Date((new Date()).getFullYear(), 12, 0));
@@ -127,8 +200,6 @@ const StatisticalPage = () => {
 
     const [startDateReadersExpire, setStartDateReadersExpire] = useState(new Date((new Date()).getFullYear(), 0, 1));
     const [endDateReadersExpire, setEndDateReadersExpire] = useState(new Date((new Date()).getFullYear(), 12, 0));
-    // const statisticalReadersDay = useSelector(statisticalReadersDaySelector)
-    // const statisticalDsDay = useSelector(statisticalDsDaySelector)
 
     useEffect(() => {
         dispatch(loadStatisticalDS({ startDate: convertDate(startDateDs), endDate: convertDate(endDateDs) }))
@@ -143,6 +214,7 @@ const StatisticalPage = () => {
     }, [dispatch, startDateReadersExpire, endDateReadersExpire])
 
     useEffect(() => {
+        dispatch(checkLogin())
         dispatch(loadStatisticalBookByDay())
         dispatch(loadStatisticalReadersByDay())
     }, [dispatch])
@@ -150,7 +222,6 @@ const StatisticalPage = () => {
     const componentRef1 = useRef();
     const componentRef2 = useRef();
     const componentRef3 = useRef();
-
 
     const onChangeValue = (date, keyName1, keyName2) => {
         if (keyName1 === 'ds') {
@@ -229,7 +300,7 @@ const StatisticalPage = () => {
                                 </Col>
                             </Row>
 
-                            <ComponentToPrintDs ref={componentRef1} value={statisticalDS} />
+                            <ComponentToPrintDs ref={componentRef1} value={statisticalDS} librarian={librarian} />
                         </div>
                     </Col>
                 </Row>
@@ -278,7 +349,7 @@ const StatisticalPage = () => {
                                     </Row>
                                 </Col>
                             </Row>
-                            <ComponentToPrintReader ref={componentRef2} value={statisticalReaders} />
+                            <ComponentToPrintReader ref={componentRef2} value={statisticalReaders} librarian={librarian}/>
                         </div>
                     </Col>
                 </Row>
@@ -327,7 +398,7 @@ const StatisticalPage = () => {
                                     </Row>
                                 </Col>
                             </Row>
-                            <ComponentToPrintReaderExpired ref={componentRef3} value={statisticalReaderExpired} />
+                            <ComponentToPrintReaderExpired ref={componentRef3} value={statisticalReaderExpired} librarian={librarian}/>
                         </div>
                     </Col>
                 </Row>

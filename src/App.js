@@ -21,6 +21,7 @@ import ProtectedRoute from './view/ProtectedRoute';
 import ProtectedRouteAdmin from './view/ProtectedRouteAdmin';
 import NotFound from './view/NotFound';
 import StatisticalPage from './containers/statistical';
+import Page from './components/home/Page';
 
 function App() {
     const dispatch = useDispatch()
@@ -36,11 +37,12 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+                        <Route path='/' element={<Page />} />
                         <Route path='/login' element={<LoginPage />} />
                     </Route>
 
                     <Route element={<ProtectedRouteAdmin isAuthenticated={isAuthenticated} />}>
-                        <Route path='/' element={<StatisticalPage />} />
+                        <Route path='/statistical' element={<StatisticalPage />} />
                         <Route path='/readers' element={<ReadersPage />} />
                         <Route path='/authors' element={<AuthorsPage />} />
                         <Route path='/category' element={<Category />} />

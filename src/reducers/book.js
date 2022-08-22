@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadBooks = createAsyncThunk(
     "books/loadBooks",
@@ -7,6 +8,23 @@ export const loadBooks = createAsyncThunk(
         try {
             const response = await axios.get(
                 `http://localhost:8000/api/v0/book`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const updateBooks = createAsyncThunk(
+    "books/updateBooks",
+    async (data) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/v0/book/${data.id_book}`, { position: data.position }
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }
@@ -38,6 +56,18 @@ const books = createSlice({
             .addCase(loadBooks.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.books = action.payload.data
+                }
+            })
+            .addCase(updateBooks.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.books = state.books.map((item) =>
+                        item.id_book === action.payload.data.id_book
+                            ? action.payload.data
+                            : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
     }

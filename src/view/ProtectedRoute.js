@@ -17,7 +17,7 @@ const ProtectedRoute = ({ isAuthenticated }) => {
         return (
             <div className="spinner-container">
                 {
-                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/' replace />
+                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/statistical' replace />
                 }
             </div>
         )

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-// import { Link } from 'react-router-dom';
 import logo from '../../assets/img/log.svg'
 import register from '../../assets/img/register.svg'
 import { loginUser } from '../../utils/callerAPI';
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from 'react-redux'
 import { setSignIn } from '../../reducers/librarian';
+import { toastError, toastSuccess } from '../../toast/toast';
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -37,12 +37,12 @@ const LoginPage = () => {
             const response = await loginUser(login)
             console.log(response)
             if (response.status === 200) {
-                // toastSuccess(response.message)
+                toastSuccess(response.message)
                 dispatch(setSignIn())
                 navigate('/readers')
             } else {
                 console.log(response)
-                // toastError(response.message)
+                toastError(response.message)
             }
         } catch (error) {
             console.log(error)

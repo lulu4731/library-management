@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadLiquidations = createAsyncThunk(
     "liquidations/loadLiquidations",
@@ -92,6 +93,9 @@ const liquidations = createSlice({
             .addCase(addLiquidations.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.liquidations.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
             .addCase(updateLiquidations.fulfilled, (state, action) => {
@@ -101,6 +105,9 @@ const liquidations = createSlice({
                             ? action.payload.data
                             : item
                     )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
 

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadCompany = createAsyncThunk(
     "company/loadCompany",
@@ -51,6 +52,23 @@ export const updateCompany = createAsyncThunk(
         }
     }
 )
+
+export const deleteCompany = createAsyncThunk(
+    "company/deleteCompany",
+    async (id_publishing_company) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v0/company/${id_publishing_company}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_publishing_company }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 const company = createSlice({
     name: 'company',
     initialState: {
@@ -69,6 +87,9 @@ const company = createSlice({
             .addCase(addCompany.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.company.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
             .addCase(updateCompany.fulfilled, (state, action) => {
@@ -78,9 +99,19 @@ const company = createSlice({
                             ? action.payload.data
                             : item
                     )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
-
+            .addCase(deleteCompany.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.company = state.company.filter(item => item.id_publishing_company !== action.payload.id_publishing_company)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
     }
 })
 

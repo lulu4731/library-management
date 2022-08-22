@@ -5,9 +5,10 @@ import BasicTable from '../../components/table';
 import { loadReceipt, receiptsSelector } from '../../reducers/receipt';
 import ReceiptModal from '../modal/receipt_modal';
 import HomePage from '../../components/home/HomePage'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const Receipt = () => {
-    const [modalShow, setModalShow] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch()
     const receipts = useSelector(receiptsSelector)
     const [receipt, setReceipt] = useState()
@@ -95,7 +96,37 @@ const Receipt = () => {
                 }
             }
         },
+        {
+            name: "id_receipt",
+            label: "Hành động",
+            options: {
+                filter: true,
+                sort: true,
+                customBodyRender: (value) => {
+                    return (
+                        <div className='pb-0'>
+                            <OverlayTrigger
+                                key={'bottom-edit'}
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip id={`tooltip-edit`}>
+                                        Cập nhật
+                                    </Tooltip>
+                                }
+                            >
+                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                            </OverlayTrigger>
+                        </div>
+                    )
+                }
+            }
+        },
     ];
+
+    const onClose = () => {
+        setIsOpen(false)
+        setReceipt()
+    }
 
     const onRowClick = (data) => {
         const temps = receipts.find(item => item.id_receipt === data[0])
@@ -103,16 +134,17 @@ const Receipt = () => {
             id_receipt: temps.id_receipt,
             data: JSON.parse(temps.ds)
         })
-        setModalShow(true)
     }
 
-    // console.log(receipts)
-    
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} setModalShow={setModalShow} data={receipts} titleButton="Thêm phiếu nhập" titleTable="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" />
-                <ReceiptModal modalShow={modalShow} setModalShow={setModalShow} value={receipt} />
+                {
+                    receipts && <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setIsOpen} data={receipts} titleButton="Thêm phiếu nhập" titleTable="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" />
+                }
+                {
+                    isOpen && <ReceiptModal isOpen={isOpen} onClose={onClose} value={receipt} />
+                }
             </HomePage>
         </>
     )
