@@ -12,7 +12,7 @@ const AuthorsModal = ({ isOpen, onClose, value }) => {
         first_name: '',
         last_name: '',
         gender: 0,
-        date_of_birth: new Date()
+        date_of_birth: new Date('1900/01/01')
     }
 
     const [author, setAuthor] = useState(defaultValue)
@@ -37,7 +37,9 @@ const AuthorsModal = ({ isOpen, onClose, value }) => {
         e.preventDefault()
         const newAuthor = { ...author }
         delete newAuthor['id_author']
-        newAuthor['date_of_birth'] = author.date_of_birth.toISOString().split('T')[0]
+        newAuthor['date_of_birth'] = author.date_of_birth.toISOString()
+
+        console.log(newAuthor)
 
         if (author.id_author === 0) {
             dispatch(addAuthors(newAuthor))

@@ -136,11 +136,16 @@ const Receipt = () => {
         })
     }
 
+    const onOpen = () => {
+        setIsOpen(true)
+        setReceipt()
+    }
+
     return (
         <>
             <HomePage>
                 {
-                    receipts && <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setIsOpen} data={receipts} titleButton="Thêm phiếu nhập" titleTable="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" />
+                    receipts && <BasicTable onRowClick={onRowClick} columns={columns} onOpen={onOpen} data={receipts} titleButton="Thêm phiếu nhập" titleTable="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" />
                 }
                 {
                     isOpen && <ReceiptModal isOpen={isOpen} onClose={onClose} value={receipt} />

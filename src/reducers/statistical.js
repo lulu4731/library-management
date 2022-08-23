@@ -86,6 +86,23 @@ export const loadStatisticalReadersExpired = createAsyncThunk(
     }
 )
 
+export const loadStatisticalTopBookWeek = createAsyncThunk(
+    "statistical/loadStatisticalTopBookWeek",
+    async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/statistical/top-book-week`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const statistical = createSlice({
     name: 'statistical',
     initialState: {
@@ -93,7 +110,8 @@ const statistical = createSlice({
         statisticalReaders: [],
         statisticalDsDay: {},
         statisticalReadersDay: 0,
-        statisticalReaderExpired: []
+        statisticalReaderExpired: [],
+        statisticalTopBookWeek: {}
     },
     reducers: {
 
@@ -120,9 +138,9 @@ const statistical = createSlice({
                     state.statisticalDsDay = action.payload.data
                 }
             })
-            .addCase(loadStatisticalReadersExpired.fulfilled, (state, action) => {
+            .addCase(loadStatisticalTopBookWeek.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
-                    state.statisticalReaderExpired = action.payload.data
+                    state.statisticalTopBookWeek = action.payload.data
                 }
             })
     }
@@ -136,6 +154,8 @@ export const statisticalReadersSelector = (state) => state.statisticalReducer.st
 export const statisticalReadersDaySelector = (state) => state.statisticalReducer.statisticalReadersDay
 export const statisticalDsDaySelector = (state) => state.statisticalReducer.statisticalDsDay
 export const statisticalReaderExpiredSelector = (state) => state.statisticalReducer.statisticalReaderExpired
+export const statisticalTopBookWeekSelector = (state) => state.statisticalReducer.statisticalTopBookWeek
+
 
 
 export default statisticalReducer

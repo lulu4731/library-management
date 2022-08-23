@@ -164,11 +164,16 @@ const ReadersPage = () => {
         dispatch(deleteReaders(id_readers))
     }
 
+    const onOpen = () => {
+        setIsOpen(true)
+        setReader()
+    }
+
     return (
         <>
             <HomePage>
                 {
-                    readers && <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" setIsOpen={setIsOpen} titleTable="QUẢN LÝ ĐỘC GIẢ" />
+                    readers && <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" onOpen={onOpen} titleTable="QUẢN LÝ ĐỘC GIẢ" />
                 }
                 {
                     isOpen && <ReadersModal isOpen={isOpen} onClose={onClose} value={reader} />

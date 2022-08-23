@@ -102,7 +102,7 @@ const Borrow = () => {
                                     </Badge>
                                 )}
                                 {JSON.parse(value).length >= 2 && (
-                                    <div className="dropdown-menu pd-0 position-fixed" style={{ top: 320 }}>
+                                    <div className="dropdown-menu pd-0" style={{ top: 320 }}>
                                         {JSON.parse(value).map((item, index) => {
                                             return (
                                                 <div key={index} className="dropdown-item-list">
@@ -205,10 +205,14 @@ const Borrow = () => {
         // setModalShow(true)
     }
 
+    const onOpen = () => {
+        setModalShow(true)
+        setBorrow()
+    }
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setModalShow} data={borrows} titleButton="Thêm phiếu mượn" titleTable="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" />
+                <BasicTable onRowClick={onRowClick} columns={columns} onOpen={onOpen} data={borrows} titleButton="Thêm phiếu mượn" titleTable="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" />
                 {
                     modalShow && (<BorrowModal modalShow={modalShow} setModalShow={setModalShow} />)
                 }

@@ -47,7 +47,7 @@ const ReactDatePicker = ({ selected, onChange, startYear, endYear }) => {
                         {"<"}
                     </button>
                     <select
-                        value={date.getYear()}
+                        value={date.getFullYear()}
                         onChange={({ target: { value } }) => changeYear(value)}
                     >
                         {years.map((option) => (
@@ -77,6 +77,7 @@ const ReactDatePicker = ({ selected, onChange, startYear, endYear }) => {
             )}
             selected={selected}
             onChange={onChange}
+            dateFormat="yyyy/MM/dd"
         />
     );
 };

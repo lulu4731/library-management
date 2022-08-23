@@ -3,7 +3,6 @@ import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
 import { addReaders, updateReaders } from '../../reducers/readers';
-import convertDate from '../../utils/convertDate';
 
 const ReadersModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -42,7 +41,7 @@ const ReadersModal = ({ isOpen, onClose, value }) => {
         e.preventDefault()
         let newReader = { ...reader }
         delete newReader['id_readers']
-        newReader['date_of_birth'] = convertDate(reader.date_of_birth)
+        newReader['date_of_birth'] = reader.date_of_birth.toISOString()
 
         if (reader.id_readers === 0) {
             dispatch(addReaders(newReader))

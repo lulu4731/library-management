@@ -109,12 +109,17 @@ const CompanyPage = () => {
         setIsOpen(false)
         setCompanyItem()
     }
+    
+    const onOpen = () => {
+        setCompanyItem()
+        setIsOpen(true)
+    }
     // console.log(readers)
     return (
         <>
             <HomePage>
                 {
-                    company && <BasicTable onRowClick={onRowClick} setIsOpen={setIsOpen} columns={columns} data={company} titleButton="Thêm nhà xuất bản" titleTable="QUẢN LÝ NHÀ XUẤT BẢN" />
+                    company && <BasicTable onRowClick={onRowClick} onOpen={onOpen} columns={columns} data={company} titleButton="Thêm nhà xuất bản" titleTable="QUẢN LÝ NHÀ XUẤT BẢN" />
                 }
                 {
                     isOpen && <CompanyModal isOpen={isOpen} onClose={onClose} value={companyItem} />

@@ -63,7 +63,7 @@ const StylesTable = styled('div', {
 })
 
 
-const BasicTable = ({ columns, data, titleButton, setIsOpen, titleTable, onRowClick }) => {
+const BasicTable = ({ columns, data, titleButton, onOpen, titleTable, onRowClick }) => {
     const options = {
         onRowSelectionChange: (rowData) => {
             console.log(rowData)
@@ -132,7 +132,7 @@ const BasicTable = ({ columns, data, titleButton, setIsOpen, titleTable, onRowCl
     return (
         <StylesTable>
             {
-                titleButton && <Button className='p-2 mb-2' style={{ backgroundColor: 'rgb(119 106 207)', borderColor: 'rgb(119 106 207)' }} onClick={() => setIsOpen(true)}>{titleButton}</Button>
+                titleButton && <Button className='p-2 mb-2' style={{ backgroundColor: 'rgb(119 106 207)', borderColor: 'rgb(119 106 207)' }} onClick={() => onOpen()}>{titleButton}</Button>
             }
             <MUIDataTable
                 title={titleTable}

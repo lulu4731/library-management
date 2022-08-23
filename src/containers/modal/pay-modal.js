@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Badge } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux';
-import { loadReaders, readersSelector } from '../../reducers/readers';
-import Select from 'react-select';
-import { loadTitle, titlesSelector } from '../../reducers/title';
-import DatePicker from "react-datepicker";
-import { components } from "react-select"
-import convertDate from '../../utils/convertDate';
-import { addBorrows, dsBorrowsSelector, loadDsBorrows, renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
+import { useDispatch } from 'react-redux';
+import { renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
 import renewalDate from '../../utils/renewalDate';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 

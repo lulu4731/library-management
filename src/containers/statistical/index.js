@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Col, Row, Table } from 'react-bootstrap'
+import { Button, Card, Col, Row, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import HomePage from '../../components/home/HomePage'
-import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, loadStatisticalReadersByDay, loadStatisticalReadersExpired, statisticalDsSelector, statisticalReaderExpiredSelector, statisticalReadersDaySelector, statisticalReadersSelector } from '../../reducers/statistical';
+import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, loadStatisticalReadersByDay, loadStatisticalReadersExpired, loadStatisticalTopBookWeek, statisticalDsSelector, statisticalReaderExpiredSelector, statisticalReadersDaySelector, statisticalReadersSelector, statisticalTopBookWeekSelector } from '../../reducers/statistical';
 import ReactToPrint from 'react-to-print';
 import DatePicker from "react-datepicker";
 import convertDate from '../../utils/convertDate';
 import { checkLogin, librarianSelector } from '../../reducers/librarian';
+import BaseChart from '../../components/base-chart'
 
 const tabStyle = {
     height: 600,
@@ -147,7 +148,7 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
                         </div>
                     </Col>
                 </Row>
-                <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ ĐỘC GIẢ QUÁ HẠN TRẢ SÁCH</h4>
+                <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ NHỮNG SÁCH QUÁ HẠN CỦA ĐỘC GIẢ</h4>
                 <Table striped bordered={true} hover>
                     <thead>
                         <tr>
@@ -191,6 +192,7 @@ const StatisticalPage = () => {
     const statisticalReaders = useSelector(statisticalReadersSelector)
     const statisticalReaderExpired = useSelector(statisticalReaderExpiredSelector)
     const librarian = useSelector(librarianSelector)
+    const statisticalTopBookWeek = useSelector(statisticalTopBookWeekSelector)
 
     const [startDateDs, setStartDateDs] = useState(new Date((new Date()).getFullYear(), 0, 1));
     const [endDateDs, setEndDateDs] = useState(new Date((new Date()).getFullYear(), 12, 0));
@@ -215,8 +217,9 @@ const StatisticalPage = () => {
 
     useEffect(() => {
         dispatch(checkLogin())
-        dispatch(loadStatisticalBookByDay())
-        dispatch(loadStatisticalReadersByDay())
+        // dispatch(loadStatisticalBookByDay())
+        // dispatch(loadStatisticalReadersByDay())
+        dispatch(loadStatisticalTopBookWeek())
     }, [dispatch])
 
     const componentRef1 = useRef();
@@ -255,6 +258,26 @@ const StatisticalPage = () => {
         <>
             <HomePage>
                 {/* <h3>THỐNG KÊ</h3> */}
+                <Row className='m-3 pl-5 pr-5'>
+                    <Col>
+                        {/* <Card className='align-items-center'> */}
+                            <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
+                            <Card.Body className='align-items-center'>
+                                <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
+                                    width="600" size='65%' />
+                            </Card.Body>
+                        {/* </Card> */}
+                    </Col>
+                    <Col>
+                        {/* <Card className='align-items-center'> */}
+                         <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
+                            <Card.Body className='align-items-center'>
+                                <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
+                                    width="600" size='65%' />
+                            </Card.Body>
+                        {/* </Card> */}
+                    </Col>
+                </Row>
                 <Row className='m-3 pl-5 pr-5'>
                     <Col>
                         <div>
@@ -349,7 +372,7 @@ const StatisticalPage = () => {
                                     </Row>
                                 </Col>
                             </Row>
-                            <ComponentToPrintReader ref={componentRef2} value={statisticalReaders} librarian={librarian}/>
+                            <ComponentToPrintReader ref={componentRef2} value={statisticalReaders} librarian={librarian} />
                         </div>
                     </Col>
                 </Row>
@@ -398,7 +421,7 @@ const StatisticalPage = () => {
                                     </Row>
                                 </Col>
                             </Row>
-                            <ComponentToPrintReaderExpired ref={componentRef3} value={statisticalReaderExpired} librarian={librarian}/>
+                            <ComponentToPrintReaderExpired ref={componentRef3} value={statisticalReaderExpired} librarian={librarian} />
                         </div>
                     </Col>
                 </Row>
@@ -484,27 +507,7 @@ const StatisticalPage = () => {
                         </Card>
                     </Col>
                 </Row> */}
-                {/* <Row className='mb-3'>
-                    <Col>
-                        <Card className='align-items-center'>
-                            <Card.Header style={{ fontWeight: 'bold' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
-                            <Card.Body>
-                                <BaseChart labels={['Quốc Âm Thi Tập', 'Chí Phèo', 'Trạng Quỳnh', 'Truyện Kiều', 'Khám phá vũ trụ'] || []} series={[15, 20, 25, 30, 40] || []} type="donut"
-                                    width="500" size='65%' />
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col>
-                        <Card className='align-items-center'>
-                            <Card.Header style={{ fontWeight: 'bold' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
-                            <Card.Body>
-                                <BaseChart labels={['a', 'b', 'c'] || []} series={[1, 2, 3] || []} type="donut"
-                                    width="400" size='65%' />
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row>
+                {/* <Row>
                     <Col>
                         <BasicTable columns={columnsDS} data={statisticalDS} titleTable="THỐNG KÊ SỐ LƯỢNG SÁCH ĐƯỢC MƯỢN" />
                     </Col>

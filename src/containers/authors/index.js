@@ -112,24 +112,35 @@ const AuthorsPage = () => {
     }
 
     const onRowClick = (data) => {
+        const temps = authors.find((item) => item.id_author === data[0])
         setAuthor({
-            id_author: data[0],
-            first_name: data[1],
-            last_name: data[2],
-            gender: data[3].props.children === 'Nam' ? 0 : 1,
-            date_of_birth: new Date(data[4].props.children)
+            ...temps,
+            date_of_birth: new Date(convertTimesTamp(temps.date_of_birth))
         })
+
+        // setAuthor({
+        //     id_author: data[0],
+        //     first_name: data[1],
+        //     last_name: data[2],
+        //     gender: data[3].props.children === 'Nam' ? 0 : 1,
+        //     date_of_birth: new Date(data[4].props.children)
+        // })
     }
 
     const onDelete = (id_author) => {
         dispatch(deleteAuthors(id_author))
     }
 
+    const onOpen = () => {
+        setAuthor()
+        setIsOpen(true)
+    }
+
     return (
         <>
             <HomePage>
                 {
-                    authors && <BasicTable onRowClick={onRowClick} columns={columns} data={authors} titleButton="Thêm tác giả" setIsOpen={setIsOpen} titleTable="QUẢN LÝ TÁC GIẢ" />
+                    authors && <BasicTable onRowClick={onRowClick} columns={columns} data={authors} titleButton="Thêm tác giả" onOpen={onOpen} titleTable="QUẢN LÝ TÁC GIẢ" />
                 }
                 {
                     isOpen && <AuthorsModal isOpen={isOpen} onClose={onClose} value={author} />

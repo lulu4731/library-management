@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form, Badge } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { loadReaders, readersSelector } from '../../reducers/readers';
 import Select from 'react-select';
-import { loadTitle, titlesSelector } from '../../reducers/title';
 import DatePicker from "react-datepicker";
-import { components } from "react-select"
-import convertDate from '../../utils/convertDate';
-import { addBorrows, dsBorrowsSelector, loadDsBorrows, renewalBook, returnBook, returnBookAll, updateBorrows } from '../../reducers/borrow';
-import renewalDate from '../../utils/renewalDate';
-import convertTime from '../../utils/convertTimesTamp';
+import { dsBorrowsSelector, loadDsBorrows, updateBorrows } from '../../reducers/borrow';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 
 
@@ -17,7 +12,7 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const titles = useSelector(dsBorrowsSelector)
-    // console.log(value)
+    console.log(value)
 
     const onClose = () => {
         setModalShow(false)
@@ -40,7 +35,15 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
     useEffect(() => {
         if (value) {
             if (JSON.stringify(value) !== JSON.stringify(defaultValue)) {
-                setBorrow(value)
+                setBorrow({
+                    ...value,
+                    books: value.books.map(item => {
+                        return {
+                            ...item,
+                            expired: new Date(convertTimesTamp(item.expired))
+                        }
+                    })
+                })
             } else {
                 setBorrow(defaultValue)
             }
@@ -79,11 +82,11 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
         newBorrow['id_readers'] = borrow.reader.value
         newBorrow['books'] = borrow.books.map(item => {
             // dispatch(setDsBorrow(item.value))
-            return { ...item, id_book: item.ds.value, expired: item.expired.split('T')[0] }
+            return { ...item, id_book: item.ds.value, expired: item.expired.toISOString() }
         })
 
         dispatch(updateBorrows(newBorrow))
-        // console.log(newBorrow)
+        console.log(newBorrow)
         onClose()
     }
 
@@ -152,8 +155,8 @@ const UpdateModal = ({ modalShow, setModalShow, value }) => {
                                                     <Form.Label>Hạn trả</Form.Label>
                                                     {/* <Form.Control disabled value={item.expired.toString().split('T')[0]} /> */}
                                                     <DatePicker
-                                                        selected={new Date(item.expired)}
-                                                        onChange={(date) => onChangeValue(index, convertTimesTamp(date.toISOString()), 'expired')}
+                                                        selected={item.expired}
+                                                        onChange={(date) => onChangeValue(index, date, 'expired')}
                                                         dateFormat="dd/MM/yyyy"
                                                         withPortal
                                                         showYearDropdown

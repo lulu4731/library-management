@@ -133,11 +133,16 @@ const Liquidation = () => {
         setIsOpen(false)
         setLiquidation()
     }
+
+    const onOpen = () => {
+        setIsOpen(true)
+        setLiquidation()
+    }
     return (
         <>
             <HomePage>
                 {
-                    liquidations && (<BasicTable onRowClick={onRowClick} columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" setIsOpen={setIsOpen} titleTable="QUẢN LÝ PHIẾU THANH LÝ" />)
+                    liquidations && (<BasicTable onRowClick={onRowClick} columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" onOpen={onOpen} titleTable="QUẢN LÝ PHIẾU THANH LÝ" />)
                 }
                 {
                     isOpen && (<LiquidationModal isOpen={isOpen} onClose={onClose} value={liquidation} />)
