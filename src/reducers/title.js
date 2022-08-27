@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const loadTitle = createAsyncThunk(
     "title/loadTitle",
@@ -51,6 +52,23 @@ export const updateTitle = createAsyncThunk(
         }
     }
 )
+
+export const deleteTitle = createAsyncThunk(
+    "title/deleteTitle",
+    async (isbn) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v0/ds/${isbn}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, isbn }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 const titles = createSlice({
     name: 'title',
     initialState: {
@@ -69,6 +87,9 @@ const titles = createSlice({
             .addCase(addTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.titles.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
             .addCase(updateTitle.fulfilled, (state, action) => {
@@ -78,9 +99,19 @@ const titles = createSlice({
                             ? action.payload.data
                             : item
                     )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
                 }
             })
-
+            .addCase(deleteTitle.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.titles = state.titles.filter(item => item.isbn !== action.payload.isbn)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
     }
 })
 

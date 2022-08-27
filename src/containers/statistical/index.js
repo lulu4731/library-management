@@ -217,8 +217,6 @@ const StatisticalPage = () => {
 
     useEffect(() => {
         dispatch(checkLogin())
-        // dispatch(loadStatisticalBookByDay())
-        // dispatch(loadStatisticalReadersByDay())
         dispatch(loadStatisticalTopBookWeek())
     }, [dispatch])
 
@@ -261,20 +259,20 @@ const StatisticalPage = () => {
                 <Row className='m-3 pl-5 pr-5'>
                     <Col>
                         {/* <Card className='align-items-center'> */}
-                            <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
-                            <Card.Body className='align-items-center'>
-                                <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
-                                    width="600" size='65%' />
-                            </Card.Body>
+                        <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
+                        <Card.Body className='align-items-center'>
+                            <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
+                                width="600" size='65%' />
+                        </Card.Body>
                         {/* </Card> */}
                     </Col>
                     <Col>
                         {/* <Card className='align-items-center'> */}
-                         <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
-                            <Card.Body className='align-items-center'>
-                                <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
-                                    width="600" size='65%' />
-                            </Card.Body>
+                        <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
+                        <Card.Body className='align-items-center'>
+                            <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
+                                width="600" size='65%' />
+                        </Card.Body>
                         {/* </Card> */}
                     </Col>
                 </Row>
@@ -425,96 +423,6 @@ const StatisticalPage = () => {
                         </div>
                     </Col>
                 </Row>
-                {/* <Row className='mb-3'>
-                    <Col>
-                        <Card>
-                            <Card.Header className='text-center' style={{ fontWeight: 'bold', backgroundColor: 'yellow' }}>Số sách được mượn trong ngày</Card.Header>
-                            <Row>
-                                <Col className="pr-0 text-center">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <i className="fa-solid fa-book-quran fa-5x p-2"></i>
-                                    </Card.Body>
-                                </Col>
-                                <div style={{ width: 1, height: '100%', backgroundColor: 'gray' }}></div>
-                                <Col className="pl-0">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <Col className='p-0 m-0 text-center' >
-                                            <p style={{ fontSize: '4rem' }}>{statisticalDsDay?.amount_book || 0}</p>
-                                        </Col>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                    <Col>
-                        <Card>
-                            <Card.Header className='text-center' style={{ fontWeight: 'bold', backgroundColor: 'yellow' }}>Số độc giả mượn sách trong ngày</Card.Header>
-                            <Row>
-                                <Col className="pr-0 text-center">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <i className="fa-solid fa-user-astronaut fa-5x p-2"></i>
-                                    </Card.Body>
-                                </Col>
-                                <div style={{ width: 1, height: '100%', backgroundColor: 'gray' }}></div>
-                                <Col className="pl-0">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <Col className='p-0 m-0 text-center' >
-                                            <p style={{ fontSize: '4rem' }}>{statisticalReadersDay}</p>
-                                        </Col>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                    <Col>
-                        <Card>
-                            <Card.Header className='text-center' style={{ fontWeight: 'bold', backgroundColor: 'yellow' }}>Số sách mà độc giả làm thất lạc</Card.Header>
-                            <Row>
-                                <Col className="pr-0 text-center">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <i className="fa-solid fa-book-quran fa-5x p-2"></i>
-                                    </Card.Body>
-                                </Col>
-                                <div style={{ width: 1, height: '100%', backgroundColor: 'gray' }}></div>
-                                <Col className="pl-0">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <Col className='p-0 m-0 text-center' >
-                                            <p style={{ fontSize: '4rem' }}>{2}</p>
-                                        </Col>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                    <Col>
-                        <Card>
-                            <Card.Header className='text-center' style={{ fontWeight: 'bold', backgroundColor: 'yellow' }}>Số sách quá hạn chưa được trả</Card.Header>
-                            <Row>
-                                <Col className="pr-0 text-center">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <i className="fa-solid fa-book-quran fa-5x p-2"></i>
-                                    </Card.Body>
-                                </Col>
-                                <div style={{ width: 1, height: '100%', backgroundColor: 'gray' }}></div>
-                                <Col className="pl-0">
-                                    <Card.Body style={{ backgroundColor: 'aqua' }}>
-                                        <Col className='p-0 m-0 text-center' >
-                                            <p style={{ fontSize: '4rem' }}>{2}</p>
-                                        </Col>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row> */}
-                {/* <Row>
-                    <Col>
-                        <BasicTable columns={columnsDS} data={statisticalDS} titleTable="THỐNG KÊ SỐ LƯỢNG SÁCH ĐƯỢC MƯỢN" />
-                    </Col>
-                    <Col>
-                        <BasicTable columns={columnsReaders} data={statisticalReaders} titleTable="THỐNG KÊ SỐ LƯỢNG SÁCH MÀ ĐỌC GIẢ MƯỢN" />
-                    </Col>
-                </Row> */}
             </HomePage>
         </>
     )

@@ -138,6 +138,11 @@ const statistical = createSlice({
                     state.statisticalDsDay = action.payload.data
                 }
             })
+            .addCase(loadStatisticalReadersExpired.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.statisticalReaderExpired = action.payload.data
+                }
+            })
             .addCase(loadStatisticalTopBookWeek.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.statisticalTopBookWeek = action.payload.data

@@ -9,7 +9,7 @@ import { companySelector, loadCompany } from '../../reducers/company';
 import { addTitle, updateTitle } from '../../reducers/title';
 import convertDate from '../../utils/convertDate';
 
-const TitleModal = ({ modalShow, setModalShow, value }) => {
+const TitleModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const company = useSelector(companySelector)
     const category = useSelector(categorySelector)
@@ -64,10 +64,10 @@ const TitleModal = ({ modalShow, setModalShow, value }) => {
         }
     })
 
-    const onClose = () => {
-        setModalShow(false)
-        setDS(defaultValue)
-    }
+    // const onClose = () => {
+    //     setModalShow(false)
+    //     setDS(defaultValue)
+    // }
 
     const styles = {
         multiValue: (base, state) => {
@@ -112,7 +112,7 @@ const TitleModal = ({ modalShow, setModalShow, value }) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
-            show={modalShow}
+            show={isOpen}
             onHide={onClose}
             keyboard={false}
         >

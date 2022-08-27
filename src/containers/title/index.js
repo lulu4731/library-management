@@ -3,12 +3,12 @@ import { Badge } from 'react-bootstrap';
 import BasicTable from '../../components/table'
 import { useDispatch, useSelector } from 'react-redux';
 import TitleModal from '../modal/title-modal';
-import { loadTitle, titlesSelector } from '../../reducers/title';
+import { deleteTitle, loadTitle, titlesSelector } from '../../reducers/title';
 import HomePage from '../../components/home/HomePage'
-import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const Title = () => {
-    const [modalShow, setModalShow] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch()
     const titles = useSelector(titlesSelector)
     const [title, setTitle] = useState()
@@ -149,7 +149,7 @@ const Title = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3'><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                             <OverlayTrigger
                                 key={'bottom-delete'}
@@ -178,17 +178,32 @@ const Title = () => {
             category: JSON.parse(temps.category),
             authors: JSON.parse(temps.authors)
         })
-        setModalShow(true)
+        // setModalShow(true)
     }
 
-    const onDelete = (value) => {
-
+    const onDelete = (isbn) => {
+        dispatch(deleteTitle(isbn))
     }
+
+    const onOpen = () => {
+        setTitle()
+        setIsOpen(true)
+    }
+
+    const onClose = () => {
+        setIsOpen()
+        setTitle()
+    }
+
     return (
         <>
             <HomePage>
-                <BasicTable onRowClick={onRowClick} columns={columns} setIsOpen={setModalShow} data={titles} titleButton="Thêm đầu sách" titleTable="QUẢN LÝ ĐẦU SÁCH" />
-                <TitleModal modalShow={modalShow} setModalShow={setModalShow} value={title} />
+                {
+                    titles && <BasicTable onRowClick={onRowClick} columns={columns} onOpen={onOpen} data={titles} titleButton="Thêm đầu sách" titleTable="QUẢN LÝ ĐẦU SÁCH" />
+                }
+                {
+                    isOpen && <TitleModal isOpen={isOpen} onClose={onClose} value={title} />
+                }
             </HomePage>
         </>
     )

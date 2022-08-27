@@ -19,18 +19,48 @@ export const loginUser = async (loginForm) => {
         else return { message: error.message }
     }
 }
-// export const changePasswordUser = async (changePass: ChangePass) => {
-//     try {
-//         const password = changePass.password
-//         const response = await axios.put(
-//             `http://localhost:8000/api/v0/user/change-pass/${changePass.id_user}`,
-//             { password }
-//         )
-//         if (response.status === 200) {
-//             return await { ...response.data, status: response.status }
-//         }
-//     } catch (error: any) {
-//         if (error.response.data) return error.response.data
-//         else return { message: error.message }
-//     }
-// }
+
+export const changePassword = async (newPass) => {
+    try {
+        const response = await axios.put(
+            `http://localhost:8000/api/v0/librarian/change/password`,
+            newPass
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}
+
+export const forgetPassword = async (email) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:8000/api/v0/librarian/forget/password`,
+            email
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}
+
+export const forgetPasswordChange = async (new_pass) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:8000/api/v0/librarian/forget/change`,
+            new_pass
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}

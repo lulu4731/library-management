@@ -813,3 +813,7 @@ form.sign-in-form {
     background-color: white;
     border-bottom: 0
 }
+
+.dropdown-toggle::after {
+  display: none !important; 
+}

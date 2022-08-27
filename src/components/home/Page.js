@@ -41,7 +41,7 @@ const Page = () => {
 
     const [select, setSelect] = useState({
         value: 'all',
-        label: 'All'
+        label: 'Tất cả'
     })
 
     const onChangeValue = (keyValue, keyName) => {
@@ -58,6 +58,15 @@ const Page = () => {
             setKeyword(keyValue)
         }
     }
+
+    const images = [
+        'https://i.ytimg.com/vi/MwoNwRzx0Ak/maxresdefault.jpg',
+        'https://menback.com/wp-content/uploads/2022/02/tam-quoc-dien-nghia.jpg',
+        'https://product.hstatic.net/200000079237/product/z2020187226535_9f6815013ed480db121ef3dbaf48a5e1_8e0dadd1867a45fa8686af1577ebdd1d_master.jpg',
+        'https://i.ytimg.com/vi/GaD1J6hGZ_4/maxresdefault.jpg',
+        'https://cdnimg.vietnamplus.vn/uploaded/tpuoaob/2021_04_02/vnp_long1.jpg',
+        'https://scr.vn/wp-content/uploads/2021/01/Tho-Xuan-Dieu.jpg'
+    ]
     return (
         <>
             <section className="portfolio section" id="portfolio">
@@ -103,7 +112,7 @@ const Page = () => {
                                     }),
 
                                 }}
-                                options={[...categoryOptions, { value: 'all', label: 'All' }]}
+                                options={[...categoryOptions, { value: 'all', label: 'Tất cả' }]}
                                 menuPlacement="top"
                                 value={select}
                                 onChange={(value) => onChangeValue(value, 'select')}
@@ -111,11 +120,11 @@ const Page = () => {
 
                             <div className='search'>
                                 <label>
-                                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={(e) => onChangeValue(e.target.value, 'keyword')} />
-                                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                                    <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={(e) => onChangeValue(e.target.value, 'keyword')} />
+                                    <i className="fa-solid fa-magnifying-glass icon"></i>
                                 </label>
                             </div>
-                            <Button className={`filter-btn active`} variant='primary' as={Link} to="/login">
+                            <Button className={`filter-btn filter-btn active`} variant='primary' as={Link} to="/login">
                                 Đăng nhập
                             </Button>
                         </div>
@@ -127,7 +136,7 @@ const Page = () => {
                                         titlesFilter.map((item, index) => (
                                             <div className="grid-item logo-design" key={index}>
                                                 <div className="gallery-image">
-                                                    <img src={"https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/61527368555745.5b611a626f420.jpg"} alt="" />
+                                                    <img src={images[index]} alt="" />
                                                     <div className="img-overlay">
                                                         {/* <div className="plus"></div> */}
                                                         <div className="img-description">
@@ -139,7 +148,8 @@ const Page = () => {
                                                                     ))
                                                                 }
                                                             </h5>
-                                                            <h5 style={{ textAlign: "justify" }}>Giới thiệu: Chí Phèo là một tác phẩm xuất sắc, thể hiện nghệ thuật viết truyện độc đáo của Nam Cao, đồng thời là một tấn bi kịch của một người nông dân nghèo bị tha hóa trong xã hội. Chí Phèo cũng là tên nhân vật chính của truyện.</h5>
+                                                            <h5 style={{ textAlign: "justify" }}>Giới thiệu: Là một trong những tiểu thuyết thành công nhất của nhà văn Nguyễn Nhật Ánh, cuốn sách là câu chuyện về cuộc sống bình dị của những đứa trẻ ở một thôn quê nghèo khó tại Việt Nam, với ý nghĩa về tình anh em, tâm tư hồn nhiên của tuổi mới lớn.
+                                                            </h5>
                                                         </div>
                                                     </div>
                                                 </div>
