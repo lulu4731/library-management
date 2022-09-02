@@ -6,6 +6,7 @@ import { loadStatisticalBookByDay, loadStatisticalDS, loadStatisticalReaders, lo
 import ReactToPrint from 'react-to-print';
 import DatePicker from "react-datepicker";
 import convertDate from '../../utils/convertDate';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 import { checkLogin, librarianSelector } from '../../reducers/librarian';
 import BaseChart from '../../components/base-chart'
 
@@ -69,7 +70,7 @@ export const ComponentToPrintDs = React.forwardRef((props, ref) => {
                         <div className='float-right'>
                             <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
                             <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
-                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian?.first_name + " " + props.librarian?.last_name}</h6>
                         </div>
                     </Col>
                 </Row>
@@ -121,7 +122,7 @@ export const ComponentToPrintReader = React.forwardRef((props, ref) => {
                         <div className='float-right'>
                             <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
                             <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
-                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian?.first_name + " " + props.librarian?.last_name}</h6>
                         </div>
                     </Col>
                 </Row>
@@ -155,6 +156,8 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
                             <th>Tên độc giả</th>
                             <th>Hạn trả sách</th>
                             <th>Số điện thoại</th>
+                            <th>Mã sách</th>
+                            <th>Tên sách</th>
                             <th>Số ngày quá hạn</th>
                         </tr>
                     </thead>
@@ -162,10 +165,11 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
                         {props.value.length > 0 && (
                             props.value.map((item, index) => (
                                 <tr key={index}>
-                                    <td>{item.name_book}</td>
                                     <td>{item.name_reader}</td>
-                                    {/* <td>{convertTimesTamp(item?.expired)}</td> */}
+                                    <td>{convertTimesTamp(item?.expired)}</td>
                                     <td>{item.phone}</td>
+                                    <td>{item.id_book}</td>
+                                    <td>{item.name_book}</td>
                                     <td>{item.day.days}</td>
                                 </tr>
                             ))
@@ -176,9 +180,10 @@ export const ComponentToPrintReaderExpired = React.forwardRef((props, ref) => {
                     <Col></Col>
                     <Col>
                         <div className='float-right'>
-                            <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
+                            <p className="mb-1 mt-4" style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                TP. Hồ Chí Minh, ngày {(new Date()).getDate()}, tháng {(new Date()).getMonth() + 1}, năm {(new Date()).getFullYear()}</p>
                             <h6 className="text-center" style={{ fontWeight: 'bold' }}>Họ và tên thủ thư tạo phiếu</h6>
-                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian.first_name + " " + props.librarian.last_name}</h6>
+                            <h6 className="text-center" style={{ fontWeight: 'bold' }}>{props.librarian?.first_name + " " + props.librarian?.last_name}</h6>
                         </div>
                     </Col>
                 </Row>
@@ -256,26 +261,26 @@ const StatisticalPage = () => {
         <>
             <HomePage>
                 {/* <h3>THỐNG KÊ</h3> */}
-                <Row className='m-3 pl-5 pr-5'>
-                    <Col>
-                        {/* <Card className='align-items-center'> */}
-                        <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
+                {/* <Row className='m-3 pl-5 pr-5'>
+                    <Col> */}
+                {/* <Card className='align-items-center'> */}
+                {/* <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tuần</Card.Header>
                         <Card.Body className='align-items-center'>
                             <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
                                 width="600" size='65%' />
-                        </Card.Body>
-                        {/* </Card> */}
-                    </Col>
-                    <Col>
-                        {/* <Card className='align-items-center'> */}
-                        <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
+                        </Card.Body> */}
+                {/* </Card> */}
+                {/* </Col>
+                    <Col> */}
+                {/* <Card className='align-items-center'> */}
+                {/* <Card.Header style={{ fontWeight: 'bold', textAlign: 'center' }}>Thống kê top 5 sách được mượn nhiều nhất tháng</Card.Header>
                         <Card.Body className='align-items-center'>
                             <BaseChart labels={statisticalTopBookWeek?.books || []} series={statisticalTopBookWeek?.amount || []} type="donut"
                                 width="600" size='65%' />
-                        </Card.Body>
-                        {/* </Card> */}
-                    </Col>
-                </Row>
+                        </Card.Body> */}
+                {/* </Card> */}
+                {/* </Col>
+                </Row> */}
                 <Row className='m-3 pl-5 pr-5'>
                     <Col>
                         <div>

@@ -3,24 +3,29 @@ import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { loadReaders, readersSelector } from '../../reducers/readers';
 import Select from 'react-select';
-import { loadTitle, titlesSelector } from '../../reducers/title';
 import DatePicker from "react-datepicker";
+import { dsBorrowsSelector, loadDsBorrows, updateBorrows } from '../../reducers/borrow';
+import convertTimesTamp from '../../utils/convertTimesTamp';
 import { components } from "react-select"
-import convertDate from '../../utils/convertDate';
-import { addBorrows, dsBorrowsSelector, loadDsBorrows, setDsBorrow, updateBorrows } from '../../reducers/borrow';
 
-const BorrowModal = ({ modalShow, setModalShow, value }) => {
+
+const AModal = ({ modalShow, setModalShow, value }) => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const titles = useSelector(dsBorrowsSelector)
-
     // console.log(value)
+    // console.log(titles)
+
+    const onClose = () => {
+        setModalShow(false)
+    }
 
     const defaultValue = {
         id_borrow: 0,
-        id_readers: {},
-        expired: new Date(),
-        books: []
+        librarian: {},
+        reader: {},
+        // create_time: {},
+        books: [],
     }
 
     const [borrow, setBorrow] = useState(defaultValue)
@@ -30,20 +35,25 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
         dispatch(loadDsBorrows())
     }, [dispatch])
 
-    // useEffect(() => {
-    //     dispatch(loadReaders())
-    //     dispatch(loadDsBorrows())
-    // }, [dispatch])
-
     useEffect(() => {
         if (value) {
             if (JSON.stringify(value) !== JSON.stringify(defaultValue)) {
-                setBorrow(value)
+                setBorrow({
+                    ...value,
+                    books: value.books.map(item => {
+                        return {
+                            ...item,
+                            expired: new Date(convertTimesTamp(item.expired))
+                        }
+                    })
+                })
             } else {
                 setBorrow(defaultValue)
             }
         }
     }, [value])
+
+    // console.log(borrow.books)
 
     const readersOptions = readers.map(item => {
         return {
@@ -51,41 +61,50 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
             label: item.first_name + ' ' + item.last_name + " (" + item.email + ")"
         }
     })
+    const onSubmit = (id_book) => {
+        // console.log(id_book)
+        // dispatch(returnBook({ id_book, id_borrow: borrow.id_borrow }))
 
-    const dsOptions = titles
-
-    const onClose = () => {
-        setModalShow(false)
-
-        setBorrow(defaultValue)
+        // onClose()
     }
 
-    const onChangeValue = (keyValue, keyName) => {
-        const newBorrow = { ...borrow }
-        newBorrow[keyName] = keyValue
-
-        setBorrow(newBorrow)
+    const onRenewal = (id_book, expired) => {
+        // const temps = renewalDate(new Date(expired))
+        // dispatch(renewalBook({ id_book, id_borrow: borrow.id_borrow, expired: renewalDate(new Date(expired)) }))
+        // onClose()
     }
 
-    const onSubmit = () => {
-        const newBorrow = { ...borrow }
-        newBorrow['id_readers'] = borrow.id_readers.value
-        delete newBorrow['expired']
+    const onPayAll = () => {
+        // let returnBook = {}
+        // returnBook['id_borrow'] = borrow.id_borrow
+        // returnBook['books'] = borrow.books.map(item => item.id_book)
+        // dispatch(returnBookAll(returnBook))
+        // onClose()
+        const newBorrow = {}
+        newBorrow['id_borrow'] = +borrow.id_borrow
+        newBorrow['id_readers'] = borrow.reader.value
         newBorrow['books'] = borrow.books.map(item => {
-            return { id_book: item.value, expired: borrow.expired.toISOString().split('T')[0] }
+            // dispatch(setDsBorrow(item.value))
+            return { ...item, id_book: item.ds.value, expired: item.expired.toISOString() }
         })
 
-        if (borrow.id_borrow === 0) {
-            dispatch(addBorrows(newBorrow))
-        } else {
-            // console.log(newBorrow)
-            dispatch(updateBorrows(newBorrow))
-        }
-        // console.log(borrow)
-        // console.log(newBorrow)
-        // dispatch(loadDsBorrows())
-        // dispatch(addBorrows(newBorrow))
+        dispatch(updateBorrows(newBorrow))
+        console.log(newBorrow)
         onClose()
+    }
+
+    const onChangeValue = (id, keyValue, keyName) => {
+        const updateBorrow = { ...borrow }
+        if (keyName === 'reader') {
+            updateBorrow[keyName] = keyValue
+        } else {
+            const updateBook = { ...updateBorrow.books[id] }
+            // console.log(updateBook)
+            updateBook[keyName] = keyValue
+            updateBorrow.books[id] = updateBook
+        }
+
+        setBorrow(updateBorrow)
     }
 
     const isValidNewOption = (inputValue, selectValue) =>
@@ -105,7 +124,6 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
             </components.Menu>
         )
     }
-    // console.log(titles)
     return (
         <Modal
             size="xl"
@@ -118,7 +136,7 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
         >
             <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    TẠO PHIẾU MƯỢN
+                    CẬP NHẬT PHIẾU MƯỢN
                 </Modal.Title>
                 <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
             </Modal.Header>
@@ -128,15 +146,16 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                         <Col>
                             <Form.Label>Độc giả mượn sách</Form.Label>
                             <Select
-                                value={borrow.id_readers}
+                                value={borrow.reader}
                                 options={readersOptions}
-                                onChange={(value) => onChangeValue(value, 'id_readers')}
+                                onChange={(value) => onChangeValue(0, value, 'reader')}
                             />
                         </Col>
-                        <Col>
-                            <Form.Label>Hạn trả sách</Form.Label>
+                        <Col className="mb-3">
+                            <Form.Label>Hạn trả</Form.Label>
+                            {/* <Form.Control disabled value={item.expired.toString().split('T')[0]} /> */}
                             <DatePicker
-                                selected={borrow.expired}
+                                selected={borrow.books[0]?.expired}
                                 onChange={(date) => onChangeValue(date, 'expired')}
                                 dateFormat="dd/MM/yyyy"
                                 withPortal
@@ -157,8 +176,8 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                             <Form.Label>Chọn sách</Form.Label>
                             <Select
                                 isMulti
-                                options={dsOptions}
-                                value={borrow.books || []}
+                                options={titles}
+                                value={borrow.books.map(item => item.ds) || []}
                                 onChange={(value) => onChangeValue(value, 'books')}
                                 placeholder="Chỉ được mươn tối đa 3 quyển sách!"
                                 isValidNewOption={isValidNewOption}
@@ -167,14 +186,13 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-                <br />
             </Modal.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                <Button variant="primary" onClick={onSubmit}>Add</Button>
+                <Button variant="primary" onClick={onPayAll}>Cập nhật</Button>
             </Modal.Footer>
         </Modal>
     )
 }
 
-export default BorrowModal
+export default AModal

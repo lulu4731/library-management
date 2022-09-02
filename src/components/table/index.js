@@ -71,7 +71,9 @@ const BasicTable = ({ columns, data, titleButton, onOpen, titleTable, onRowClick
         // pagination: true,
         selectableRows: 'none',
         onRowClick: (rowData) => onRowClick(rowData),
-        // onSearch: (data) => {}
+        // onSearchChange: (searchText) => {
+        //     console.log(searchText)
+        // },
         onRowsDelete: (data) => {
             console.log(data)
         },

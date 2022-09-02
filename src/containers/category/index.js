@@ -32,6 +32,11 @@ const Category = () => {
     const onDelete = (id_category) => {
         dispatch(deleteCategory(id_category))
     }
+
+    const onOpen = () => {
+        setIsOpen(true)
+        setCategoryItems()
+    }
     const columns = [
         {
             name: "id_category",
@@ -91,7 +96,7 @@ const Category = () => {
         <>
             <HomePage>
                 {
-                    category && <BasicTable onRowClick={onRowClick} columns={columns} data={category} titleButton="Thêm thể loại" setIsOpen={setIsOpen} titleTable="QUẢN LÝ THỂ LOẠI" />
+                    category && <BasicTable onRowClick={onRowClick} columns={columns} data={category} titleButton="Thêm thể loại" onOpen={onOpen} titleTable="QUẢN LÝ THỂ LOẠI" />
                 }
                 {
                     isOpen && <CategoryModal isOpen={isOpen} onClose={onClose} value={categoryItems} />

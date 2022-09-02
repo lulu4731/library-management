@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { categorySelector, loadCategory } from '../../reducers/category'
 import Select from 'react-select';
 import { loadTitle, titlesSelector } from '../../reducers/title'
+import { searchDS } from '../../utils/callerAPI'
 
 const Page = () => {
     // const [active, setActive] = useState(0)
@@ -67,6 +68,16 @@ const Page = () => {
         'https://cdnimg.vietnamplus.vn/uploaded/tpuoaob/2021_04_02/vnp_long1.jpg',
         'https://scr.vn/wp-content/uploads/2021/01/Tho-Xuan-Dieu.jpg'
     ]
+
+    const handleKeyDown = async (e) => {
+        if (e.key === 'Enter') {
+            const response = await searchDS(keyword.replace(/\s+/g, ' ').trim())
+            if (response.status === 200) {
+                setTitleFilter(response.data)
+            }
+            setKeyword('')
+        }
+    }
     return (
         <>
             <section className="portfolio section" id="portfolio">
@@ -120,7 +131,7 @@ const Page = () => {
 
                             <div className='search'>
                                 <label>
-                                    <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={(e) => onChangeValue(e.target.value, 'keyword')} />
+                                    <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={(e) => onChangeValue(e.target.value, 'keyword')} onKeyDown={handleKeyDown} />
                                     <i className="fa-solid fa-magnifying-glass icon"></i>
                                 </label>
                             </div>
@@ -136,7 +147,7 @@ const Page = () => {
                                         titlesFilter.map((item, index) => (
                                             <div className="grid-item logo-design" key={index}>
                                                 <div className="gallery-image">
-                                                    <img src={images[index]} alt="" />
+                                                    <img src={item?.img} alt="" />
                                                     <div className="img-overlay">
                                                         {/* <div className="plus"></div> */}
                                                         <div className="img-description">
@@ -148,7 +159,7 @@ const Page = () => {
                                                                     ))
                                                                 }
                                                             </h5>
-                                                            <h5 style={{ textAlign: "justify" }}>Giới thiệu: Là một trong những tiểu thuyết thành công nhất của nhà văn Nguyễn Nhật Ánh, cuốn sách là câu chuyện về cuộc sống bình dị của những đứa trẻ ở một thôn quê nghèo khó tại Việt Nam, với ý nghĩa về tình anh em, tâm tư hồn nhiên của tuổi mới lớn.
+                                                            <h5 style={{ textAlign: "justify" }}>Giới thiệu: {item.description}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -265,15 +276,14 @@ const Page = () => {
                 <div className="container-home">
                     <div className="grid-4">
                         <div className="grid-4-col footer-about">
-                            <h3 className="title-sm">About</h3>
+                            <h3 className="title-sm">Thông tin</h3>
                             <p className="text">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-                                officiis quo officia quia?
+                                Website quản lý thư viện Học Viện Công Nghệ Bưu Chính Viễn Thông
                             </p>
                         </div>
 
                         <div className="grid-4-col footer-links">
-                            <h3 className="title-sm">Links</h3>
+                            {/* <h3 className="title-sm">Links</h3>
                             <ul>
                                 <li>
                                     <a href="#services">Services</a>
@@ -290,11 +300,11 @@ const Page = () => {
                                 <li>
                                     <a href="#contact">Contact</a>
                                 </li>
-                            </ul>
+                            </ul> */}
                         </div>
 
                         <div className="grid-4-col footer-links">
-                            <h3 className="title-sm">Services</h3>
+                            {/* <h3 className="title-sm">Services</h3>
                             <ul>
                                 <li>
                                     <a href="#">Web Design</a>
@@ -311,20 +321,26 @@ const Page = () => {
                                 <li>
                                     <a href="#">UI Design</a>
                                 </li>
-                            </ul>
+                            </ul> */}
                         </div>
 
                         <div className="grid-4-col footer-newstletter">
-                            <h3 className="title-sm">Subscribe</h3>
+                            <h3 className="title-sm">Liên hệ</h3>
                             <p className="text">
-                                Lorem ipsum dolor, sit amet ipsum dolor sit amet.
+                                Mọi thông tin vui lòng liên hệ với chúng tôi qua các địa chỉ sau
                             </p>
-                            <div className="footer-input-wrap">
+                            {/* <div className="footer-input-wrap">
                                 <input type="email" className="footer-input" placeholder="Email" />
                                 <a href="#" className="input-arrow">
                                     <i className="fas fa-angle-right"></i>
                                 </a>
-                            </div>
+                            </div> */}
+                            <p className="text">
+                                Email: dangnguyen0401@gmail.com
+                            </p>
+                            <p className="text">
+                                SDT: 0327876080
+                            </p>
                         </div>
                     </div>
                 </div>

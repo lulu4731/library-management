@@ -8,6 +8,7 @@ import PayModal from '../modal/pay-modal';
 import HomePage from '../../components/home/HomePage';
 import UpdateModal from '../modal/update-borrow-modal';
 import convertTimesTamp from '../../utils/convertTimesTamp';
+import AModal from '../modal/a';
 
 const Borrow = () => {
     const [modalShow, setModalShow] = useState(false)
@@ -16,6 +17,7 @@ const Borrow = () => {
     const [borrow, setBorrow] = useState()
     const [payModal, setPayModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
+    const [borrowPay, setBorrowPay] = useState()
 
     useEffect(() => {
         dispatch(loadBorrows())
@@ -150,6 +152,7 @@ const Borrow = () => {
                 sort: true,
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const borrow_status = JSON.parse(value).find(item => item.borrow_status === 0)
+                    const update_borrow = JSON.parse(value).find(item => item.borrow_status === 1)
                     if (borrow_status) {
                         return (
                             <div className='pb-0'>
@@ -166,17 +169,22 @@ const Borrow = () => {
                                 >
                                     <Button variant='warning mr-3' onClick={() => setPayModal(true)}><i className="fa-solid fa-book"></i></Button>
                                 </OverlayTrigger>
-                                <OverlayTrigger
-                                    key={'bottom-edit'}
-                                    placement={'bottom'}
-                                    overlay={
-                                        <Tooltip id={`tooltip-edit`}>
-                                            Cập nhật
-                                        </Tooltip>
-                                    }
-                                >
-                                    <Button variant='primary' onClick={() => setUpdateModal(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
-                                </OverlayTrigger>
+                                {
+                                    !update_borrow && (
+                                        <OverlayTrigger
+                                            key={'bottom-edit'}
+                                            placement={'bottom'}
+                                            overlay={
+                                                <Tooltip id={`tooltip-edit`}>
+                                                    Cập nhật
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <Button variant='primary' onClick={() => setModalShow(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                        </OverlayTrigger>
+                                    )
+                                }
+
                             </div>
                         );
                     } else {
@@ -196,12 +204,22 @@ const Borrow = () => {
         // console.log(data)
         const temps = borrows.find(item => item.id_borrow === data[0])
         // console.log(temps)
-        setBorrow({
+        setBorrowPay({
             ...temps,
             librarian: JSON.parse(temps.librarian),
             reader: JSON.parse(temps.reader),
             books: JSON.parse(temps.books),
         })
+
+        setBorrow({
+            id_borrow: temps.id_borrow,
+            id_readers: JSON.parse(temps.reader),
+            expired: new Date(convertTimesTamp(JSON.parse(temps.books)[0].expired)),
+            books: JSON.parse(temps.books).map(item => item.ds)
+        })
+
+        // console.log(JSON.parse(temps.books).map(item => item.ds
+        // ))
         // setModalShow(true)
     }
 
@@ -214,13 +232,13 @@ const Borrow = () => {
             <HomePage>
                 <BasicTable onRowClick={onRowClick} columns={columns} onOpen={onOpen} data={borrows} titleButton="Thêm phiếu mượn" titleTable="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" />
                 {
-                    modalShow && (<BorrowModal modalShow={modalShow} setModalShow={setModalShow} />)
+                    modalShow && (<BorrowModal modalShow={modalShow} setModalShow={setModalShow} value={borrow} />)
                 }
-                {
+                {/* {
                     updateModal && (<UpdateModal modalShow={updateModal} setModalShow={setUpdateModal} value={borrow} />)
-                }
+                } */}
                 {
-                    payModal && <PayModal modalShow={payModal} setModalShow={setPayModal} value={borrow} />
+                    payModal && <PayModal modalShow={payModal} setModalShow={setPayModal} value={borrowPay} />
                 }
             </HomePage>
         </>

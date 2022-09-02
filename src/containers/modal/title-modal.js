@@ -23,7 +23,9 @@ const TitleModal = ({ isOpen, onClose, value }) => {
         publishing_year: new Date(),
         company: {},
         category: {},
-        authors: []
+        authors: [],
+        description: '',
+        img: ''
     }
     const [ds, setDS] = useState(defaultValue)
 
@@ -148,10 +150,6 @@ const TitleModal = ({ isOpen, onClose, value }) => {
                     <Form.Group>
                         <Row>
                             <Col>
-                                <Form.Label>Giá</Form.Label>
-                                <Form.Control type="text" value={ds?.price} onChange={(e) => onChangeValue(e.target.value, 'price')} />
-                            </Col>
-                            <Col>
                                 <Form.Label>Số trang</Form.Label>
                                 <Form.Control type="text" value={ds?.page} onChange={(e) => onChangeValue(e.target.value, 'page')} />
                             </Col>
@@ -165,11 +163,6 @@ const TitleModal = ({ isOpen, onClose, value }) => {
                                     dropdownMode="select"
                                 />
                             </Col>
-                        </Row>
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                        <Row>
                             <Col>
                                 <Form.Label>Thể loại</Form.Label>
                                 <Select
@@ -178,6 +171,11 @@ const TitleModal = ({ isOpen, onClose, value }) => {
                                     onChange={(value) => onChangeValue(value, 'category')}
                                 />
                             </Col>
+                        </Row>
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                        <Row>
                             <Col>
                                 <Form.Label>Tác giả</Form.Label>
                                 <Select
@@ -188,6 +186,19 @@ const TitleModal = ({ isOpen, onClose, value }) => {
                                     value={ds?.authors || []}
                                     onChange={(value) => onChangeValue(value, 'authors')}
                                 />
+                            </Col>
+                            <Col>
+                                <Form.Label>Link ảnh</Form.Label>
+                                <Form.Control type="text" value={ds?.img} onChange={(e) => onChangeValue(e.target.value, 'img')} />
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                        <Row>
+                            <Col>
+                                <Form.Label>Mô tả</Form.Label>
+                                <Form.Control type="text" value={ds?.description} onChange={(e) => onChangeValue(e.target.value, 'description')} />
                             </Col>
                         </Row>
                     </Form.Group>

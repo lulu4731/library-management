@@ -64,3 +64,17 @@ export const forgetPasswordChange = async (new_pass) => {
         else return { message: error.message }
     }
 }
+
+export const searchDS = async (keyword) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:8000/api/v0/search?k=${keyword}`,
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}
