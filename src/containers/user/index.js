@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import logo from '../../assets/img/log.svg'
 import register from '../../assets/img/register.svg'
-import { forgetPassword, forgetPasswordChange, loginUser } from '../../utils/callerAPI';
+import { forgetPassword, forgetPasswordChange, loginUser, registerUser } from '../../utils/callerAPI';
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from 'react-redux'
-import { setSignIn } from '../../reducers/librarian';
+import { checkLogin, setSignIn } from '../../reducers/librarian';
 import { toastError, toastSuccess } from '../../toast/toast';
 import { Button } from 'react-bootstrap';
 
@@ -15,6 +15,16 @@ const LoginPage = () => {
     const [login, setLogin] = useState({
         email: '',
         password: ''
+    })
+
+    const [register, setRegister] = useState({
+        first_name: '',
+        last_name: '',
+        phone: '',
+        email: '',
+        citizen_identification: '',
+        password: '',
+        confirm_pass: ''
     })
     const { email, password } = login
 
@@ -54,7 +64,8 @@ const LoginPage = () => {
             if (response.status === 200) {
                 toastSuccess(response.message)
                 dispatch(setSignIn())
-                navigate('/statistical')
+                dispatch(checkLogin())
+                // navigate('/statistical')
             } else {
                 toastError(response.message)
             }
@@ -99,6 +110,26 @@ const LoginPage = () => {
         }
     }
 
+    const handleChangeValueRegister = (keyValue, keyName) => {
+        const newRegister = { ...register }
+        newRegister[keyName] = keyValue
+        setRegister(newRegister)
+    }
+
+    const onSubmitSignUp = async (e) => {
+        e.preventDefault()
+        try {
+            const response = await registerUser(register)
+            if (response.status === 201) {
+                toastSuccess(response.message)
+                onSignIn()
+            } else {
+                toastError(response.message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <div className="container">
             <div className="forms-container">
@@ -123,21 +154,37 @@ const LoginPage = () => {
                     </form>
                     {
                         form === 'register' ? (
-                            <form action="#" className="sign-up-form">
+                            <form action="#" className="sign-up-form" onSubmit={onSubmitSignUp}>
                                 <h2 className="title-sign">Đăng ký</h2>
                                 <div className="input-field">
                                     <i className="fas fa-user"></i>
-                                    <input type="text" placeholder="Email" />
+                                    <input type="text" placeholder="Họ" name='first_name' value={register.first_name} onChange={(e) => handleChangeValueRegister(e.target.value, 'first_name')} />
+                                </div>
+                                <div className="input-field">
+                                    <i className="fas fa-user"></i>
+                                    <input type="text" placeholder="Tên" name='last_name' value={register.last_name} onChange={(e) => handleChangeValueRegister(e.target.value, 'last_name')} />
+                                </div>
+                                <div className="input-field">
+                                    <i className="fas fa-user"></i>
+                                    <input type="text" placeholder="CMND" name='citizen_identification' value={register.citizen_identification} onChange={(e) => handleChangeValueRegister(e.target.value, 'citizen_identification')} />
+                                </div>
+                                <div className="input-field">
+                                    <i className="fa-solid fa-phone"></i>
+                                    <input type="text" placeholder="Số điện thoại" name='phone' value={register.phone} onChange={(e) => handleChangeValueRegister(e.target.value, 'phone')} />
                                 </div>
                                 <div className="input-field">
                                     <i className="fas fa-envelope"></i>
-                                    <input type="password" placeholder="Password" />
+                                    <input type="text" placeholder="Email" name='email' value={register.email} onChange={(e) => handleChangeValueRegister(e.target.value, 'email')} />
                                 </div>
                                 <div className="input-field">
                                     <i className="fas fa-lock"></i>
-                                    <input type="password" placeholder="Password Confirm" />
+                                    <input type="password" placeholder="Password" name='password' value={register.password} onChange={(e) => handleChangeValueRegister(e.target.value, 'password')} />
                                 </div>
-                                <input type="submit" className="btn-sign" value="Sign up" />
+                                <div className="input-field">
+                                    <i className="fas fa-lock"></i>
+                                    <input type="password" placeholder="Password Confirm" name='confirm_pass' value={register.confirm_pass} onChange={(e) => handleChangeValueRegister(e.target.value, 'confirm_pass')} />
+                                </div>
+                                <button type="submit" className="btn-sign solid">Đăng kí</button>
                             </form>
                         ) : (
                             <form action="#" className="sign-up-form" onSubmit={onSubmitChangePass}>

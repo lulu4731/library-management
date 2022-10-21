@@ -49,6 +49,9 @@ const StylesTable = styled('div', {
     '.tss-1akey0g-MUIDataTableHeadCell-data': {
         fontWeight: 'bold'
     },
+    '.css-of0l2h-StyleTable .tss-178gktx-MUIDataTableHeadCell-contentWrapper': {
+        paddingLeft: 12
+    },
     '.tss-1qtl85h-MUIDataTableBodyCell-root': {
         marginLeft: 15
     },

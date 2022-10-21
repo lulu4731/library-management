@@ -1,33 +1,32 @@
-import React, { useEffect, useState } from 'react'
-import BasicTable from '../../components/table'
-import ReadersModal from '../modal/readers-modal'
-import { useDispatch, useSelector } from 'react-redux'
-import { deleteReaders, loadReaders, readersSelector, updateReadersStatus } from '../../reducers/readers'
-// import { checkLogin } from '../../reducers/librarian'
-import HomePage from '../../components/home/HomePage'
+import React from 'react'
+import { useEffect, useState } from 'react'
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import HomePageAdmin from '../../components/home/HomePageAdmin'
+import BasicTable from '../../components/table'
+import { librariansSelector, loadLibrarian, updateLibrarianStatus } from '../../reducers/librarian'
 import convertTimesTamp from '../../utils/convertTimesTamp'
+import LibrarianModal from '../modal/librarian-modal'
 
-const ReadersPage = () => {
+const LibrarianPage = () => {
     const dispatch = useDispatch()
-    const readers = useSelector(readersSelector)
     const [isOpen, setIsOpen] = useState(false)
-    const [reader, setReader] = useState()
+    const librarians = useSelector(librariansSelector)
+    const [librarian, setLibrarian] = useState()
 
     useEffect(() => {
-        dispatch(loadReaders())
-        // dispatch(checkLogin())
+        dispatch(loadLibrarian())
     }, [dispatch])
 
     const onClose = () => {
         setIsOpen(false)
-        setReader()
+        setLibrarian()
     }
 
     const columns = [
         {
-            name: "citizen_identification",
-            label: "CMND",
+            name: "id_librarian",
+            label: "Mã thủ thư",
             options: {
                 filter: true,
                 sort: true,
@@ -94,13 +93,13 @@ const ReadersPage = () => {
                 sort: true,
                 customBodyRender: (value) => {
                     return (
-                        <p>{value != null ? convertTimesTamp(value) : ''}</p>
+                        <p>{convertTimesTamp(value)}</p>
                     );
                 }
             }
         },
         {
-            name: "readers_status",
+            name: "librarian_status",
             label: "Trạng thái",
             options: {
                 filter: true,
@@ -108,34 +107,20 @@ const ReadersPage = () => {
                 customBodyRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value === 0 ? "success" : value === 2 ? 'danger' : value === 1 ? 'danger' : 'warning'}>{value === 0 ? "Hoạt động" : value === 2 ? 'Khóa' : value === 1 ? 'Khóa vĩnh viễn' : 'Chờ duyệt'}</Badge>
+                            <Badge bg="success">{value === 0 ? "Hoạt động" : "Khóa"}</Badge>
                         </div>
                     );
                 }
             },
         },
         {
-            name: "id_readers",
+            name: "id_librarian",
             label: "Hành động",
             options: {
                 filter: true,
                 sort: true,
-                customBodyRender: (value, data) => {
-                    return data.rowData[8] === 3 ? (
-                        <div className='pb-0'>
-                            <OverlayTrigger
-                                key={'bottom-change'}
-                                placement={'bottom'}
-                                overlay={
-                                    <Tooltip id={`tooltip-change`}>
-                                        Duyệt tài khoản
-                                    </Tooltip>
-                                }
-                            >
-                                <Button variant='primary mr-3' onClick={() => dispatch(updateReadersStatus(value))}><i className="fa-solid fa-user-check"></i></Button>
-                            </OverlayTrigger>
-                        </div>
-                    ) : (
+                customBodyRender: (value) => {
+                    return (
                         <div className='pb-0'>
                             <OverlayTrigger
                                 key={'bottom-edit'}
@@ -157,18 +142,18 @@ const ReadersPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='danger mr-3' onClick={() => onDelete(value)}><i className="fa-solid fa-trash-can"></i></Button>
+                                <Button variant='danger mr-3' onClick={() => undefined}><i className="fa-solid fa-trash-can"></i></Button>
                             </OverlayTrigger>
                             <OverlayTrigger
-                                key={'bottom-lock'}
+                                key={'bottom-change'}
                                 placement={'bottom'}
                                 overlay={
-                                    <Tooltip id={`tooltip-lock`}>
-                                        {data.rowData[8] === 0 ? "Khóa tài khoản" : "Mở khóa"}
+                                    <Tooltip id={`tooltip-change`}>
+                                        Cập nhật trạng thái làm việc
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='danger' onClick={() => onDelete(value)}><i className={data.rowData[8] === 0 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"}></i></Button>
+                                <Button variant='warning' onClick={() => dispatch(updateLibrarianStatus(value))}><i className="fa-solid fa-wrench"></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -178,34 +163,28 @@ const ReadersPage = () => {
     ];
 
     const onRowClick = (data) => {
-        const temps = readers.find((item) => item.citizen_identification === data[0])
-        setReader({
+        const temps = librarians.find((item) => item.id_librarian === data[0])
+        setLibrarian({
             ...temps,
             date_of_birth: new Date(convertTimesTamp(temps.date_of_birth))
         })
     }
 
-    const onDelete = (id_readers) => {
-        dispatch(deleteReaders(id_readers))
-    }
-
     const onOpen = () => {
         setIsOpen(true)
-        setReader()
+        setLibrarian()
     }
 
     return (
-        <>
-            <HomePage>
-                {
-                    readers && <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" onOpen={onOpen} titleTable="QUẢN LÝ ĐỘC GIẢ" />
-                }
-                {
-                    isOpen && <ReadersModal isOpen={isOpen} onClose={onClose} value={reader} />
-                }
-            </HomePage>
-        </>
+        <HomePageAdmin>
+            {
+                librarians && <BasicTable onRowClick={onRowClick} columns={columns} data={librarians} titleButton="Tạo thủ thư" onOpen={onOpen} titleTable="QUẢN LÝ THỦ THƯ" />
+            }
+            {
+                isOpen && <LibrarianModal isOpen={isOpen} onClose={onClose} value={librarian} />
+            }
+        </HomePageAdmin>
     )
 }
 
-export default ReadersPage
+export default LibrarianPage

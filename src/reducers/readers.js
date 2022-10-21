@@ -53,6 +53,23 @@ export const updateReaders = createAsyncThunk(
     }
 )
 
+export const updateReadersStatus = createAsyncThunk(
+    "readers/updateReadersStatus",
+    async (id_readers) => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:8000/api/v0/readers/change-status/${id_readers}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const deleteReaders = createAsyncThunk(
     "readers/deleteReaders",
     async (id_readers) => {
@@ -107,6 +124,18 @@ const readers = createSlice({
             .addCase(deleteReaders.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.readers = state.readers.filter(item => item.id_readers !== action.payload.id_readers)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(updateReadersStatus.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.readers = state.readers.map((item) =>
+                        item.id_readers === action.payload.data.id_readers
+                            ? action.payload.data
+                            : item
+                    )
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)

@@ -10,6 +10,8 @@ import borrowsReducer from "../reducers/borrow"
 import librarianReducer from "../reducers/librarian"
 import liquidationsReducer from "../reducers/liquidation"
 import statisticalReducer from "../reducers/statistical"
+import commentReducer from "../reducers/comment"
+import feedbackReducer from "../reducers/feedback"
 
 const store = configureStore({
     reducer: {
@@ -23,7 +25,9 @@ const store = configureStore({
         borrowsReducer,
         librarianReducer,
         liquidationsReducer,
-        statisticalReducer
+        statisticalReducer,
+        commentReducer,
+        feedbackReducer
     },
 })
 

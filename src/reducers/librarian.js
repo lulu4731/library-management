@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
 import setAuthToken from "../utils/setAuthToken";
 import * as types from '../contains/type'
+import { toastError, toastSuccess } from "../toast/toast";
 
 export const checkLogin = createAsyncThunk('librarian/check', async () => {
     try {
@@ -22,11 +23,99 @@ export const checkLogin = createAsyncThunk('librarian/check', async () => {
     }
 })
 
+export const loadLibrarian = createAsyncThunk(
+    "librarian/loadLibrarian",
+    async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/librarian`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const updateLibrarianStatus = createAsyncThunk(
+    "librarian/updateLibrarianStatus",
+    async (id_librarian) => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:8000/api/v0/librarian/${id_librarian}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const addLibrarian = createAsyncThunk(
+    "librarian/addLibrarian",
+    async (librarian) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/librarian`, librarian
+            )
+            if (response.status === 201) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const updateLibrarian = createAsyncThunk(
+    "librarian/updateLibrarian",
+    async (data) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/v0/librarian/${data.id_librarian}`, data.librarian
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+// export const deleteReaders = createAsyncThunk(
+//     "readers/deleteReaders",
+//     async (id_readers) => {
+//         try {
+//             const response = await axios.delete(
+//                 `http://localhost:8000/api/v0/readers/${id_readers}`
+//             )
+//             if (response.status === 200) {
+//                 return await { ...response.data, status: response.status, id_readers: id_readers }
+//             }
+//         } catch (error) {
+//             if (error.response.data) return error.response.data
+//             else return { message: error.message }
+//         }
+//     }
+// )
+
 const librarian = createSlice({
     name: 'librarian',
     initialState: {
-        librarian: {},
-        isAuthenticated: false
+        librarian: {
+            role: 0
+        },
+        isAuthenticated: false,
+        librarians: []
     },
     reducers: {
         setSignIn(state) {
@@ -41,9 +130,46 @@ const librarian = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(loadLibrarian.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.librarians = action.payload.data
+                }
+            })
             .addCase(checkLogin.fulfilled, (state, action) => {
                 state.librarian = action.payload.data
                 state.isAuthenticated = action.payload.isAuthenticated
+            })
+            .addCase(addLibrarian.fulfilled, (state, action) => {
+                if (action.payload.status === 201) {
+                    state.librarians.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(updateLibrarianStatus.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.librarians = state.librarians.map((item) =>
+                        item.id_librarian === action.payload.data.id_librarian
+                            ? action.payload.data
+                            : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(updateLibrarian.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.librarians = state.librarians.map((item) =>
+                        item.id_librarian === action.payload.data.id_librarian
+                            ? action.payload.data
+                            : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
             })
     }
 })
@@ -51,6 +177,7 @@ const librarian = createSlice({
 const librarianReducer = librarian.reducer
 
 export const librarianSelector = (state) => state.librarianReducer.librarian
+export const librariansSelector = (state) => state.librarianReducer.librarians
 export const isAuthenticatedSelector = (state) => state.librarianReducer.isAuthenticated
 export const { setSignIn, setLogout } = librarian.actions
 

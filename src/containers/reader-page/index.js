@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import '../../assets/style.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { checkLogin } from '../../reducers/librarian'
 import halfCircle from '../../assets/shapes/half-circle.png'
 import square from '../../assets/shapes/square.png'
 import wave from '../../assets/shapes/wave.png'
 import circle from '../../assets/shapes/circle.png'
 import triangle from '../../assets/shapes/triangle.png'
 import x from '../../assets/shapes/x.png'
-import E from '../../assets/portfolio/port1.jpg'
-import { Button, Row } from 'react-bootstrap'
+import { Button, Col, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import { categorySelector, loadCategory } from '../../reducers/category'
 import Select from 'react-select';
-import { loadTitle, titlesSelector } from '../../reducers/title'
+import { addLoveTitle, deleteLoveTitle, loadTitle, titlesSelector } from '../../reducers/title'
 import { searchDS } from '../../utils/callerAPI'
-import ModalLove from '../../containers/reader-page/modal-love'
+import Header from './Header'
 
-const Page = () => {
-    // const [active, setActive] = useState(0)
+const HomePageReader = () => {
+    const dispatch = useDispatch()
     const category = useSelector(categorySelector)
     const titles = useSelector(titlesSelector)
-    const dispatch = useDispatch()
     const [titlesFilter, setTitleFilter] = useState(titles)
     const [keyword, setKeyword] = useState('')
+
+    useEffect(() => {
+        dispatch(checkLogin())
+    }, [dispatch])
 
     useEffect(() => {
         dispatch(loadCategory())
@@ -46,6 +48,16 @@ const Page = () => {
         label: 'Tất cả'
     })
 
+    const handleKeyDown = async (e) => {
+        if (e.key === 'Enter') {
+            const response = await searchDS(keyword.replace(/\s+/g, ' ').trim())
+            if (response.status === 200) {
+                setTitleFilter(response.data)
+            }
+            setKeyword('')
+        }
+    }
+
     const onChangeValue = (keyValue, keyName) => {
         if (keyName === 'select') {
             if (keyValue.value === 'all') {
@@ -61,27 +73,9 @@ const Page = () => {
         }
     }
 
-    const images = [
-        'https://i.ytimg.com/vi/MwoNwRzx0Ak/maxresdefault.jpg',
-        'https://menback.com/wp-content/uploads/2022/02/tam-quoc-dien-nghia.jpg',
-        'https://product.hstatic.net/200000079237/product/z2020187226535_9f6815013ed480db121ef3dbaf48a5e1_8e0dadd1867a45fa8686af1577ebdd1d_master.jpg',
-        'https://i.ytimg.com/vi/GaD1J6hGZ_4/maxresdefault.jpg',
-        'https://cdnimg.vietnamplus.vn/uploaded/tpuoaob/2021_04_02/vnp_long1.jpg',
-        'https://scr.vn/wp-content/uploads/2021/01/Tho-Xuan-Dieu.jpg'
-    ]
-
-    const handleKeyDown = async (e) => {
-        if (e.key === 'Enter') {
-            const response = await searchDS(keyword.replace(/\s+/g, ' ').trim())
-            if (response.status === 200) {
-                setTitleFilter(response.data)
-            }
-            setKeyword('')
-        }
-    }
     return (
         <>
-
+            <Header titles={titles.filter(item => item.love_status === true)} />
             <section className="portfolio section" id="portfolio">
                 <div className="background-bg">
                     <div className="overlay overlay-sm">
@@ -137,9 +131,9 @@ const Page = () => {
                                     <i className="fa-solid fa-magnifying-glass icon"></i>
                                 </label>
                             </div>
-                            <Button className={`filter-btn filter-btn active`} variant='primary' as={Link} to="/login">
+                            {/* <Button className={`filter-btn filter-btn active`} variant='primary' as={Link} to="/login">
                                 Đăng nhập
-                            </Button>
+                            </Button> */}
                         </div>
 
                         <div className="grid">
@@ -151,9 +145,22 @@ const Page = () => {
                                                 <div className="gallery-image">
                                                     <img src={item?.img} alt="" />
                                                     <div className="img-overlay">
-                                                        {/* <div className="plus"></div> */}
+
                                                         <div className="img-description">
-                                                            <h3>{item.name_book}</h3>
+                                                            <Row >
+                                                                <Col>
+                                                                    <i className="fa-solid fa-plus fa-2x float-left"></i>
+                                                                </Col>
+                                                                <Col>
+                                                                    <i className="fa-solid fa fa-heart fa-2x float-right" style={{ color: item.love_status ? '#f35539' : 'white' }}
+                                                                        onClick={() => dispatch(item.love_status ? deleteLoveTitle(item.isbn) : addLoveTitle(item.isbn))}>
+                                                                    </i>
+                                                                </Col>
+                                                            </Row>
+                                                            <Link to={`/readers/ds/${item.isbn}`} state={item}>
+                                                                <h3>{item.name_book}</h3>
+                                                            </Link>
+
                                                             <h5>Tác giả:
                                                                 {
                                                                     JSON.parse(item.authors).map((author) => (
@@ -347,9 +354,8 @@ const Page = () => {
                     </div>
                 </div>
             </footer>
-
         </>
     )
 }
 
-export default Page
+export default HomePageReader

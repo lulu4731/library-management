@@ -103,6 +103,23 @@ export const loadStatisticalTopBookWeek = createAsyncThunk(
     }
 )
 
+export const loadStatisticalTopBookMonth = createAsyncThunk(
+    "statistical/loadStatisticalTopBookMonth",
+    async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/statistical/top-book-month`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const statistical = createSlice({
     name: 'statistical',
     initialState: {
@@ -111,7 +128,8 @@ const statistical = createSlice({
         statisticalDsDay: {},
         statisticalReadersDay: 0,
         statisticalReaderExpired: [],
-        statisticalTopBookWeek: {}
+        statisticalTopBookWeek: {},
+        statisticalTopBookMonth: {},
     },
     reducers: {
 
@@ -148,6 +166,11 @@ const statistical = createSlice({
                     state.statisticalTopBookWeek = action.payload.data
                 }
             })
+            .addCase(loadStatisticalTopBookMonth.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.statisticalTopBookMonth = action.payload.data
+                }
+            })
     }
 })
 
@@ -160,6 +183,7 @@ export const statisticalReadersDaySelector = (state) => state.statisticalReducer
 export const statisticalDsDaySelector = (state) => state.statisticalReducer.statisticalDsDay
 export const statisticalReaderExpiredSelector = (state) => state.statisticalReducer.statisticalReaderExpired
 export const statisticalTopBookWeekSelector = (state) => state.statisticalReducer.statisticalTopBookWeek
+export const statisticalTopBookMonthSelector = (state) => state.statisticalReducer.statisticalTopBookMonth
 
 
 

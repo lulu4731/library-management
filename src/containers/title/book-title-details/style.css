@@ -1,0 +1,210 @@
+.title-book-details {
+    font-size: 17px;
+	font-weight: 500;
+	line-height: 22px;
+	margin-bottom: 4px;
+    color: #fff;
+  }
+
+.product-info-tabs {
+	margin-top: 25px; 
+}
+.product-info-tabs .nav-tabs {
+	border-bottom: 2px solid #784cfb;
+}
+.product-info-tabs .nav-tabs .nav-item {
+	margin-bottom: 0;
+}
+.product-info-tabs .nav-tabs .nav-link {
+	border: none; 
+	border-bottom: 2px solid transparent;
+	color: #784cfb;
+}
+.product-info-tabs .nav-tabs .nav-item .nav-link:hover {
+	border: none; 
+}
+.product-info-tabs .nav-tabs .nav-item.show .nav-link, 
+.product-info-tabs .nav-tabs .nav-link.active, 
+.product-info-tabs .nav-tabs .nav-link.active:hover {
+	border: none; 
+	border-bottom: 3px solid #784cfb;
+	font-weight: bold;
+    background-color: deepskyblue;
+    color: #fff;
+}
+.product-info-tabs .tab-content .tab-pane {
+	padding: 30px 20px;
+	font-size: 15px;
+	line-height: 24px;
+	color: #323232;
+}
+.review-form .form-group {
+	clear: both;
+}
+.mb-20 {
+	margin-bottom: 20px;
+}
+
+.review-form .rate {
+	float: none;
+	display: inline-block;
+}
+.review-heading {
+	font-size: 24px;
+    font-weight: 600;
+    line-height: 24px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    color: #000;
+}
+.review-form .form-control {
+	font-size: 14px;
+}
+.review-form input.form-control {
+	height: 40px;
+}
+.review-form textarea.form-control {
+	resize: none;
+}
+.review-form .round-black-btn {
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.background-bg-details {
+    position: absolute;
+    width: 100%;
+    height: 540px;
+    top: 0;
+    left: 0;
+    background-color: var(--main-color);
+  }
+
+  .grid-item-details {
+    width: 33.33%;
+    padding: 0 1.2rem 1.6rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+.details{
+    background-color: #F0F8FF;
+}
+.heart-details {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10rem;
+  transform: translate(-50%, -50%);
+  border-radius: 3px;
+}
+
+.box-comments {
+	width: 100%;
+	padding: 2rem;
+	border: 1px solid rgba(11, 131, 230, 0.4);
+	border-radius: 15px;
+	box-shadow: rgba(11, 131, 230, 0.4) 0px 0px 1rem;
+    background-color: #f0f8ff;
+}
+
+.write-comment {
+	height: 120px;
+    padding: 10px;
+    margin: 10px 0px;
+    border: 2px solid rgb(204, 204, 204);
+    border-radius: 5px;
+}
+
+/* style={{ height: "120px", minHeight: "100px", maxHeight: "300px", padding: "10px", margin: "10px 0px", border: "2px solid #ccc", borderRadius: "5px", borderSizing: "border-box" }} */
+.read-comment .card {
+	background-color: #F0F8FF;
+	margin-bottom: 1%;
+}
+
+.card:hover{
+    box-shadow: none !important;
+    background-color: #F0F8FF;
+}
+/* .box-comments .write-comment {
+	border-radius: 5px;
+} */
+
+
+.read-comment .card-body {
+	font-size: 16px !important;
+}
+
+.read-comment .card-body .card-title {
+	font-size: 20px;
+	margin: 0;
+}
+
+.read-comment p {
+	margin-bottom: 0;
+}
+
+/* .comment-item-button button {
+	padding: 2px 15px 2px 0;
+
+} */
+
+.read-comment.rep {
+	padding-left: 5.5rem;
+}
+
+.read-comment .date-comment i {
+	display: inline;
+	float: right;
+	justify-content: right;
+	padding-right: 5px;
+	font-size: 16px;
+
+}
+
+.form-comment {
+    display: block;
+    margin-top: 0rem;
+    padding: 0;
+}
+
+.button-comment {
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: rgb(0 123 255);
+    border: 0px;
+    float: right;
+    padding: 8px 16px 8px 16px;
+    color: #fff;
+}
+
+.icon-size{
+	font-size: 1.5rem;
+}
+
+.grid-item-love{
+	/* width: 88%; */
+    /* padding: 1rem 1.2rem; */
+    display: flex;
+    justify-content: center;
+	margin-left: 35px;
+}
+
+.offcanvas-end {
+    width: 900px;
+}
+
+.title-love {
+	position: relative;
+	display: inline-block;
+	padding-bottom: 1rem;
+	padding-top: 1rem;
+	line-height: 1;
+	font-size: 2rem;
+	/* margin-bottom: 0.6rem; */
+	color: #784cfb
+  }
+
+  .modal-love{
+	background-color: #f0f8ff;
+  }

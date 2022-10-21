@@ -1,5 +1,5 @@
-import React from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { hoveredSelector, setHovered } from '../../reducers/book'
@@ -14,6 +14,8 @@ const Sidebar = ({ toggle }) => {
         e.children[1].style.backgroundColor = 'rgb(119 106 207)';
     };
 
+    const [hide, setHide] = useState(false)
+
     return (
         <div className={`navigation${toggle}`}>
             <ul>
@@ -23,11 +25,40 @@ const Sidebar = ({ toggle }) => {
                         <span className='title' style={{ fontWeight: 'bold' }}>QUẢN LÝ THƯ VIỆN</span>
                     </Link>
                 </li>
-                <li className={hovered === 1 ? 'hovered' : ''} onClick={() => dispatch(setHovered(1))}>
+                {/* <li className={hovered === 1 ? 'hovered' : ''} onClick={() => dispatch(setHovered(1))}>
                     <Link to='/statistical' >
                         <span className='icon'><i className="fa-solid fa-chart-line ion-icon"></i></span>
                         <span className='title' style={{ fontWeight: 'bold' }}>Thống kê</span>
                     </Link>
+                </li> */}
+                <li className={hovered === 1 ? 'hovered' : ''} onClick={() => dispatch(setHovered(1))}>
+                    <Link to='' onClick={() => setHide(!hide)}>
+                        <span className='icon'><i className="fa-solid fa-chart-line ion-icon"></i></span>
+                        <span className='title' style={{ fontWeight: 'bold' }}>Thống kê</span>
+                    </Link>
+                    {
+                        hide && (
+                            <div style={{ fontWeight: 'bold', paddingLeft: '14px' }}>
+                                <Link to='/statistical/chart' onClick={() => setHide(true)}>
+                                    <span className='icon-dropdown'><i className="fa-solid fa-chart-line ion-icon"></i></span>
+                                    <span className='title-dropdown' style={{ fontWeight: 'bold' }}>Biểu đồ thống kê</span>
+                                </Link>
+                                <Link to='/statistical/borrowed-books' onClick={() => setHide(true)}>
+                                    <span className='icon-dropdown'><i className="fa-solid fa-chart-line ion-icon"></i></span>
+                                    <span className='title-dropdown' style={{ fontWeight: 'bold' }}>Số sách được mượn</span>
+                                </Link>
+                                <Link to='/statistical/borrowed-readers' onClick={() => setHide(true)}>
+                                    <span className='icon-dropdown'><i className="fa-solid fa-chart-line ion-icon"></i></span>
+                                    <span className='title-dropdown' style={{ fontWeight: 'bold' }}>Số sách độc giả mượn</span>
+                                </Link>
+                                <Link to='/statistical/overdue-book' onClick={() => setHide(true)}>
+                                    <span className='icon-dropdown'><i className="fa-solid fa-chart-line ion-icon"></i></span>
+                                    <span className='title-dropdown' style={{ fontWeight: 'bold' }}>Sách quá hạn</span>
+                                </Link>
+                            </div>
+                        )
+                    }
+
                 </li>
                 <li className={hovered === 2 ? 'hovered' : ''} onClick={() => dispatch(setHovered(2))}>
                     <Link to='/readers'>

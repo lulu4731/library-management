@@ -69,6 +69,41 @@ export const deleteTitle = createAsyncThunk(
         }
     }
 )
+
+export const addLoveTitle = createAsyncThunk(
+    "title/addLoveTitle",
+    async (isbn) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/love/${isbn}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, isbn }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const deleteLoveTitle = createAsyncThunk(
+    "title/deleteLoveTitle",
+    async (isbn) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v0/love/${isbn}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, isbn }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const titles = createSlice({
     name: 'title',
     initialState: {
@@ -107,6 +142,30 @@ const titles = createSlice({
             .addCase(deleteTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.titles = state.titles.filter(item => item.isbn !== action.payload.isbn)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(addLoveTitle.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.titles = state.titles.map((item) =>
+                        item.isbn === action.payload.isbn
+                            ? { ...item, love_status: true }
+                            : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(deleteLoveTitle.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.titles = state.titles.map((item) =>
+                        item.isbn === action.payload.isbn
+                            ? { ...item, love_status: false }
+                            : item
+                    )
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)

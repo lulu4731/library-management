@@ -20,6 +20,21 @@ export const loginUser = async (loginForm) => {
     }
 }
 
+export const registerUser = async (registerForm) => {
+    try {
+        const response = await axios.post(
+            "http://localhost:8000/api/v0/readers/register",
+            registerForm
+        )
+        if (response.status === 201) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}
+
 export const changePassword = async (newPass) => {
     try {
         const response = await axios.put(
