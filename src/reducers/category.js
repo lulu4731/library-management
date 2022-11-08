@@ -19,6 +19,23 @@ export const loadCategory = createAsyncThunk(
     }
 )
 
+export const searchCategory = createAsyncThunk(
+    "category/searchCategory",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/category/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addCategory = createAsyncThunk(
     "category/addCategory",
     async (category) => {
@@ -72,18 +89,24 @@ export const deleteCategory = createAsyncThunk(
 const category = createSlice({
     name: 'category',
     initialState: {
-        category: []
+        category: [],
+        categorySelect: []
     },
     reducers: {
 
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadCategory.fulfilled, (state, action) => {
+            .addCase(searchCategory.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.category = action.payload.data
                 }
             })
+            // .addCase(searchCategory.fulfilled, (state, action) => {
+            //     if (action.payload.status === 200) {
+            //         state.category = action.payload.data
+            //     }
+            // })
             .addCase(addCategory.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.category.unshift(action.payload.data)

@@ -28,7 +28,7 @@ const ProtectedRoute = ({ isAuthenticated }) => {
                     //isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/statistical/borrowed-books' replace />
                     isLoading ? <Spinner animation="border" variant='info' />
                         : user?.role === 1 ? <Navigate to='/admin/librarian' replace />
-                            : user?.role === 2 ? <Navigate to='/statistical/chart' replace /> : <Navigate to='/readers/home' replace />
+                            : user?.role === 2 ? <Navigate to='/statistical/chart' replace /> : <Navigate to='/readers/home' replace={false} />
                 }
             </div>
         )

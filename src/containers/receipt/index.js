@@ -1,41 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import { Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import BasicTable from '../../components/table';
-import { loadReceipt, receiptsSelector } from '../../reducers/receipt';
+import { loadReceipt, receiptsSelector, searchReceipt } from '../../reducers/receipt';
 import ReceiptModal from '../modal/receipt_modal';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import TableBootstrap from '../../components/table/table-bootstrap';
 
 const Receipt = () => {
     const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch()
     const receipts = useSelector(receiptsSelector)
-    const [receipt, setReceipt] = useState()
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadReceipt())
-    }, [dispatch])
+        dispatch(searchReceipt(keyword.replace(/\s+/g, ' ').trim()))
+    }, [dispatch, keyword])
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            );
+        }
+    }
 
     const columns = [
-        {
-            name: "id_receipt",
-            label: "Mã phiếu nhập",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
         {
             name: "librarian",
             label: "Tên thủ thư nhập phiếu",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg='info' >{JSON.parse(value).first_name + ' ' + JSON.parse(value).last_name}</Badge>
+                            <Badge bg='info' >{JSON.parse(value.librarian).first_name + ' ' + JSON.parse(value.librarian).last_name}</Badge>
                         </div>
                     );
                 }
@@ -45,36 +51,35 @@ const Receipt = () => {
             name: "ds",
             label: "Các đầu sách trong phiếu nhập",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <div className="d-flex droptop">
-                                {JSON.parse(value).length <= 0 ? null : (
+                                {JSON.parse(value.ds).length <= 0 ? null : (
                                     <Badge bg="success"
                                         className="d-flex align-items-center"
-                                        data-toggle={JSON.parse(value).length >= 2 ? 'dropdown' : ''}
+                                        data-toggle={JSON.parse(value.ds).length >= 2 ? 'dropdown' : ''}
                                     >
-                                        <span className="pr-2">{JSON.parse(value)[0].ds?.label + ': ' + JSON.parse(value)[0].number_book}</span>
-                                        {JSON.parse(value).length >= 2 && (
+                                        <span className="pr-2">{JSON.parse(value.ds)[0].ds?.label + ': ' + JSON.parse(value.ds)[0].number_book}</span>
+                                        {JSON.parse(value.ds).length >= 2 && (
                                             <>
-                                                <span className="badge badge-secondary mr-2 p-1">+ {JSON.parse(value).length - 1}</span>
+                                                <span className="badge badge-secondary mr-2 p-1">+ {JSON.parse(value.ds).length - 1}</span>
                                                 <i className="fa-solid fa-chevron-down"></i>
                                             </>
                                         )}
                                     </Badge>
                                 )}
-                                {JSON.parse(value).length >= 2 && (
+                                {JSON.parse(value.ds).length >= 2 && (
                                     <div className="dropdown-menu pd-0">
-                                        {JSON.parse(value).map((item, index) => {
+                                        {JSON.parse(value.ds).map((item, index) => {
                                             return (
                                                 <div key={index} className="dropdown-item-list">
                                                     {item?.ds.label + ': ' + item.number_book}
                                                 </div>
                                             );
                                         })}
-                                        <div className="dropdown-footer">Total: {JSON.parse(value).length}</div>
+                                        <div className="dropdown-footer">Total: {JSON.parse(value.ds).length}</div>
                                     </div>
                                 )}
                             </div>
@@ -87,22 +92,20 @@ const Receipt = () => {
             name: "create_time",
             label: "Ngày nhập",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{value.toString().split('T')[0]}</p>
+                        <p>{value.create_time.toString().split('T')[0]}</p>
                     );
                 }
             }
         },
         {
-            name: "id_receipt",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <OverlayTrigger
@@ -114,7 +117,7 @@ const Receipt = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -125,30 +128,30 @@ const Receipt = () => {
 
     const onClose = () => {
         setIsOpen(false)
-        setReceipt()
+        setItem()
     }
 
-    const onRowClick = (data) => {
-        const temps = receipts.find(item => item.id_receipt === data[0])
-        setReceipt({
-            id_receipt: temps.id_receipt,
-            data: JSON.parse(temps.ds)
+    const onUpdate = (data) => {
+        setItem({
+            id_receipt: data.id_receipt,
+            data: JSON.parse(data.ds)
         })
+        setIsOpen(true)
     }
 
     const onOpen = () => {
         setIsOpen(true)
-        setReceipt()
+        setItem()
     }
 
     return (
         <>
             <HomePage>
                 {
-                    receipts && <BasicTable onRowClick={onRowClick} columns={columns} onOpen={onOpen} data={receipts} titleButton="Thêm phiếu nhập" titleTable="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" />
+                    <TableBootstrap columns={columns} onOpen={onOpen} data={receipts} titleButton="Thêm phiếu nhập" title="QUẢN LÝ DANH SÁCH PHIẾU NHẬP" header={header} />
                 }
                 {
-                    isOpen && <ReceiptModal isOpen={isOpen} onClose={onClose} value={receipt} />
+                    isOpen && <ReceiptModal isOpen={isOpen} onClose={onClose} value={item} />
                 }
             </HomePage>
         </>

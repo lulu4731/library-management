@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { addLiquidations, bookLiquidationsSelector, loadBookLiquidations, updateLiquidations } from '../../reducers/liquidation';
@@ -26,6 +26,7 @@ const LiquidationModal = ({ isOpen, onClose, value }) => {
                 setLiquidation(defaultValue)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const styles = {
@@ -65,45 +66,34 @@ const LiquidationModal = ({ isOpen, onClose, value }) => {
     }
 
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    THÊM PHIẾU THANH LÝ
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Form className='form-modal' onSubmit={onSubmit}>
-                <Modal.Body>
-                    <Form.Group>
-                        <Row>
-                            <Col>
-                                <Form.Label>Tác giả</Form.Label>
-                                <Select
-                                    closeMenuOnSelect={false}
-                                    isMulti
-                                    options={bookLiquidation}
-                                    styles={styles}
-                                    value={liquidation?.books || []}
-                                    onChange={(value) => onChangeValue(value, 'books')}
-                                />
-                            </Col>
-                        </Row>
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                    <Button variant="primary" type='submit'>{liquidation.id_liquidation === 0 ? 'Thêm' : "Sửa"}</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>
+                    {liquidation.id_liquidation === 0 ? 'THÊM PHIẾU THANH LÝ' : "SỬA PHIẾU THANH LÝ"}
+                </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Label>Chọn sách thanh lý</Form.Label>
+                            <Select
+                                closeMenuOnSelect={false}
+                                isMulti
+                                options={bookLiquidation}
+                                styles={styles}
+                                value={liquidation?.books || []}
+                                onChange={(value) => onChangeValue(value, 'books')}
+                            />
+                        </Col>
+                    </Row>
+                </Form.Group>
+            </Offcanvas.Body>
+            <Modal.Footer>
+                <Button variant='secondary' onClick={onClose}>Đóng</Button>
+                <Button variant="primary" type='submit' onClick={onSubmit}>{liquidation.id_liquidation === 0 ? 'Thêm' : "Sửa"}</Button>
+            </Modal.Footer>
+        </Offcanvas>
     )
 }
 

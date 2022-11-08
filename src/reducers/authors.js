@@ -19,6 +19,23 @@ export const loadAuthors = createAsyncThunk(
     }
 )
 
+export const searchAuthors = createAsyncThunk(
+    "authors/searchAuthors",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/author/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addAuthors = createAsyncThunk(
     "authors/addAuthors",
     async (author) => {
@@ -79,7 +96,7 @@ const authors = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadAuthors.fulfilled, (state, action) => {
+            .addCase(searchAuthors.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.authors = action.payload.data
                 }

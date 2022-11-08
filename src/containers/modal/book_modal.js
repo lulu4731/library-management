@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { updateBooks } from '../../reducers/book';
-import { addCompany, updateCompany } from '../../reducers/company';
 
 const BookModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -22,6 +21,7 @@ const BookModal = ({ isOpen, onClose, value }) => {
                 setPosition(defaultValue)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const onValueChange = (keyValue, keyName) => {
@@ -34,51 +34,29 @@ const BookModal = ({ isOpen, onClose, value }) => {
         e.preventDefault()
 
         dispatch(updateBooks(position))
-
-        // if (position.id_book === 0) {
-        //     // dispatch(addCompany(newCompany))
-        // } else {
-        //     dispatch(updateCompany({
-        //         id_publishing_company: company.id_publishing_company,
-        //         company: newCompany
-        //     }))
-        // }
         onClose()
     }
 
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    CẬP NHẬT VỊ TRÍ
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Form className='form-modal' onSubmit={onSubmit}>
-                <Modal.Body>
-                    <Form.Group>
-                        <Row>
-                            <Col>
-                                <Form.Label>Vị trí</Form.Label>
-                                <Form.Control type="text" required value={position?.position} onChange={(e) => onValueChange(e.target.value, 'position')} />
-                            </Col>
-                        </Row>
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                    <Button variant="primary" type='submit'>{position.id_book === 0 ? 'Thêm' : "Sửa"}</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>CẬP NHẬT VỊ TRÍ</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Label>Vị trí</Form.Label>
+                            <Form.Control type="text" required value={position?.position} onChange={(e) => onValueChange(e.target.value, 'position')} />
+                        </Col>
+                    </Row>
+                </Form.Group>
+            </Offcanvas.Body>
+            <Modal.Footer>
+                <Button variant='secondary' onClick={onClose}>Đóng</Button>
+                <Button variant="primary" type='submit' onClick={onSubmit}>Cập nhật</Button>
+            </Modal.Footer>
+        </Offcanvas>
     )
 }
 

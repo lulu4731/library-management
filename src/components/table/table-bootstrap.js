@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Table } from 'react-bootstrap'
+import { Button, Table } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 
-const TableBootstrap = ({ columns = [], data = [], title }) => {
+const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, page, header }) => {
     const [pageNumber, setPageNumber] = useState(0)
-    const todoPerPage = 2
+    // const [keyword, setKeyword] = useState('')
+    const todoPerPage = page || 10
     const pagesVisited = pageNumber * todoPerPage
 
     const pageCount = Math.ceil(data.length / todoPerPage)
@@ -29,22 +30,31 @@ const TableBootstrap = ({ columns = [], data = [], title }) => {
     const changePage = ({ selected }) => {
         setPageNumber(selected)
     }
+
+    // console.log(keyword)
     return (
         <>
-            <Table striped bordered hover className="table-info">
+            {
+                titleButton && <Button className='p-2 mb-2' style={{ backgroundColor: 'rgb(119 106 207)', borderColor: 'rgb(119 106 207)' }} onClick={() => onOpen()}>{titleButton}</Button>
+            }
+            <Table bordered hover className="table-info box-comments">
                 <thead>
                     <tr>
                         <th colSpan={columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2 + 1} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>{title}</th>
                         <th colSpan={columns.length / 2} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
-                            <div className='search-table'>
-                                <label style={{ marginBottom: 0 }}>
-                                    <input type="text" placeholder='Tìm kiếm' />
-                                    <i className="fa-solid fa-magnifying-glass icon"></i>
-                                </label>
-                            </div>
+                            {
+                                !header ? (
+                                    <div className='search-table'>
+                                        <label style={{ marginBottom: 0 }}>
+                                            <input type="text" placeholder='Tìm kiếm' />
+                                            <i className="fa-solid fa-magnifying-glass icon"></i>
+                                        </label>
+                                    </div>
+                                ) : header.customRender()
+                            }
                         </th>
                     </tr>
-                    <tr style={{ borderBottom: 0 }}>
+                    <tr>
                         {columns.map((item, index) => (
                             <th key={index}>{item?.label}</th>
                         ))}

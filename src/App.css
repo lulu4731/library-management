@@ -17,8 +17,15 @@
 body{
     min-height: 100vh;
     overflow-x: hidden;
-
+    -ms-overflow-style: none; 
+  scrollbar-width: none; 
+  overflow-y: scroll; 
 }
+body::-webkit-scrollbar {
+  display: none; 
+}
+
+
 .container-app{
     position: relative;
     width: 100%;
@@ -845,3 +852,20 @@ form.sign-in-form {
 
 /* header page readers */
 
+.card-statistical{
+  width: 100%;
+	padding: 2rem;
+	border: 1px solid rgba(11, 131, 230, 0.4);
+	border-radius: 15px;
+	box-shadow: rgba(11, 131, 230, 0.4) 0px 0px 1rem;
+    background-color: #f0f8ff;
+}
+
+.card-statistical:hover {
+  box-shadow: rgba(11, 131, 230, 0.4) 0px 0px 1rem !important;
+  background-color: #F0F8FF;
+}
+
+.card-header {
+  background-color: rgb(223 218 255);
+}

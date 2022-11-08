@@ -104,19 +104,62 @@ export const deleteLoveTitle = createAsyncThunk(
     }
 )
 
+export const searchTitle = createAsyncThunk(
+    "title/searchTitle",
+    async (data) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/search?k=${data.keyword}&c=${data.category}`,
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const searchTitleLibrarian = createAsyncThunk(
+    "title/searchTitleLibrarian",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/ds/search?k=${keyword}`,
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const titles = createSlice({
     name: 'title',
     initialState: {
-        titles: []
+        titles: [],
+        titlesSearch: {
+            list: [],
+            amount_love: 0
+        },
     },
     reducers: {
 
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadTitle.fulfilled, (state, action) => {
+            .addCase(searchTitleLibrarian.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.titles = action.payload.data
+                }
+            })
+            .addCase(searchTitle.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.titlesSearch = action.payload.data
                 }
             })
             .addCase(addTitle.fulfilled, (state, action) => {
@@ -149,11 +192,12 @@ const titles = createSlice({
             })
             .addCase(addLoveTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
-                    state.titles = state.titles.map((item) =>
+                    state.titlesSearch.list = state.titlesSearch.list.map((item) =>
                         item.isbn === action.payload.isbn
                             ? { ...item, love_status: true }
                             : item
                     )
+                    state.titlesSearch.amount_love += 1
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)
@@ -161,11 +205,12 @@ const titles = createSlice({
             })
             .addCase(deleteLoveTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
-                    state.titles = state.titles.map((item) =>
+                    state.titlesSearch.list = state.titlesSearch.list.map((item) =>
                         item.isbn === action.payload.isbn
                             ? { ...item, love_status: false }
                             : item
                     )
+                    state.titlesSearch.amount_love -= 1
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)
@@ -178,6 +223,7 @@ const titlesReducer = titles.reducer
 
 
 export const titlesSelector = (state) => state.titlesReducer.titles
+export const titlesSearchSelector = (state) => state.titlesReducer.titlesSearch
 
 
 export default titlesReducer

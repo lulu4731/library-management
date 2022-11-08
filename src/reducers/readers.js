@@ -19,6 +19,23 @@ export const loadReaders = createAsyncThunk(
     }
 )
 
+export const searchReaders = createAsyncThunk(
+    "readers/searchReaders",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/readers/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addReaders = createAsyncThunk(
     "readers/addReaders",
     async (reader) => {
@@ -86,6 +103,58 @@ export const deleteReaders = createAsyncThunk(
         }
     }
 )
+
+export const banReaders = createAsyncThunk(
+    "readers/banReaders",
+    async (data) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/readers/${data.id_readers}/ban`, data.lock
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_readers: data.id_readers }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const dieReaders = createAsyncThunk(
+    "readers/dieReaders",
+    async (data) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/readers/${data.id_readers}/die`, data.lock
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_readers: data.id_readers }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const unLockReaders = createAsyncThunk(
+    "readers/unLockReaders",
+    async (id_readers) => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:8000/api/v0/readers/${id_readers}/unlock`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_readers: id_readers }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const readers = createSlice({
     name: 'readers',
     initialState: {
@@ -96,7 +165,7 @@ const readers = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadReaders.fulfilled, (state, action) => {
+            .addCase(searchReaders.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.readers = action.payload.data
                 }
@@ -135,6 +204,53 @@ const readers = createSlice({
                         item.id_readers === action.payload.data.id_readers
                             ? action.payload.data
                             : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(banReaders.fulfilled, (state, action) => {
+                console.log(action.payload.data)
+                if (action.payload.status === 200) {
+                    state.readers = state.readers.map((item) => {
+                        if (item.id_readers === action.payload.id_readers) {
+                            item.readers_status = 1
+                            item.hours = action.payload.data
+                            return item
+                        }
+                        return item
+                    }
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(dieReaders.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.readers = state.readers.map((item) => {
+                        if (item.id_readers === action.payload.id_readers) {
+                            item.readers_status = 2
+                            return item
+                        }
+                        return item
+                    }
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(unLockReaders.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.readers = state.readers.map((item) => {
+                        if (item.id_readers === action.payload.id_readers) {
+                            item.readers_status = 0
+                            return item
+                        }
+                        return item
+                    }
                     )
                     toastSuccess(action.payload.message)
                 } else {

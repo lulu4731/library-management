@@ -1,38 +1,44 @@
 import React, { useState, useEffect } from 'react'
-import BasicTable from '../../components/table'
 import { useDispatch, useSelector } from 'react-redux';
-import { liquidationsSelector, loadLiquidations } from '../../reducers/liquidation';
+import { liquidationsSelector, loadLiquidations, searchLiquidations } from '../../reducers/liquidation';
 import HomePage from '../../components/home/HomePage';
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import LiquidationModal from '../modal/liquidation-modal';
+import TableBootstrap from '../../components/table/table-bootstrap';
 
 const Liquidation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch()
     const liquidations = useSelector(liquidationsSelector)
-    const [liquidation, setLiquidation] = useState()
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadLiquidations())
-    }, [dispatch])
+        dispatch(searchLiquidations(keyword.replace(/\s+/g, ' ').trim()))
+    }, [dispatch, keyword])
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            );
+        }
+    }
 
     const columns = [
-        {
-            name: "id_liquidation",
-            label: "Mã phiếu thanh lý",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
         {
             name: "librarian",
             label: "Thủ thư nhập phiếu",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    const librarian = JSON.parse(value)
+                status: true,
+                customRender: (value) => {
+                    const librarian = JSON.parse(value.librarian)
                     return (
                         <p>{librarian.first_name + " " + librarian.last_name}</p>
                     );
@@ -43,36 +49,35 @@ const Liquidation = () => {
             name: "books",
             label: "Các sách thanh lý",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <div className="d-flex droptop">
-                                {JSON.parse(value).length <= 0 ? null : (
+                                {JSON.parse(value.books).length <= 0 ? null : (
                                     <Badge bg="success"
                                         className="d-flex align-items-center"
-                                        data-toggle={JSON.parse(value).length >= 2 ? 'dropdown' : ''}
+                                        data-toggle={JSON.parse(value.books).length >= 2 ? 'dropdown' : ''}
                                     >
-                                        <span className="mr-2">{JSON.parse(value)[0]?.label}</span>
-                                        {JSON.parse(value).length >= 2 && (
+                                        <span className="mr-2">{JSON.parse(value.books)[0]?.label}</span>
+                                        {JSON.parse(value.books).length >= 2 && (
                                             <>
-                                                <span className="badge badge-secondary mr-2 p-1">+ {JSON.parse(value).length - 1}</span>
+                                                <span className="badge badge-secondary mr-2 p-1">+ {JSON.parse(value.books).length - 1}</span>
                                                 <i className="fa-solid fa-chevron-down"></i>
                                             </>
                                         )}
                                     </Badge>
                                 )}
-                                {JSON.parse(value).length >= 2 && (
+                                {JSON.parse(value.books).length >= 2 && (
                                     <div className="dropdown-menu pd-0">
-                                        {JSON.parse(value).map((item, index) => {
+                                        {JSON.parse(value.books).map((item, index) => {
                                             return (
                                                 <div key={index} className="dropdown-item-list">
                                                     {item?.label}
                                                 </div>
                                             );
                                         })}
-                                        <div className="dropdown-footer">Total: {JSON.parse(value).length}</div>
+                                        <div className="dropdown-footer">Total: {JSON.parse(value.books).length}</div>
                                     </div>
                                 )}
                             </div>
@@ -85,22 +90,20 @@ const Liquidation = () => {
             name: "create_time",
             label: "Ngày tạo phiếu",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{value.toString().split('T')[0]}</p>
+                        <p>{value.create_time.toString().split('T')[0]}</p>
                     );
                 }
             }
         },
         {
-            name: "id_liquidation",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <OverlayTrigger
@@ -112,7 +115,7 @@ const Liquidation = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -121,31 +124,31 @@ const Liquidation = () => {
         },
     ];
 
-    const onRowClick = (data) => {
-        const temps = liquidations.find(item => item.id_liquidation === data[0])
-        setLiquidation({
-            id_liquidation: temps.id_liquidation,
-            books: JSON.parse(temps.books)
+    const onUpdate = (data) => {
+        setItem({
+            id_liquidation: data.id_liquidation,
+            books: JSON.parse(data.books)
         })
+        setIsOpen(true)
     }
 
     const onClose = () => {
         setIsOpen(false)
-        setLiquidation()
+        setItem()
     }
 
     const onOpen = () => {
         setIsOpen(true)
-        setLiquidation()
+        setItem()
     }
     return (
         <>
             <HomePage>
                 {
-                    liquidations && (<BasicTable onRowClick={onRowClick} columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" onOpen={onOpen} titleTable="QUẢN LÝ PHIẾU THANH LÝ" />)
+                    (<TableBootstrap columns={columns} data={liquidations} titleButton="Thêm thiếu thanh lý" onOpen={onOpen} title="QUẢN LÝ PHIẾU THANH LÝ" header={header} />)
                 }
                 {
-                    isOpen && (<LiquidationModal isOpen={isOpen} onClose={onClose} value={liquidation} />)
+                    isOpen && (<LiquidationModal isOpen={isOpen} onClose={onClose} value={item} />)
                 }
             </HomePage>
         </>

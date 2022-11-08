@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Col, Offcanvas, Row } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addLoveTitle, deleteLoveTitle } from '../../../reducers/title';
+import { saveDs } from '../../../utils/local_storage_order';
 
-const ModalLove = ({ isOpen, setIsOpen, titles = [] }) => {
+const ModalLove = ({ isOpen, onClose, titles = [], orders, setOrders }) => {
     const dispatch = useDispatch()
-    // console.log(titles)
+    console.log(titles)
 
-    const handleClose = () => {
-        setIsOpen(false)
-    }
     return (
         <>
-            <Offcanvas show={isOpen} onHide={handleClose} placement="end" scroll className="modal-love">
+            <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title className='title-love'>DANH SÁCH YÊU THÍCH</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    {/* <div className="grid"> */}
                     <Row>
                         {
                             titles.length > 0 && titles.map((item, index) => (
-                                <Col style={{ padding: 0 }} key={index} md={6} className="mb-5">
+                                <Col key={index} md={6} className="p-0">
                                     <div className="grid-item-love">
                                         <div className="gallery-image">
                                             <img src={item.img} alt="" />
@@ -31,7 +28,13 @@ const ModalLove = ({ isOpen, setIsOpen, titles = [] }) => {
                                                 <div className="img-description">
                                                     <Row >
                                                         <Col>
-                                                            <i className="fa-solid fa-plus fa-2x float-left"></i>
+                                                            <i className="fa-solid fa-plus fa-2x float-left"
+                                                                style={{
+                                                                    color: orders.find(order => JSON.stringify(order) === JSON.stringify(saveDs(item))) ? '#09f910' : 'white'
+                                                                }}
+                                                                onClick={() => setOrders(item)}
+                                                            >
+                                                            </i>
                                                         </Col>
                                                         <Col>
                                                             <i className="fa-solid fa fa-heart fa-2x float-right" style={{ color: item.love_status ? '#f35539' : 'white' }}
@@ -60,13 +63,7 @@ const ModalLove = ({ isOpen, setIsOpen, titles = [] }) => {
                             ))
                         }
                     </Row>
-                    {/* </div> */}
                 </Offcanvas.Body>
-                {/* <Col style={{ maxHeight: '60px', minHeight: '60px' }} className="d-flex">
-                    <Col className="float-right">
-                        <Button>Đóng</Button>
-                    </Col>
-                </Col> */}
             </Offcanvas>
         </>
     );

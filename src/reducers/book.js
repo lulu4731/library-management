@@ -18,6 +18,22 @@ export const loadBooks = createAsyncThunk(
         }
     }
 )
+export const searchBooks = createAsyncThunk(
+    "books/searchBooks",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/book/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 
 export const updateBooks = createAsyncThunk(
     "books/updateBooks",
@@ -53,7 +69,7 @@ const books = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadBooks.fulfilled, (state, action) => {
+            .addCase(searchBooks.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.books = action.payload.data
                 }

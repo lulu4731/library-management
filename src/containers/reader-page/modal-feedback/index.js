@@ -1,20 +1,18 @@
 import React, { useState } from 'react'
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
+import { Button, Col, Form, Modal, Offcanvas, Row } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
 import { addFeedback } from '../../../reducers/feedback'
+import Select from 'react-select'
 
-const ModalFeedback = ({ isOpen, setIsOpen }) => {
+const ModalFeedback = ({ isOpen, onClose }) => {
     const dispatch = useDispatch()
     const [feedback, setFeedback] = useState({
         subject: '',
-        content: ''
+        content: '',
+        problem: {}
     })
 
-    const { subject, content } = feedback
-
-    const onClose = () => {
-        setIsOpen(false)
-    }
+    const { subject, content, problem } = feedback
 
     const onChangeValue = (keyValue, keyName) => {
         const newFeedback = { ...feedback }
@@ -26,27 +24,26 @@ const ModalFeedback = ({ isOpen, setIsOpen }) => {
         dispatch(addFeedback(feedback))
         setFeedback({
             subject: '',
-            content: ''
+            content: '',
+            problem: {}
         })
+
         onClose()
     }
 
+    const options = [
+        { value: 0, label: "Về tài khoản" },
+        { value: 1, label: "Về mượn trả sách" },
+        { value: 2, label: "Về mượn rách sách, mất sách" },
+        { value: 3, label: "Vấn đề khác" }
+    ]
+
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    GỬI PHẢN HỒI ĐẾN ADMIN
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>GỬI PHẢN HỒI ĐẾN ADMIN</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
                 <Form.Group>
                     <Row>
                         <Col>
@@ -57,17 +54,28 @@ const ModalFeedback = ({ isOpen, setIsOpen }) => {
                     <br />
                     <Row>
                         <Col>
+                            <Form.Label>Vấn đề phản hồi</Form.Label>
+                            <Select
+                                options={options}
+                                value={problem}
+                                onChange={(value) => onChangeValue(value, 'problem')}
+                            />
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col>
                             <Form.Label>Nội dung</Form.Label>
-                            <Form.Control as="textarea" rows={5} value={content} onChange={(e) => onChangeValue(e.target.value, 'content')} />
+                            <Form.Control as="textarea" rows={21} value={content} onChange={(e) => onChangeValue(e.target.value, 'content')} />
                         </Col>
                     </Row>
                 </Form.Group>
-            </Modal.Body>
+            </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
                 <Button variant="primary" onClick={onSubmit}>Gửi phản hồi</Button>
             </Modal.Footer>
-        </Modal >
+        </Offcanvas>
     )
 }
 

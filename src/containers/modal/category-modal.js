@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { addCategory, updateCategory } from '../../reducers/category';
 
@@ -21,6 +21,7 @@ const CategoryModal = ({ isOpen, onClose, value }) => {
                 setCategory(defaultValue)
             }
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const onValueChange = (keyValue, keyName) => {
@@ -45,22 +46,13 @@ const CategoryModal = ({ isOpen, onClose, value }) => {
     }
 
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    THÊM THỂ LOẠI
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Modal.Body>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>
+                    {category.id_category === 0 ? 'THÊM THỂ LOẠI' : "SỬA THỂ LOẠI"}
+                </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
                 <Form.Group>
                     <Row>
                         <Col>
@@ -69,12 +61,12 @@ const CategoryModal = ({ isOpen, onClose, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-            </Modal.Body>
+            </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
                 <Button variant="primary" onClick={onSubmit}>{category.id_category === 0 ? 'Thêm' : "Sửa"}</Button>
             </Modal.Footer>
-        </Modal>
+        </Offcanvas>
     )
 }
 

@@ -18,6 +18,23 @@ export const loadReceipt = createAsyncThunk(
     }
 )
 
+export const searchReceipt = createAsyncThunk(
+    "receipt/searchReceipt",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/receipt/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addReceipt = createAsyncThunk(
     "receipt/addReceipt",
     async (receipt) => {
@@ -61,7 +78,7 @@ const receipts = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadReceipt.fulfilled, (state, action) => {
+            .addCase(searchReceipt.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.receipts = action.payload.data
                 }

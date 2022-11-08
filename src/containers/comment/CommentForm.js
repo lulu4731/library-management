@@ -16,37 +16,37 @@ const CommentForm = ({
     }
     return (
         // <Row>
-            <Form onSubmit={onSubmit} className="form-comment">
-                <textarea
-                    type="text"
-                    className="write-comment col-xl-12 col-lg-12 col-md-12 col-sm-12"
-                    placeholder="Viết bình luận..."
-                    name="content"
-                    onKeyPress={(e) => {
-                        e.key === "Enter" && e.preventDefault()
-                    }}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    // style={{ height: "120px", minHeight: "100px", maxHeight: "300px", padding: "10px", margin: "10px 0px", border: "2px solid #ccc", borderRadius: "5px", borderSizing: "border-box" }}
-                />
+        <Form onSubmit={onSubmit} className="form-comment">
+            <textarea
+                type="text"
+                className="write-comment col-xl-12 col-lg-12 col-md-12 col-sm-12"
+                placeholder="Viết bình luận..."
+                name="content"
+                onKeyPress={(e) => {
+                    e.key === "Enter" && e.preventDefault()
+                }}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+            // style={{ height: "120px", minHeight: "100px", maxHeight: "300px", padding: "10px", margin: "10px 0px", border: "2px solid #ccc", borderRadius: "5px", borderSizing: "border-box" }}
+            />
+            <button
+                className="button-comment ml-2"
+                disabled={isTextareaDisabled}
+                onClick={onSubmit}
+            >
+                {/* <i className="fas fa-comment-dots"></i> */}
+                Bình luận
+            </button>
+            {hasCancelButton && (
                 <button
-                    className="button-comment ml-2"
-                    disabled={isTextareaDisabled}
-                    onClick={onSubmit}
+                    className="button-comment"
+                    onClick={handleCancel}
                 >
-                    {/* <i className="fas fa-comment-dots"></i> */}
-                    Bình luận
+                    {/* <i className="fas fa-window-close"></i> */}
+                    Đóng
                 </button>
-                {hasCancelButton && (
-                    <button
-                        className="button-comment"
-                        onClick={handleCancel}
-                    >
-                        {/* <i className="fas fa-window-close"></i> */}
-                        Đóng
-                    </button>
-                )}
-            </Form>
+            )}
+        </Form>
         // </Row>
     )
 }

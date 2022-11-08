@@ -1,69 +1,64 @@
 import React, { useEffect, useState } from 'react'
-import BasicTable from '../../components/table'
 import ReadersModal from '../modal/readers-modal'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteReaders, loadReaders, readersSelector, updateReadersStatus } from '../../reducers/readers'
-// import { checkLogin } from '../../reducers/librarian'
+import { deleteReaders, loadReaders, readersSelector, searchReaders, unLockReaders, updateReadersStatus } from '../../reducers/readers'
 import HomePage from '../../components/home/HomePage'
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import convertTimesTamp from '../../utils/convertTimesTamp'
+import TableBootstrap from '../../components/table/table-bootstrap'
+import LockModal from '../modal/lock-modal'
 
 const ReadersPage = () => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const [isOpen, setIsOpen] = useState(false)
-    const [reader, setReader] = useState()
+    const [isOpenLock, setIsOpenLock] = useState(false)
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadReaders())
-        // dispatch(checkLogin())
-    }, [dispatch])
+        dispatch(searchReaders(keyword.replace(/\s+/g, ' ').trim()))
+    }, [keyword, dispatch])
 
     const onClose = () => {
         setIsOpen(false)
-        setReader()
+        setIsOpenLock(false)
+        setItem()
     }
 
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            );
+        }
+    }
     const columns = [
         {
             name: "citizen_identification",
             label: "CMND",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "first_name",
             label: "Họ",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "last_name",
             label: "Tên",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "email",
             label: "Email",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "phone",
-            label: "Phone",
-            options: {
-                filter: true,
-                sort: true,
-            }
+            label: "Số điện thoại",
         },
         {
             name: "address",
@@ -77,12 +72,11 @@ const ReadersPage = () => {
             name: "gender",
             label: "Giới tính",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{value === 0 ? 'Nam' : 'Nữ'}</p>
-                    );
+                        <p>{value.gender === 0 ? 'Nam' : 'Nữ'}</p>
+                    )
                 }
             }
         },
@@ -90,11 +84,10 @@ const ReadersPage = () => {
             name: "date_of_birth",
             label: "Ngày sinh",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{value != null ? convertTimesTamp(value) : ''}</p>
+                        <p>{value.date_of_birth === null ? '' : convertTimesTamp(value.date_of_birth)}</p>
                     );
                 }
             }
@@ -103,25 +96,23 @@ const ReadersPage = () => {
             name: "readers_status",
             label: "Trạng thái",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value === 0 ? "success" : value === 2 ? 'danger' : value === 1 ? 'danger' : 'warning'}>{value === 0 ? "Hoạt động" : value === 2 ? 'Khóa' : value === 1 ? 'Khóa vĩnh viễn' : 'Chờ duyệt'}</Badge>
+                            <Badge bg={value.readers_status === 0 ? 'success' : 'danger'}>{value.readers_status === 0 ? "Hoạt động" : value.readers_status === 1 ? "Khóa " + value.hours + " giờ" : 'Khóa vĩnh viễn'}</Badge>
                         </div>
                     );
                 }
             },
         },
         {
-            name: "id_readers",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, data) => {
-                    return data.rowData[8] === 3 ? (
+                status: true,
+                customRender: (value) => {
+                    return value.readers_status === 3 ? (
                         <div className='pb-0'>
                             <OverlayTrigger
                                 key={'bottom-change'}
@@ -132,7 +123,7 @@ const ReadersPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => dispatch(updateReadersStatus(value))}><i className="fa-solid fa-user-check"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => dispatch(updateReadersStatus(value.id_readers))}><i className="fa-solid fa-user-check"></i></Button>
                             </OverlayTrigger>
                         </div>
                     ) : (
@@ -146,7 +137,7 @@ const ReadersPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                             <OverlayTrigger
                                 key={'bottom-delete'}
@@ -157,18 +148,18 @@ const ReadersPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='danger mr-3' onClick={() => onDelete(value)}><i className="fa-solid fa-trash-can"></i></Button>
+                                <Button variant='danger mr-3' onClick={() => onDelete(value.id_readers)}><i className="fa-solid fa-trash-can"></i></Button>
                             </OverlayTrigger>
                             <OverlayTrigger
                                 key={'bottom-lock'}
                                 placement={'bottom'}
                                 overlay={
                                     <Tooltip id={`tooltip-lock`}>
-                                        {data.rowData[8] === 0 ? "Khóa tài khoản" : "Mở khóa"}
+                                        {value.readers_status === 0 ? "Khóa tài khoản" : "Mở khóa"}
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='danger' onClick={() => onDelete(value)}><i className={data.rowData[8] === 0 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"}></i></Button>
+                                <Button variant='warning' onClick={() => value.readers_status === 0 ? onLock(value) : unLock(value.id_readers)}><i className={value.readers_status === 0 ? "fa-solid fa-lock" : "fa-solid fa-lock-open"}></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -177,31 +168,47 @@ const ReadersPage = () => {
         },
     ];
 
-    const onRowClick = (data) => {
-        const temps = readers.find((item) => item.citizen_identification === data[0])
-        setReader({
-            ...temps,
-            date_of_birth: new Date(convertTimesTamp(temps.date_of_birth))
-        })
-    }
-
     const onDelete = (id_readers) => {
         dispatch(deleteReaders(id_readers))
     }
 
     const onOpen = () => {
         setIsOpen(true)
-        setReader()
+        setItem()
+    }
+
+    const onUpdate = (data) => {
+        setItem({
+            ...data,
+            date_of_birth: new Date(convertTimesTamp(data.date_of_birth))
+        })
+        setIsOpen(true)
+    }
+
+    const onLock = (data) => {
+        setItem({
+            id_readers: data.id_readers,
+            first_name: data.first_name,
+            last_name: data.last_name
+        })
+        setIsOpenLock(true)
+    }
+
+    const unLock = (id_readers) => {
+        dispatch(unLockReaders(id_readers))
     }
 
     return (
         <>
             <HomePage>
                 {
-                    readers && <BasicTable onRowClick={onRowClick} columns={columns} data={readers} titleButton="Thêm độc giả" onOpen={onOpen} titleTable="QUẢN LÝ ĐỘC GIẢ" />
+                    <TableBootstrap columns={columns} data={readers} title="QUẢN LÝ ĐỘC GIẢ" titleButton="Thêm độc giả" onOpen={onOpen} header={header} />
                 }
                 {
-                    isOpen && <ReadersModal isOpen={isOpen} onClose={onClose} value={reader} />
+                    isOpen && <ReadersModal isOpen={isOpen} onClose={onClose} value={item} />
+                }
+                {
+                    isOpenLock && <LockModal isOpen={isOpenLock} onClose={onClose} value={item} />
                 }
             </HomePage>
         </>

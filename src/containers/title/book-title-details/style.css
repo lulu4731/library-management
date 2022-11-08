@@ -187,7 +187,7 @@
     /* padding: 1rem 1.2rem; */
     display: flex;
     justify-content: center;
-	margin-left: 35px;
+	margin: 16px;
 }
 
 .offcanvas-end {
@@ -208,3 +208,23 @@
   .modal-love{
 	background-color: #f0f8ff;
   }
+
+
+  .post-user-card.card {
+	display: inline-block;
+	text-align: center;
+	background-color: #F0F8FF;
+}
+
+.post-user-card .d-flex {
+	display: flex !important;
+	justify-content: center;
+}
+
+.image-user {
+    position: absolute;
+    font-size: 1.5rem;
+    top: 42%;
+    left: 53%;
+    /* color: #fff; */
+}

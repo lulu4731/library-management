@@ -74,10 +74,10 @@ function App() {
                         <Route path='/company' element={<CompanyPage />} />
                     </Route>
 
-                    <Route element={<ProtectedRouteReaders isAuthenticated={isAuthenticated} />}>
-                        <Route path='/readers/home' element={<HomePageReader />} />
-                        <Route path='/readers/ds/:isbn' element={<BookTitleDetails />} />
-                    </Route>
+                    {/* <Route element={<ProtectedRouteReaders isAuthenticated={isAuthenticated} />}> */}
+                    <Route path='/readers/home' element={<HomePageReader />} />
+                    <Route path='/readers/ds/:isbn' element={<HomePageReader />} />
+                    {/* </Route> */}
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>

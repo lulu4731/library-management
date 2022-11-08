@@ -93,3 +93,18 @@ export const searchDS = async (keyword) => {
         else return { message: error.message }
     }
 }
+
+export const paymentBorrow = async (borrow) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:8000/api/v0/payment`,
+            borrow
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}

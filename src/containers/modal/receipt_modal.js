@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { loadTitle, titlesSelector } from '../../reducers/title';
 import Select from 'react-select';
@@ -46,6 +46,7 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                 setReceipts(defaultValue)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const [dsOptions, setDsOptions] = useState([])
@@ -88,16 +89,9 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
             }
         }))
     }
-    // console.log(receipts)
+
     const onChangeValue = (id, keyValue, keyName) => {
         const temps = { ...receipts }
-
-        // if (keyName === "ds") {
-        //     setDsOptions(dsOptions.filter(item => keyValue.value !== item.value))
-        // }
-
-        // console.log(typeof(keyValue.p))
-
         const newReceipts = { ...receipts.data[id] }
 
         newReceipts[keyName] = keyValue
@@ -121,80 +115,69 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
     }
 
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    THÊM PHIẾU NHẬP
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Form className="form-modal" onSubmit={onSubmit}>
-                <Modal.Body>
-                    <Row>
-                        <Col><Form.Label>Chọn đầu sách</Form.Label></Col>
-                        <Col><Form.Label>Số lượng</Form.Label></Col>
-                        <Col><Form.Label>Giá</Form.Label></Col>
-                        <Col><Form.Label>Thành tiền</Form.Label></Col>
-                        <div className='mr-5'>
-                        </div>
-                    </Row>
-                    {
-                        receipts.data.length > 0 && (
-                            receipts.data.map((item, index) => (
-                                <Form.Group key={index}>
-                                    <Row>
-                                        <Col>
-                                            <Select
-                                                options={dsOptions}
-                                                value={item.ds}
-                                                onChange={(value) => onChangeValue(index, value, 'ds')}
-                                            />
-                                        </Col>
-                                        <Col>
-                                            <Form.Control type="number" require="true" value={item.number_book} onChange={(e) => onChangeValue(index, +e.target.value, 'number_book')} />
-                                        </Col>
-                                        <Col>
-                                            <Form.Control type="tel" require="true" value={(+item.price).toLocaleString()} onChange={(e) => onChangeValue(index, e.target.value.replace(/\D/g, ''), 'price')} />
-                                        </Col>
-                                        <Col>
-                                            <Form.Control type="text" disabled value={(item.price * item.number_book).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
-                                        </Col>
-                                        <div className=''>
-                                            <Button variant='link' className='text-decoration-none p-2 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
-                                        </div>
-                                    </Row>
-                                    <br />
-                                </Form.Group>
-                            ))
-                        )
-                    }
-                    <Row>
-                        <Col md={8}>
-                            <Button variant='link' className='text-decoration-none' onClick={onAdd}><i className="fa-solid fa-plus"></i> Thêm đầu sách</Button>
-                        </Col>
-                        <Col style={{ marginRight: '48px', marginLeft: '60px' }}>
-                            <Form.Label>Tổng tiền</Form.Label>
-                            <Form.Control type="text" disabled value={receipts.data.reduce(
-                                (previousValue, currentValue) => previousValue + (currentValue.number_book * currentValue.price),
-                                0
-                            ).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
-                        </Col>
-                    </Row>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                    <Button variant="primary" type='submit'>{receipts.id_receipt === 0 ? 'Thêm' : "Sửa"}</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>
+                    {receipts.id_receipt === 0 ? 'THÊM PHIẾU NHẬP' : "SỬA PHIẾU NHẬP"}
+                </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Row>
+                    <Col md={4}><Form.Label>Chọn đầu sách</Form.Label></Col>
+                    <Col md={2}><Form.Label>Số lượng</Form.Label></Col>
+                    <Col><Form.Label>Giá</Form.Label></Col>
+                    <Col><Form.Label>Thành tiền</Form.Label></Col>
+                    <Col md={1}>
+                    </Col>
+                </Row>
+                {
+                    receipts.data.length > 0 && (
+                        receipts.data.map((item, index) => (
+                            <Form.Group key={index}>
+                                <Row>
+                                    <Col md={4}>
+                                        <Select
+                                            options={dsOptions}
+                                            value={item.ds}
+                                            onChange={(value) => onChangeValue(index, value, 'ds')}
+                                        />
+                                    </Col>
+                                    <Col md={2}>
+                                        <Form.Control type="number" require="true" value={item.number_book} onChange={(e) => onChangeValue(index, +e.target.value, 'number_book')} />
+                                    </Col>
+                                    <Col>
+                                        <Form.Control type="tel" require="true" value={(+item.price).toLocaleString()} onChange={(e) => onChangeValue(index, e.target.value.replace(/\D/g, ''), 'price')} />
+                                    </Col>
+                                    <Col>
+                                        <Form.Control type="text" disabled value={(item.price * item.number_book).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
+                                    </Col>
+                                    <Col md={1}>
+                                        <Button variant='link' className='text-decoration-none p-2 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
+                                    </Col>
+                                </Row>
+                                <br />
+                            </Form.Group>
+                        ))
+                    )
+                }
+                <Row>
+                    <Col md={8}>
+                        <Button variant='link' className='text-decoration-none' onClick={onAdd}><i className="fa-solid fa-plus"></i> Thêm đầu sách</Button>
+                    </Col>
+                    <Col style={{ marginRight: '30px', marginLeft: '40px' }}>
+                        <Form.Label>Tổng tiền</Form.Label>
+                        <Form.Control type="text" disabled value={receipts.data.reduce(
+                            (previousValue, currentValue) => previousValue + (currentValue.number_book * currentValue.price),
+                            0
+                        ).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
+                    </Col>
+                </Row>
+            </Offcanvas.Body>
+            <Modal.Footer>
+                <Button variant='secondary' onClick={onClose}>Đóng</Button>
+                <Button variant="primary" type='submit' onClick={onSubmit}>{receipts.id_receipt === 0 ? 'Thêm' : "Sửa"}</Button>
+            </Modal.Footer>
+        </Offcanvas>
     )
 }
 

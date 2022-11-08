@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { loadReaders, readersSelector } from '../../reducers/readers';
 import Select from 'react-select';
-import { loadTitle, titlesSelector } from '../../reducers/title';
 import DatePicker from "react-datepicker";
 import { components } from "react-select"
-import convertDate from '../../utils/convertDate';
-import { addBorrows, dsBorrowsSelector, loadDsBorrows, setDsBorrow, updateBorrows } from '../../reducers/borrow';
+import { addBorrows, dsBorrowsSelector, loadDsBorrows, updateBorrows } from '../../reducers/borrow';
 
-const BorrowModal = ({ modalShow, setModalShow, value }) => {
+const BorrowModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const titles = useSelector(dsBorrowsSelector)
-
-    // console.log(value)
 
     const defaultValue = {
         id_borrow: 0,
@@ -30,11 +26,6 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
         dispatch(loadDsBorrows())
     }, [dispatch])
 
-    // useEffect(() => {
-    //     dispatch(loadReaders())
-    //     dispatch(loadDsBorrows())
-    // }, [dispatch])
-
     useEffect(() => {
         if (value) {
             if (JSON.stringify(value) !== JSON.stringify(defaultValue)) {
@@ -43,6 +34,7 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                 setBorrow(defaultValue)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const readersOptions = readers.map(item => {
@@ -53,12 +45,6 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
     })
 
     const dsOptions = titles
-
-    const onClose = () => {
-        setModalShow(false)
-
-        setBorrow(defaultValue)
-    }
 
     const onChangeValue = (keyValue, keyName) => {
         const newBorrow = { ...borrow }
@@ -78,15 +64,24 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
         if (borrow.id_borrow === 0) {
             dispatch(addBorrows(newBorrow))
         } else {
-            // console.log(newBorrow)
             dispatch(updateBorrows(newBorrow))
         }
-        // console.log(borrow)
-        // console.log(newBorrow)
-        // dispatch(loadDsBorrows())
-        // dispatch(addBorrows(newBorrow))
         onClose()
     }
+
+    const styles = {
+        multiValue: (base, state) => {
+            return { ...base, backgroundColor: 'rgba(54, 179, 126, 0.1)', color: 'rgb(54, 179, 126)' };
+        },
+        multiValueLabel: (base, state) => {
+            return state.data.isFixed
+                ? { ...base, fontWeight: 'bold', color: 'white', paddingRight: 6 }
+                : base;
+        },
+        multiValueRemove: (base, state) => {
+            return state.data.isFixed ? { ...base, display: 'none' } : base;
+        },
+    };
 
     const isValidNewOption = (inputValue, selectValue) =>
         inputValue.length > 0 && selectValue.length < 3
@@ -105,26 +100,17 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
             </components.Menu>
         )
     }
-    // console.log(titles)
+
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={modalShow}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    TẠO PHIẾU MƯỢN
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Group>
-                    <Row>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>
+                    {borrow.id_borrow === 0 ? 'THÊM PHIẾU MƯỢN SÁCH' : 'SỬA PHIẾU MƯỢN SÁCH'}
+                </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form.Group className='pb-3'>
+                    <Row className='pb-3'>
                         <Col>
                             <Form.Label>Độc giả mượn sách</Form.Label>
                             <Select
@@ -133,6 +119,8 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                                 onChange={(value) => onChangeValue(value, 'id_readers')}
                             />
                         </Col>
+                    </Row>
+                    <Row>
                         <Col>
                             <Form.Label>Hạn trả sách</Form.Label>
                             <DatePicker
@@ -150,14 +138,14 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-                <br />
-                <Form.Group>
+                <Form.Group className='pb-3'>
                     <Row>
                         <Col>
                             <Form.Label>Chọn sách</Form.Label>
                             <Select
                                 isMulti
                                 options={dsOptions}
+                                styles={styles}
                                 value={borrow.books || []}
                                 onChange={(value) => onChangeValue(value, 'books')}
                                 placeholder="Chỉ được mươn tối đa 3 quyển sách!"
@@ -167,13 +155,12 @@ const BorrowModal = ({ modalShow, setModalShow, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-                <br />
-            </Modal.Body>
+            </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                <Button variant="primary" onClick={onSubmit}>Add</Button>
+                <Button variant="primary" onClick={onSubmit}>{borrow.id_borrow === 0 ? 'Thêm' : 'Sửa'}</Button>
             </Modal.Footer>
-        </Modal>
+        </Offcanvas>
     )
 }
 

@@ -1,32 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import BasicTable from '../../components/table'
 import { useDispatch, useSelector } from 'react-redux';
-import { categorySelector, deleteCategory, loadCategory } from '../../reducers/category';
+import { categorySelector, deleteCategory, loadCategory, searchCategory } from '../../reducers/category';
 import CategoryModal from '../modal/category-modal';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import TableBootstrap from '../../components/table/table-bootstrap';
 
 const Category = () => {
     const [isOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch()
     const category = useSelector(categorySelector)
-    const [categoryItems, setCategoryItems] = useState()
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadCategory())
-    }, [dispatch])
-
-
-    const onRowClick = (data) => {
-        setCategoryItems({
-            id_category: data[0],
-            name_category: data[1],
-        })
-    }
+        dispatch(searchCategory(keyword.replace(/\s+/g, ' ').trim()))
+    }, [keyword, dispatch])
 
     const onClose = () => {
         setIsOpen(false)
-        setCategoryItems()
+        setItem()
     }
 
     const onDelete = (id_category) => {
@@ -35,32 +28,39 @@ const Category = () => {
 
     const onOpen = () => {
         setIsOpen(true)
-        setCategoryItems()
+        setItem()
     }
+
+    const onUpdate = (data) => {
+        setItem(data)
+        setIsOpen(true)
+    }
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            )
+        }
+    }
+
     const columns = [
-        {
-            name: "id_category",
-            label: "Mã thể loại",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
         {
             name: "name_category",
             label: "Tên thể loại",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
-            name: "id_category",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <OverlayTrigger
@@ -72,7 +72,7 @@ const Category = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                             <OverlayTrigger
                                 key={'bottom-delete'}
@@ -83,7 +83,7 @@ const Category = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='danger' onClick={() => onDelete(value)}><i className="fa-solid fa-trash-can"></i></Button>
+                                <Button variant='danger' onClick={() => onDelete(value.id_category)}><i className="fa-solid fa-trash-can"></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -96,10 +96,10 @@ const Category = () => {
         <>
             <HomePage>
                 {
-                    category && <BasicTable onRowClick={onRowClick} columns={columns} data={category} titleButton="Thêm thể loại" onOpen={onOpen} titleTable="QUẢN LÝ THỂ LOẠI" />
+                    <TableBootstrap columns={columns} data={category} titleButton="Thêm thể loại" onOpen={onOpen} title="QUẢN LÝ THỂ LOẠI" header={header} />
                 }
                 {
-                    isOpen && <CategoryModal isOpen={isOpen} onClose={onClose} value={categoryItems} />
+                    isOpen && <CategoryModal isOpen={isOpen} onClose={onClose} value={item} />
                 }
             </HomePage>
         </>

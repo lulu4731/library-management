@@ -1,10 +1,81 @@
-import React from 'react'
-import { Button, OverlayTrigger, Table, Tooltip } from 'react-bootstrap'
-import ReactPaginate from 'react-paginate'
+import React, { useEffect, useState } from 'react'
+import { Button, OverlayTrigger, Row, Tooltip } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
 import HomePageAdmin from '../../components/home/HomePageAdmin'
 import TableBootstrap from '../../components/table/table-bootstrap'
+import { feedbackSelector, loadFeedback } from '../../reducers/feedback'
+import ModalEmailFeedback from './modal-email-feedback'
+import ModalFeedback from './modal_feedback'
+import Select from 'react-select'
 
 const FeedbackPage = () => {
+    const dispatch = useDispatch()
+    const feedback = useSelector(feedbackSelector)
+    const [isOpen, setIsOpen] = useState(false)
+    const [isOpenEmail, setIsOpenEmail] = useState(false)
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
+
+    useEffect(() => {
+        dispatch(loadFeedback())
+    }, [dispatch])
+
+    const onChangeStatus = (value) => {
+        setItem(value)
+        setIsOpen(true)
+    }
+
+
+    const onEmail = (value) => {
+        setItem(value)
+        setIsOpenEmail(true)
+    }
+
+    const onClose = () => {
+        setIsOpenEmail(false)
+        setIsOpen(false)
+        setItem()
+    }
+
+    const options = [
+        { value: 0, label: "Về tài khoản" },
+        { value: 1, label: "Về mượn trả sách" },
+        { value: 2, label: "Về mượn rách sách, mất sách" },
+        { value: 3, label: "Vấn đề khác" }
+    ]
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            padding: '2px 0px',
+            borderRadius: 20,
+        }),
+    }
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <>
+                    <div className='search-table'>
+                        <label style={{ marginBottom: 0 }}>
+                            <input type="text" placeholder='Tìm kiếm' style={{ width: '210px' }} value={keyword} onChange={e => setKeyword(e.target.value)} />
+                            <i className="fa-solid fa-magnifying-glass icon"></i>
+                        </label>
+                    </div>
+                    <Row className='p-0'>
+                        <Select
+                            styles={customStyles}
+                            options={options}
+
+                        // value={problem}
+                        // onChange={(value) => onChangeValue(value, 'problem')}
+                        />
+                    </Row>
+                </>
+            );
+        }
+    }
     const columns = [
         {
             name: "subject",
@@ -15,24 +86,32 @@ const FeedbackPage = () => {
             label: "Nội dung"
         },
         {
-            name: "day",
+            name: "problem",
+            label: "Vấn đề",
+            options: {
+                status: true,
+                customRender: (value) => {
+                    return (
+                        <p>{value.problem === 3 ? 'Vấn đề khác' : value.problem === 0 ? 'Vấn đề tài khoản' : value.problem === 1 ? 'Về mượn trả sách' : "Về mượn rách sách, mất sách"}</p>
+                    )
+                }
+            }
+        },
+        {
+            name: "time",
             label: "Thời gian"
         },
         {
-            name: "first_name",
-            label: "Họ"
-        },
-        {
-            name: "last_name",
-            label: "Tên"
+            name: "name",
+            label: "Họ tên"
         },
         {
             name: "email",
             label: "Email"
         },
         {
-            name: "Số điện thoại",
-            label: "phone"
+            name: "phone",
+            label: "Số điện thoại"
         },
         {
             name: "action",
@@ -40,31 +119,33 @@ const FeedbackPage = () => {
             options: {
                 status: true,
                 customRender: (value) => {
-                    console.log(value)
                     return (
                         <div className='pb-0'>
-                            <OverlayTrigger
-                                key={'bottom-edit'}
+                            {value.status === 0 ? <OverlayTrigger
+                                key={'bottom-status'}
                                 placement={'bottom'}
                                 overlay={
-                                    <Tooltip id={`tooltip-edit`}>
+                                    <Tooltip id={`tooltip-status`}>
                                         Đánh dấu đã đọc
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3'><i className="fa-solid fa-pen-to-square"></i></Button>
-                            </OverlayTrigger>
-                            {/* <OverlayTrigger
-                                key={'bottom-delete'}
-                                placement={'bottom'}
-                                overlay={
-                                    <Tooltip id={`tooltip-delete`}>
-                                        Xóa
-                                    </Tooltip>
-                                }
-                            >
-                                <Button variant='danger'><i className="fa-solid fa-trash-can"></i></Button>
-                            </OverlayTrigger> */}
+                                <Button variant='primary mr-3' onClick={() => onChangeStatus(value)}><i className="fa-solid fa-eye"></i></Button>
+                            </OverlayTrigger> : (
+                                <>
+                                    <OverlayTrigger
+                                        key={'bottom-email'}
+                                        placement={'bottom'}
+                                        overlay={
+                                            <Tooltip id={`tooltip-email`}>
+                                                Gửi email phản hồi đến độc giả
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <Button variant='warning mr-3' onClick={() => onEmail(value)}><i className="fa-solid fa-envelope"></i></Button>
+                                    </OverlayTrigger>
+                                </>
+                            )}
                         </div>
                     )
                 }
@@ -72,111 +153,17 @@ const FeedbackPage = () => {
         }
     ]
 
-    const data = [
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss1',
-            content: 'Sao khóa tài khoản của tôi'
-        },
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss2',
-            content: 'Sao khóa tài khoản của tôi'
-        },
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss3',
-            content: 'Sao khóa tài khoản của tôi'
-        },
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss4',
-            content: 'Sao khóa tài khoản của tôi'
-        },
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss5',
-            content: 'Sao khóa tài khoản của tôi'
-        },
-        {
-            subject: 'Mở khóa tài khoảnsssssssssssssssssss6',
-            content: 'Sao khóa tài khoản của tôi'
-        }
-    ]
     return (
         <HomePageAdmin>
-            {/* <Table striped bordered hover className="table-info">
-                <thead>
-                    <tr>
-                        <th colSpan={3} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>QUẢN LÝ PHẢN HỒI</th>
-                        <th colSpan={4} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
-                            <div className='search-table'>
-                                <label style={{ marginBottom: 0 }}>
-                                    <input type="text" placeholder='Tìm kiếm' />
-                                    <i className="fa-solid fa-magnifying-glass icon"></i>
-                                </label>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr style={{ borderBottom: 0 }}>
-                        <th scope="col">Tiêu đề</th>
-                        <th scope="col">Nội dung</th>
-                        <th scope="col">Thời gian</th>
-                        <th scope="col">Họ tên</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Số điện thoại</th>
-                        <th scope='col'>Hàng động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style={{ borderTop: 0 }}>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                    </tr>
-                    <tr>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                    </tr>
-                    <tr>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                        <td>sss</td>
-                    </tr>
-                    <tr>
-                        <td colSpan={7}>
-                            <ReactPaginate
-                                previousLabel={<i className="fa fa-chevron-left "></i>}
-                                nextLabel={<i className="fa fa-chevron-right"></i>}
-                                pageCount={5}
-                                onPageChange={1}
-                                containerClassName={"pagination justify-content-center"}
-                                pageClassName={"page-item me-2"}
-                                pageLinkClassName={"page-link"}
-                                previousClassName={"page-item me-2"}
-                                previousLinkClassName={"page-link"}
-                                nextClassName={"page-item"}
-                                nextLinkClassName={"page-link"}
-                                breakClassName={"page-item me-2"}
-                                breakLinkClassName={"page-link"}
-                                disabledClassName={"paginationDisabled"}
-                                activeClassName={"active"}
-                                marginPagesDisplayed={1}
-                                pageRangeDisplayed={2}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </Table> */}
-            <TableBootstrap columns={columns} data={data} title="QUẢN LÝ PHẢN HỒI"/>
+            {
+                <TableBootstrap columns={columns} data={feedback} title="QUẢN LÝ PHẢN HỒI" header={header} />
+            }
+            {
+                isOpen && <ModalFeedback isOpen={isOpen} onClose={onClose} feedback={item} />
+            }
+            {
+                isOpenEmail && <ModalEmailFeedback isOpen={setIsOpenEmail} onClose={onClose} feedback={item} />
+            }
         </HomePageAdmin>
     )
 }

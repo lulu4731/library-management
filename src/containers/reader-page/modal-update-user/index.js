@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
-import { addReaders, updateReaders } from '../../reducers/readers';
+import { addReaders, updateReaders } from '../../../reducers/readers';
 
-const ReadersModal = ({ isOpen, onClose, value }) => {
+const ModalUpdateUser = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
 
     const defaultValue = {
@@ -40,27 +40,27 @@ const ReadersModal = ({ isOpen, onClose, value }) => {
 
     const onSubmit = (e) => {
         e.preventDefault()
-        let newReader = { ...reader }
-        delete newReader['id_readers']
-        newReader['date_of_birth'] = reader.date_of_birth.toISOString()
+        // let newReader = { ...reader }
+        // delete newReader['id_readers']
+        // newReader['date_of_birth'] = reader.date_of_birth.toISOString()
 
-        if (reader.id_readers === 0) {
-            dispatch(addReaders(newReader))
-        } else {
-            dispatch(updateReaders({
-                id_readers: reader.id_readers,
-                reader: newReader
-            }))
-        }
+        // if (reader.id_readers === 0) {
+        //     dispatch(addReaders(newReader))
+        // } else {
+        //     dispatch(updateReaders({
+        //         id_readers: reader.id_readers,
+        //         reader: newReader
+        //     }))
+        // }
 
-        onClose()
+        // onClose()
     }
 
     return (
         <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title className='title-love'>
-                    {reader.id_readers === 0 ? 'THÊM ĐỘC GIẢ' : "SỬA ĐỘC GIẢ"}
+                    Cập nhật thông tin độc giả
                 </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
@@ -143,4 +143,4 @@ const ReadersModal = ({ isOpen, onClose, value }) => {
     )
 }
 
-export default ReadersModal
+export default ModalUpdateUser

@@ -527,7 +527,7 @@
 
 
 .table-striped>tbody>tr:nth-of-type(odd)>* {
-  --bs-table-accent-bg:#c6f5ff;
+  --bs-table-accent-bg:#f0ffff;
   color: var(--bs-table-striped-color);
 }
 
@@ -551,4 +551,23 @@
   top: 11px;
   left: 15px;
   font-size: 1.2rem;
+}
+
+.table-info {
+    --bs-table-bg: #f0ffff;
+    --bs-table-hover-bg: #dbf9ff;
+}
+
+.table-info td {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.table-info th {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.table-bordered thead td, .table-bordered thead th {
+  background-color: rgb(223 218 255);
 }

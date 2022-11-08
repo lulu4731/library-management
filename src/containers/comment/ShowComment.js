@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { Row, Col, Card, Image, Button } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { connect, useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router"
-// import ShowCommentChildren from "./ShowCommentChildren"
 import CommentForm from "./CommentForm"
 import { addCommentChildren, addCommentParent, commentSelector, deleteComment, loadComment, updateComment } from "../../reducers/comment"
 import { checkLogin, librarianSelector } from "../../reducers/librarian"
 import ShowCommentChildren from "./ShowCommentChildren"
 import { toastError } from "../../toast/toast"
-// import { toastError } from "../.././toast/Toast"
 
 const ShowComment = () => {
     const dispatch = useDispatch()
@@ -59,7 +57,7 @@ const ShowComment = () => {
         }
     }
     const deleteCommentParent = (id_cmt, id_cmt_parent) => {
-        dispatch(deleteComment({id_cmt, isbn, id_cmt_parent}))
+        dispatch(deleteComment({ id_cmt, isbn, id_cmt_parent }))
     }
 
     const hideCommentParent = (id_cmt, status) => {
@@ -345,7 +343,6 @@ const ShowComment = () => {
                                         <hr />
                                     </Card.Body>
                                 </Card>
-
                             </div>
                         ))}
                     </div>

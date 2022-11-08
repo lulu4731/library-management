@@ -19,6 +19,23 @@ export const loadBorrows = createAsyncThunk(
     }
 )
 
+export const searchBorrows = createAsyncThunk(
+    "borrows/searchBorrows",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/book_borrow/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const loadDsBorrows = createAsyncThunk(
     "borrows/loadDsBorrows",
     async () => {
@@ -121,11 +138,46 @@ export const renewalBook = createAsyncThunk(
     }
 )
 
+export const pendingBook = createAsyncThunk(
+    "borrows/pendingBook",
+    async (borrow) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/v0/book_borrow/pending`, borrow
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_borrow: borrow.id_borrow }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const addBorrowsReader = createAsyncThunk(
+    "borrows/addBorrowsReader",
+    async (borrow) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/book_borrow/reader`, borrow
+            )
+            if (response.status === 201) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 const borrows = createSlice({
     name: 'borrows',
     initialState: {
         borrows: [],
-        dsBorrow: []
+        dsBorrow: [],
+        borrowsReaders: []
     },
     reducers: {
         setDsBorrow(state, action) {
@@ -137,7 +189,7 @@ const borrows = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadBorrows.fulfilled, (state, action) => {
+            .addCase(searchBorrows.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.borrows = action.payload.data
                 }
@@ -150,6 +202,14 @@ const borrows = createSlice({
             .addCase(addBorrows.fulfilled, (state, action) => {
                 if (action.payload.status === 201) {
                     state.borrows.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(addBorrowsReader.fulfilled, (state, action) => {
+                if (action.payload.status === 201) {
+                    state.borrowsReaders.unshift(action.payload.data)
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)
@@ -185,6 +245,22 @@ const borrows = createSlice({
                         // console.log(item)
                         if (item.id_borrow === action.payload.id_borrow) {
                             item.books = action.payload.data
+                            return item
+                        } else {
+                            return item
+                        }
+                    })
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(pendingBook.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.borrows = state.borrows.map((item) => {
+                        if (item.id_borrow === action.payload.id_borrow) {
+                            item.books = action.payload.data.books
+                            item['librarian'] = action.payload.data.librarian
                             return item
                         } else {
                             return item

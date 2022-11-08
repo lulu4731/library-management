@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form, Badge } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Badge, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
 import renewalDate from '../../utils/renewalDate';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 
 
-const PayModal = ({ modalShow, setModalShow, value }) => {
+const PayModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
-
-    const onClose = () => {
-        setModalShow(false)
-    }
 
     const defaultValue = {
         id_borrow: 0,
         librarian: {},
         reader: {},
-        // create_time: {},
         books: [],
     }
 
@@ -31,19 +26,17 @@ const PayModal = ({ modalShow, setModalShow, value }) => {
                 setBorrow(defaultValue)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
-    // console.log(borrow.books)
 
     const onSubmit = (id_book) => {
-        // console.log(id_book)
         dispatch(returnBook({ id_book, id_borrow: borrow.id_borrow }))
 
         onClose()
     }
 
     const onRenewal = (id_book, expired) => {
-        // const temps = renewalDate(new Date(expired))
         dispatch(renewalBook({ id_book, id_borrow: borrow.id_borrow, expired: renewalDate(new Date(expired)) }))
         onClose()
     }
@@ -55,24 +48,14 @@ const PayModal = ({ modalShow, setModalShow, value }) => {
         dispatch(returnBookAll(returnBook))
         onClose()
     }
+
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={modalShow}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    TRẢ SÁCH
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Group>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>TRẢ SÁCH/GIA HẠN</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form.Group className='pb-3'>
                     <Row>
                         <Col>
                             <Form.Label>Độc giả mượn sách</Form.Label>
@@ -80,7 +63,6 @@ const PayModal = ({ modalShow, setModalShow, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-                <br />
                 <Form.Group>
                     <Row>
                         <Col>
@@ -117,12 +99,12 @@ const PayModal = ({ modalShow, setModalShow, value }) => {
                         </Col>
                     </Row>
                 </Form.Group>
-            </Modal.Body>
+            </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
                 <Button variant="primary" onClick={onPayAll}>Trả tất cả</Button>
             </Modal.Footer>
-        </Modal>
+        </Offcanvas>
     )
 }
 

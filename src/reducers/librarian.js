@@ -40,6 +40,23 @@ export const loadLibrarian = createAsyncThunk(
     }
 )
 
+export const searchLibrarian = createAsyncThunk(
+    "librarian/searchLibrarian",
+    async (keyword) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/librarian/search?k=${keyword}`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const updateLibrarianStatus = createAsyncThunk(
     "librarian/updateLibrarianStatus",
     async (id_librarian) => {
@@ -130,7 +147,7 @@ const librarian = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadLibrarian.fulfilled, (state, action) => {
+            .addCase(searchLibrarian.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.librarians = action.payload.data
                 }

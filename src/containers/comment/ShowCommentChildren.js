@@ -84,7 +84,7 @@ const ShowCommentChildren = ({
     return (
         <>
             {commentChildren.length > 0 && commentChildren.map((comment, index) => (
-                <div className="read-comment" key={comment.id_cmt}>
+                <div className="read-comment" key={index}>
                     <Card
                         style={{
                             flexDirection: "row",

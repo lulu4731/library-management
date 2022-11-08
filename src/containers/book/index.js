@@ -1,44 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import BasicTable from '../../components/table'
-import { booksSelector, loadBooks } from '../../reducers/book';
+import { booksSelector, loadBooks, searchBooks } from '../../reducers/book';
 import HomePage from '../../components/home/HomePage';
 import BookModal from '../modal/book_modal';
+import TableBootstrap from '../../components/table/table-bootstrap';
 
 const Book = () => {
     const [isOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch()
     const books = useSelector(booksSelector)
-    const [book, setBook] = useState()
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadBooks())
-    }, [dispatch])
+        dispatch(searchBooks(keyword.replace(/\s+/g, ' ').trim()))
+    }, [dispatch, keyword])
 
     const onClose = () => {
         setIsOpen(false)
-        setBook()
+        setItem()
+    }
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            );
+        }
     }
     const columns = [
-        {
-            name: "id_book",
-            label: "Mã sách",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
         {
             name: "ds",
             label: "Thuộc đầu sách",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg="info">{JSON.parse(value).label}</Badge>
+                            <Badge bg="info">{JSON.parse(value.ds).label}</Badge>
                         </div>
                     );
                 }
@@ -47,21 +53,16 @@ const Book = () => {
         {
             name: "position",
             label: "Vị trí sách",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "id_liquidation",
             label: "Trạng thái thanh lý",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value === null ? 'primary' : 'danger'}>{value === null ? 'Được sử dụng' : 'Đã thanh lý'}</Badge>
+                            <Badge bg={value.id_liquidation === null ? 'primary' : 'danger'}>{value.id_liquidation === null ? 'Được sử dụng' : 'Đã thanh lý'}</Badge>
                         </div>
                     );
                 }
@@ -69,26 +70,24 @@ const Book = () => {
         },
         {
             name: "id_status",
-            label: "Trạng thái",
+            label: "Trạng thái sử dụng",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value === 0 ? 'success' : value === 1 ? 'warning' : 'danger'}>{value === 0 ? 'Chưa được mượn' : value === 1 ? 'Đã đươc mượn' : 'Sách bị mất'}</Badge>
+                            <Badge bg={value.id_status === 0 ? 'success' : value === 1 ? 'warning' : 'danger'}>{value.id_status === 0 ? 'Chưa được mượn' : value === 1 ? 'Đã đươc mượn' : 'Sách bị mất'}</Badge>
                         </div>
                     );
                 }
             },
         },
         {
-            name: "id_book",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <OverlayTrigger
@@ -100,7 +99,7 @@ const Book = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -109,21 +108,21 @@ const Book = () => {
         },
     ];
 
-    const onRowClick = (data) => {
-        const temps = books.find(item => item.id_book === data[0])
-        setBook({
-            id_book: temps.id_book,
-            position: temps.position || ""
+    const onUpdate = (data) => {
+        setItem({
+            id_book: data.id_book,
+            position: data.position || ""
         })
+        setIsOpen(true)
     }
     return (
         <>
             <HomePage>
                 {
-                    books && <BasicTable onRowClick={onRowClick} columns={columns} data={books} titleTable="QUẢN LÝ ĐỘC GIẢ" />
+                    <TableBootstrap columns={columns} data={books} title="QUẢN LÝ ĐỘC GIẢ" header={header} />
                 }
                 {
-                    isOpen && <BookModal isOpen={isOpen} onClose={onClose} value={book} />
+                    isOpen && <BookModal isOpen={isOpen} onClose={onClose} value={item} />
                 }
             </HomePage>
         </>

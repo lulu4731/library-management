@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import { addCompany, updateCompany } from '../../reducers/company';
 
@@ -24,6 +24,7 @@ const CompanyModal = ({ isOpen, onClose, value }) => {
                 setCompany(defaultValue)
             }
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const onValueChange = (keyValue, keyName) => {
@@ -49,55 +50,47 @@ const CompanyModal = ({ isOpen, onClose, value }) => {
     }
 
     return (
-        <Modal
-            size="xl"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop="static"
-            show={isOpen}
-            onHide={onClose}
-            keyboard={false}
-        >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    THÊM TÁC GIẢ
-                </Modal.Title>
-                <Button variant='secondary' onClick={onClose}><i className="fa-solid fa-xmark"></i></Button>
-            </Modal.Header>
-            <Form className='form-modal' onSubmit={onSubmit}>
-                <Modal.Body>
-                    <Form.Group>
-                        <Row>
-                            <Col>
-                                <Form.Label>Tên nhà xuất bản</Form.Label>
-                                <Form.Control type="text" required value={company?.name_publishing_company} onChange={(e) => onValueChange(e.target.value, 'name_publishing_company')} />
-                            </Col>
-                            <Col>
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control type="text" required value={company?.email} onChange={(e) => onValueChange(e.target.value, 'email')} />
-                            </Col>
-                        </Row>
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                        <Row>
-                            <Col>
-                                <Form.Label>Số điện thoại</Form.Label>
-                                <Form.Control type="text" required value={company?.phone} onChange={(e) => onValueChange(e.target.value, 'phone')} />
-                            </Col>
-                            <Col>
-                                <Form.Label>Địa chỉ</Form.Label>
-                                <Form.Control type="text" required value={company?.address} onChange={(e) => onValueChange(e.target.value, 'address')} />
-                            </Col>
-                        </Row>
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                    <Button variant="primary" type='submit'>{company.id_publishing_company === 0 ? 'Thêm' : "Sửa"}</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+        <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title className='title-love'>
+                    {company.id_publishing_company === 0 ? 'THÊM NHÀ XUẤT BẢN' : "SỬA NHÀ XUẤT BẢN"}
+                </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form.Group className='pb-3'>
+                    <Row className='pb-3'>
+                        <Col>
+                            <Form.Label>Tên nhà xuất bản</Form.Label>
+                            <Form.Control type="text" required value={company?.name_publishing_company} onChange={(e) => onValueChange(e.target.value, 'name_publishing_company')} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control type="text" required value={company?.email} onChange={(e) => onValueChange(e.target.value, 'email')} />
+                        </Col>
+                    </Row>
+                </Form.Group>
+                <Form.Group>
+                    <Row className='pb-3'>
+                        <Col>
+                            <Form.Label>Số điện thoại</Form.Label>
+                            <Form.Control type="text" required value={company?.phone} onChange={(e) => onValueChange(e.target.value, 'phone')} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Form.Label>Địa chỉ</Form.Label>
+                            <Form.Control as="textarea" rows={6} required value={company?.address} onChange={(e) => onValueChange(e.target.value, 'address')} />
+                        </Col>
+                    </Row>
+                </Form.Group>
+            </Offcanvas.Body>
+            <Modal.Footer>
+                <Button variant='secondary' onClick={onClose}>Đóng</Button>
+                <Button variant="primary" type='submit' onClick={onSubmit}>{company.id_publishing_company === 0 ? 'Thêm' : "Sửa"}</Button>
+            </Modal.Footer>
+        </Offcanvas>
     )
 }
 

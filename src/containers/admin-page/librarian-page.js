@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import HomePageAdmin from '../../components/home/HomePageAdmin'
-import BasicTable from '../../components/table'
-import { librariansSelector, loadLibrarian, updateLibrarianStatus } from '../../reducers/librarian'
+import TableBootstrap from '../../components/table/table-bootstrap'
+import { librariansSelector, searchLibrarian, updateLibrarianStatus } from '../../reducers/librarian'
 import convertTimesTamp from '../../utils/convertTimesTamp'
 import LibrarianModal from '../modal/librarian-modal'
 
@@ -12,76 +12,75 @@ const LibrarianPage = () => {
     const dispatch = useDispatch()
     const [isOpen, setIsOpen] = useState(false)
     const librarians = useSelector(librariansSelector)
-    const [librarian, setLibrarian] = useState()
+    const [item, setItem] = useState()
+    const [keyword, setKeyword] = useState('')
 
     useEffect(() => {
-        dispatch(loadLibrarian())
-    }, [dispatch])
+        dispatch(searchLibrarian(keyword.replace(/\s+/g, ' ').trim()))
+    }, [keyword, dispatch])
 
     const onClose = () => {
         setIsOpen(false)
-        setLibrarian()
+        setItem()
     }
+
+    const header =
+    {
+        customRender: () => {
+            return (
+                <div className='search-table'>
+                    <label style={{ marginBottom: 0 }}>
+                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                        <i className="fa-solid fa-magnifying-glass icon"></i>
+                    </label>
+                </div>
+            );
+        }
+    }
+
 
     const columns = [
         {
-            name: "id_librarian",
-            label: "Mã thủ thư",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
-        {
             name: "first_name",
             label: "Họ",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "last_name",
             label: "Tên",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "email",
             label: "Email",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "phone",
-            label: "Phone",
+            label: "Số điện thoại",
+        },
+        {
+            name: "date_of_birth",
+            label: "Ngày bắt đầu",
             options: {
-                filter: true,
-                sort: true,
+                status: true,
+                customRender: (value) => {
+                    return (
+                        <p>{convertTimesTamp(value.start_day)}</p>
+                    );
+                }
             }
         },
         {
             name: "address",
             label: "Địa chỉ",
-            options: {
-                filter: true,
-                sort: true,
-            }
         },
         {
             name: "gender",
             label: "Giới tính",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{value === 0 ? 'Nam' : 'Nữ'}</p>
-                    );
+                        <p>{value.gender === 0 ? 'Nam' : 'Nữ'}</p>
+                    )
                 }
             }
         },
@@ -89,11 +88,10 @@ const LibrarianPage = () => {
             name: "date_of_birth",
             label: "Ngày sinh",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
-                        <p>{convertTimesTamp(value)}</p>
+                        <p>{convertTimesTamp(value.date_of_birth)}</p>
                     );
                 }
             }
@@ -102,24 +100,22 @@ const LibrarianPage = () => {
             name: "librarian_status",
             label: "Trạng thái",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg="success">{value === 0 ? "Hoạt động" : "Khóa"}</Badge>
+                            <Badge bg={value.librarian_status === 0 ? 'success' : 'danger'}>{value.librarian_status === 0 ? "Hoạt động" : "Khóa"}</Badge>
                         </div>
                     );
                 }
             },
         },
         {
-            name: "id_librarian",
+            name: "action",
             label: "Hành động",
             options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) => {
+                status: true,
+                customRender: (value) => {
                     return (
                         <div className='pb-0'>
                             <OverlayTrigger
@@ -131,9 +127,9 @@ const LibrarianPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='primary mr-3' onClick={() => setIsOpen(true)}><i className="fa-solid fa-pen-to-square"></i></Button>
+                                <Button variant='primary mr-3' onClick={() => onUpdate(value)}><i className="fa-solid fa-pen-to-square"></i></Button>
                             </OverlayTrigger>
-                            <OverlayTrigger
+                            {/* <OverlayTrigger
                                 key={'bottom-delete'}
                                 placement={'bottom'}
                                 overlay={
@@ -143,7 +139,7 @@ const LibrarianPage = () => {
                                 }
                             >
                                 <Button variant='danger mr-3' onClick={() => undefined}><i className="fa-solid fa-trash-can"></i></Button>
-                            </OverlayTrigger>
+                            </OverlayTrigger> */}
                             <OverlayTrigger
                                 key={'bottom-change'}
                                 placement={'bottom'}
@@ -153,7 +149,10 @@ const LibrarianPage = () => {
                                     </Tooltip>
                                 }
                             >
-                                <Button variant='warning' onClick={() => dispatch(updateLibrarianStatus(value))}><i className="fa-solid fa-wrench"></i></Button>
+                                <Button variant='warning'
+                                    onClick={() => dispatch(updateLibrarianStatus(value.id_librarian))}>
+                                    <i className="fa-solid fa-wrench"></i>
+                                </Button>
                             </OverlayTrigger>
                         </div>
                     )
@@ -162,26 +161,26 @@ const LibrarianPage = () => {
         },
     ];
 
-    const onRowClick = (data) => {
-        const temps = librarians.find((item) => item.id_librarian === data[0])
-        setLibrarian({
-            ...temps,
-            date_of_birth: new Date(convertTimesTamp(temps.date_of_birth))
-        })
-    }
-
     const onOpen = () => {
         setIsOpen(true)
-        setLibrarian()
+        setItem()
+    }
+
+    const onUpdate = (data) => {
+        setItem({
+            ...data,
+            date_of_birth: new Date(convertTimesTamp(data.date_of_birth))
+        })
+        setIsOpen(true)
     }
 
     return (
         <HomePageAdmin>
             {
-                librarians && <BasicTable onRowClick={onRowClick} columns={columns} data={librarians} titleButton="Tạo thủ thư" onOpen={onOpen} titleTable="QUẢN LÝ THỦ THƯ" />
+                <TableBootstrap columns={columns} data={librarians} title="QUẢN LÝ THỦ THƯ" titleButton="Thêm thủ thư" onOpen={onOpen} header={header} />
             }
             {
-                isOpen && <LibrarianModal isOpen={isOpen} onClose={onClose} value={librarian} />
+                isOpen && <LibrarianModal isOpen={isOpen} onClose={onClose} value={item} />
             }
         </HomePageAdmin>
     )
