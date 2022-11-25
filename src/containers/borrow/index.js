@@ -8,6 +8,7 @@ import HomePage from '../../components/home/HomePage';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 import TableBootstrap from '../../components/table/table-bootstrap';
 import PendingModal from '../modal/pending-modal';
+import renewalDate from '../../utils/renewalDate';
 
 const Borrow = () => {
     const dispatch = useDispatch()
@@ -291,9 +292,12 @@ const Borrow = () => {
     }
 
     const onPending = (data) => {
+        let date = new Date(convertTimesTamp(JSON.parse(data.books)[0].arrival_date))
         setItem({
             id_borrow: data.id_borrow,
-            books: JSON.parse(data.books).map(item => item.id_book)
+            books: JSON.parse(data.books).map(item => item.id_book),
+            arrival_date: new Date(convertTimesTamp(JSON.parse(data.books)[0].arrival_date)),
+            expired: new Date(date.setDate(date.getDate() + 14))
         })
 
         setIsOpenPending(true)

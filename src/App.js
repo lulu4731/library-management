@@ -1,10 +1,9 @@
 import './App.css';
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css"
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ReadersPage from './containers/readers';
-import HomePage from './components/home/HomePage';
 import AuthorsPage from './containers/authors';
 import Category from './containers/category';
 import Title from './containers/title';
@@ -15,27 +14,27 @@ import Borrow from './containers/borrow';
 import CompanyPage from './containers/company';
 import LoginPage from './containers/user';
 import { ToastContainer } from "react-toastify"
-import { checkLogin, isAuthenticatedSelector, librarianSelector } from './reducers/librarian';
-import { useDispatch, useSelector } from 'react-redux'
+import { isAuthenticatedSelector } from './reducers/librarian';
+import { useSelector } from 'react-redux'
 import ProtectedRoute from './view/ProtectedRoute';
 import ProtectedRouteAdmin from './view/ProtectedRouteAdmin';
 import NotFound from './view/NotFound';
 import StatisticalPage from './containers/statistical';
-import Page from './components/home/Page';
 import BorrowedBooks from './containers/statistical/borrowed-books';
 import BorrowedReaders from './containers/statistical/borrowed-readers';
 import OverdueBook from './containers/statistical/overdue-book';
-import ProtectedRouteReaders from './view/ProtectedRouterReaders';
 import HomePageReader from './containers/reader-page';
 import ProtectedRouteLibrarian from './view/ProtectedRouterLibrarian';
 import LibrarianPage from './containers/admin-page/librarian-page';
-import BookTitleDetails from './containers/title/book-title-details';
 import FeedbackPage from './containers/admin-page/feedback-page';
+import Comment from './containers/comment';
+import '../src/assets/style-1.css'
+import '../src/assets/style.css'
 
 function App() {
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     const isAuthenticated = useSelector(isAuthenticatedSelector)
-    const user = useSelector(librarianSelector)
+    // const user = useSelector(librarianSelector)
 
     // console.log(user)
 
@@ -49,8 +48,8 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-                        <Route path='/' element={<Page />} />
-                        <Route path='/login' element={<LoginPage />} />
+                        {/* <Route path='/' element={<Page />} /> */}
+                        <Route path='/' element={<LoginPage />} />
                     </Route>
 
                     <Route element={<ProtectedRouteAdmin isAuthenticated={isAuthenticated} />}>
@@ -72,6 +71,7 @@ function App() {
                         <Route path='/liquidation' element={<Liquidation />} />
                         <Route path='/borrow' element={<Borrow />} />
                         <Route path='/company' element={<CompanyPage />} />
+                        <Route path='/comments' element={<Comment />} />
                     </Route>
 
                     {/* <Route element={<ProtectedRouteReaders isAuthenticated={isAuthenticated} />}> */}

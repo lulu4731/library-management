@@ -125,6 +125,12 @@ const Sidebar = ({ toggle }) => {
                         <span className='title' style={{ fontWeight: 'bold' }}>Phiếu mượn sách</span>
                     </Link>
                 </li>
+                <li className={hovered === 11 ? 'hovered' : ''} onClick={() => dispatch(setHovered(11))}>
+                    <Link to='/comments'>
+                        <span className='icon'><i className="fa-solid fa-address-book ion-icon"></i></span>
+                        <span className='title' style={{ fontWeight: 'bold' }}>Quản lý bình luận</span>
+                    </Link>
+                </li>
                 <li onClick={() => dispatch(setLogout())}>
                     <Link to='/'>
                         <span className='icon'><i className="fa-solid fa-right-from-bracket ion-icon"></i></span>

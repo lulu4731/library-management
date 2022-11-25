@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRouteReaders = ({ isAuthenticated }) => {
     const [isLoading, setIsLoading] = useState(true)
-    
+
 
     useEffect(() => {
         const a = setTimeout(() => {
@@ -18,7 +18,7 @@ const ProtectedRouteReaders = ({ isAuthenticated }) => {
         return (
             <div className="spinner-container">
                 {
-                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/login' replace />
+                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/' replace />
                 }
             </div>
         )

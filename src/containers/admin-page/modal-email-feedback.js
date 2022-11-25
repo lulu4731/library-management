@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import { Button, Col, Form, Modal, Offcanvas, Row } from 'react-bootstrap'
+import { addNotification } from '../../utils/callerAPI'
 import { sendEmail } from '../../utils/sendEmail'
+import { useDispatch } from 'react-redux'
+import { updateStatusFeedback } from '../../reducers/feedback'
 
 const ModalEmailFeedback = ({ isOpen, onClose, feedback }) => {
-    const { subject = '', content = '', name, email } = feedback
+    const dispatch = useDispatch()
+
+    const { subject = '', content = '', name, email, id_readers, id_feedback } = feedback
     const [handle, setHandle] = useState('')
 
-    const onChangeStatusFeedback = () => {
+    const onChangeStatusFeedback = async () => {
         const data = {
             real_name: name,
             content,
@@ -14,6 +19,15 @@ const ModalEmailFeedback = ({ isOpen, onClose, feedback }) => {
             email
         }
         sendEmail(data)
+        const notification = {
+            title: `Trả lời phản hồi: ${subject}`,
+            content: `Trả lời: ${handle}`,
+            action: 'Trả lời phản hồi',
+            id_readers
+        }
+        dispatch(updateStatusFeedback(id_feedback))
+        await addNotification(notification)
+
         onClose()
     }
     return (
@@ -49,7 +63,7 @@ const ModalEmailFeedback = ({ isOpen, onClose, feedback }) => {
             </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                <Button variant="primary" onClick={onChangeStatusFeedback}>Đánh dấu đã đọc</Button>
+                <Button variant="primary" onClick={onChangeStatusFeedback}>Gửi</Button>
             </Modal.Footer>
         </Offcanvas>
     )

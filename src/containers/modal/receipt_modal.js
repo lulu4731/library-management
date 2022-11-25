@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { loadTitle, titlesSelector } from '../../reducers/title';
+import { loadTitle, searchTitle, searchTitleLibrarian, titlesSelector } from '../../reducers/title';
 import Select from 'react-select';
 import { addReceipt, updateReceipt } from '../../reducers/receipt';
 
@@ -26,7 +26,7 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
     const [receipts, setReceipts] = useState(defaultValue)
 
     useEffect(() => {
-        dispatch(loadTitle())
+        dispatch(searchTitleLibrarian(''))
     }, [dispatch])
 
     useEffect(() => {

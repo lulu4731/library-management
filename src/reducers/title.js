@@ -144,7 +144,8 @@ const titles = createSlice({
         titles: [],
         titlesSearch: {
             list: [],
-            amount_love: 0
+            amount_love: 0,
+            listLove: []
         },
     },
     reducers: {
@@ -192,11 +193,20 @@ const titles = createSlice({
             })
             .addCase(addLoveTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
-                    state.titlesSearch.list = state.titlesSearch.list.map((item) =>
-                        item.isbn === action.payload.isbn
-                            ? { ...item, love_status: true }
-                            : item
-                    )
+                    // state.titlesSearch.list = state.titlesSearch.list.map((item) =>
+                    //     item.isbn === action.payload.isbn
+                    //         ? { ...item, love_status: true }
+
+                    //         : item
+                    // )
+                    state.titlesSearch.list = state.titlesSearch.list.map((item) => {
+                        if (item.isbn === action.payload.isbn) {
+                            const temps = { ...item, love_status: true }
+                            state.titlesSearch.listLove.unshift(temps)
+                            return temps
+                        }
+                        return item
+                    })
                     state.titlesSearch.amount_love += 1
                     toastSuccess(action.payload.message)
                 } else {
@@ -205,11 +215,19 @@ const titles = createSlice({
             })
             .addCase(deleteLoveTitle.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
-                    state.titlesSearch.list = state.titlesSearch.list.map((item) =>
-                        item.isbn === action.payload.isbn
-                            ? { ...item, love_status: false }
-                            : item
-                    )
+                    // state.titlesSearch.list = state.titlesSearch.list.map((item) =>
+                    //     item.isbn === action.payload.isbn
+                    //         ? { ...item, love_status: false }
+                    //         : item
+                    // )
+                    state.titlesSearch.list = state.titlesSearch.list.map((item) => {
+                        if (item.isbn === action.payload.isbn) {
+                            const temps = { ...item, love_status: false }
+                            state.titlesSearch.listLove = state.titlesSearch.listLove.filter(love => love.isbn !== temps.isbn)
+                            return temps
+                        }
+                        return item
+                    })
                     state.titlesSearch.amount_love -= 1
                     toastSuccess(action.payload.message)
                 } else {

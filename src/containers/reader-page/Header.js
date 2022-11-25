@@ -17,7 +17,7 @@ import ModalFeedback from './modal-feedback'
 import BorrowModal from './modal-borrow/borrow-modal'
 import ModalUser from './modal-user'
 
-const Header = ({ titles, amount_card, orders, setOrders, id_readers, load_orders, name_reader, amount_love }) => {
+const Header = ({ titles, amount_card, orders, setOrders, id_readers, load_orders, name_reader, amount_love, data }) => {
     const dispatch = useDispatch()
     const [isOpenLove, setIsOpenLove] = useState(false)
     const [isOpenFeedback, setIsOpenFeedback] = useState(false)
@@ -119,7 +119,7 @@ const Header = ({ titles, amount_card, orders, setOrders, id_readers, load_order
                 />)
             }
             {
-                isOpenUser && <ModalUser isOpen={isOpenUser} onClose={onClose} />
+                isOpenUser && <ModalUser isOpen={isOpenUser} onClose={onClose} data={data}/>
             }
         </>
     )

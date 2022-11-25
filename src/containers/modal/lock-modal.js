@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { banReaders, dieReaders } from '../../reducers/readers';
 import { toastError } from '../../toast/toast';
+import { sendEmail, sendEmailLock } from '../../utils/sendEmail'
 
 const LockModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -13,7 +14,7 @@ const LockModal = ({ isOpen, onClose, value }) => {
         first_name: '',
         last_name: '',
         type_lock: {
-            label: 'Khóa theo ngày',
+            label: 'Khóa theo giờ',
             value: 1
         },
         hours_lock: 0,
@@ -50,6 +51,14 @@ const LockModal = ({ isOpen, onClose, value }) => {
                     }
                 }
 
+                const email = {
+                    real_name: lock.first_name + ' ' + lock.last_name,
+                    reason: lock.reason,
+                    lock_type: `trong ${lock.hours_lock} giờ`,
+                    email: lock.email
+                }
+                // console.log(email)
+                sendEmailLock(email)
                 dispatch(banReaders(data))
             } else {
                 toastError('Số giờ khóa phải lớn hơn 0')
@@ -61,7 +70,14 @@ const LockModal = ({ isOpen, onClose, value }) => {
                     reason: lock.reason,
                 }
             }
-
+            const email = {
+                real_name: lock.first_name + ' ' + lock.last_name,
+                reason: lock.reason,
+                lock_type: `khóa vĩnh viễn`,
+                email: lock.email
+            }
+            // console.log(email)
+            sendEmailLock(email)
             dispatch(dieReaders(data))
         }
 
@@ -97,7 +113,7 @@ const LockModal = ({ isOpen, onClose, value }) => {
                             <Select
                                 options={[
                                     {
-                                        label: 'Khóa theo ngày',
+                                        label: 'Khóa theo giờ',
                                         value: 1
                                     },
                                     {

@@ -75,8 +75,8 @@ ul{
    margin: 0;
 }
 
-.navigation ul li:nth-child(12) {
-    margin-top: 150px;
+.navigation ul li:nth-child(13) {
+    margin-top: 105px;
     /* pointer-events: ; */
  }
 
@@ -868,4 +868,26 @@ form.sign-in-form {
 
 .card-header {
   background-color: rgb(223 218 255);
+}
+
+.search-table{
+  position: relative;
+  float: right;
+}
+
+.search-table label input {
+  width: 500px;
+  height: 42px;
+  border-radius: 40px;
+  padding: 5px 20px;
+  padding-left: 40px;
+  outline: none;
+  border: 1px solid var(--back2);
+}
+
+.search-table label .icon {
+  position: absolute;
+  top: 11px;
+  left: 15px;
+  font-size: 1.2rem;
 }

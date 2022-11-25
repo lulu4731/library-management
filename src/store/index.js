@@ -12,6 +12,7 @@ import liquidationsReducer from "../reducers/liquidation"
 import statisticalReducer from "../reducers/statistical"
 import commentReducer from "../reducers/comment"
 import feedbackReducer from "../reducers/feedback"
+import notificationsReducer from "../reducers/notification"
 
 const store = configureStore({
     reducer: {
@@ -27,7 +28,8 @@ const store = configureStore({
         liquidationsReducer,
         statisticalReducer,
         commentReducer,
-        feedbackReducer
+        feedbackReducer,
+        notificationsReducer
     },
 })
 

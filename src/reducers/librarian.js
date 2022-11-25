@@ -3,6 +3,9 @@ import axios from 'axios'
 import setAuthToken from "../utils/setAuthToken";
 import * as types from '../contains/type'
 import { toastError, toastSuccess } from "../toast/toast";
+import { updateReaders } from "./readers";
+import { renewalBook } from "./borrow";
+import store from "../store";
 
 export const checkLogin = createAsyncThunk('librarian/check', async () => {
     try {
@@ -129,7 +132,7 @@ const librarian = createSlice({
     name: 'librarian',
     initialState: {
         librarian: {
-            role: 0
+            borrow: []
         },
         isAuthenticated: false,
         librarians: []
@@ -186,6 +189,50 @@ const librarian = createSlice({
                     toastSuccess(action.payload.message)
                 } else {
                     toastError(action.payload.message)
+                }
+            })
+            .addCase(updateReaders.fulfilled, (state, action) => {
+                // console.log(store.getState().librarianReducer)
+                if (action.payload.status === 200) {
+                    // console.log(action.payload.data)
+                    state.librarian = { ...state.librarian, ...action.payload.data }
+                    state.librarian.borrow = state.librarian.borrow.map(item => (
+                        {
+                            ...item,
+                            reader: JSON.stringify({
+                                value: action.payload.data.id_readers,
+                                label: action.payload.data.first_name + " " + action.payload.data.last_name + '(' + action.payload.data.email + ')'
+                            })
+                        }
+                    ))
+
+
+                    // toastSuccess(action.payload.message)
+                } else {
+                    // toastError(action.payload.message)
+                }
+            })
+            .addCase(renewalBook.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    // console.log(state.borrows)
+                    state.librarian.borrow = state.librarian.borrow.map((item) => {
+                        // console.log(item)
+                        if (item.id_borrow === action.payload.id_borrow) {
+                            let temps = JSON.parse(item.books)
+                            let books = temps.map((item) =>
+                                item.id_book === action.payload.data.id_book
+                                    ? action.payload.data
+                                    : item
+                            )
+                            item.books = JSON.stringify(books)
+                            return item
+                        } else {
+                            return item
+                        }
+                    })
+                    // toastSuccess(action.payload.message)
+                } else {
+                    // toastError(action.payload.message)
                 }
             })
     }

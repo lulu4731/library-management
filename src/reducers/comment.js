@@ -18,6 +18,23 @@ export const loadComment = createAsyncThunk(
     }
 )
 
+export const searchComment = createAsyncThunk(
+    "comment/searchComment",
+    async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/ds/comment`
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addCommentParent = createAsyncThunk(
     "comment/addParent",
     async ({ isbn, content }) => {
@@ -124,6 +141,7 @@ const comment = createSlice({
         commentChildren: [],
         showCommentParent: false,
         showCommentChildren: false,
+        commentSearch: []
     },
     reducers: {
         setShowComment(state) {
@@ -141,6 +159,12 @@ const comment = createSlice({
             .addCase(loadComment.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.comment = action.payload.data
+                } else {
+                }
+            })
+            .addCase(searchComment.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.commentSearch = action.payload.data
                 } else {
                 }
             })
@@ -207,9 +231,17 @@ const comment = createSlice({
                 if (action.payload.status === 200) {
                     if (action.payload.id_cmt_parent === 0) {
                         state.comment = state.comment.filter((comment) => comment.id_cmt !== action.payload.id_cmt)
+                        state.commentSearch = state.commentSearch.filter((comment) => comment.id_cmt !== action.payload.id_cmt)
                     } else {
                         state.comment = state.comment.map((item) => {
                             item.commentChildren = item.commentChildren.filter((itemChildren) => itemChildren.id_cmt !== action.payload.id_cmt)
+                            return item
+                        })
+                        state.commentSearch = state.commentSearch.map((item) => {
+                            if (item.commentChildren) {
+                                item.commentChildren = item.commentChildren.filter((itemChildren) => itemChildren.id_cmt !== action.payload.id_cmt)
+                                return item
+                            }
                             return item
                         })
                     }
@@ -269,6 +301,7 @@ const commentReducer = comment.reducer
 // export const showCommentSelectorChildren = (state) =>
 //     state.commentReducer.showCommentChildren
 export const commentSelector = (state) => state.commentReducer.comment
+export const searchCommentSelector = (state) => state.commentReducer.commentSearch
 // export const commentChildrenSelector = (state) =>
 //     state.commentReducer.commentChildren
 

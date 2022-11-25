@@ -108,3 +108,18 @@ export const paymentBorrow = async (borrow) => {
         else return { message: error.message }
     }
 }
+
+export const addNotification = async (notification) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:8000/api/v0/notification`,
+            notification
+        )
+        if (response.status === 201) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}

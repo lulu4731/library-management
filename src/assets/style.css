@@ -559,15 +559,19 @@
 }
 
 .table-info td {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 10px;
 }
 
 .table-info th {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 10px;
 }
 
 .table-bordered thead td, .table-bordered thead th {
   background-color: rgb(223 218 255);
+}
+
+.react-datepicker__input-container input {
+  height: 42px;
 }

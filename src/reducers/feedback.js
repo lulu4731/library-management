@@ -21,6 +21,23 @@ export const loadFeedback = createAsyncThunk(
     }
 )
 
+export const searchFeedback = createAsyncThunk(
+    "feedback/searchFeedback",
+    async (data) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v0/feedback/search?s=${data.start}&e=${data.end}&p=${data.problem}`,
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const addFeedback = createAsyncThunk(
     "feedback/addFeedback",
     async (feedback) => {
@@ -73,7 +90,7 @@ const feedback = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadFeedback.fulfilled, (state, action) => {
+            .addCase(searchFeedback.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     state.feedback = action.payload.data
                 }

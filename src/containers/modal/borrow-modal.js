@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { loadReaders, readersSelector } from '../../reducers/readers';
+import { loadReaders, readersSelector, searchReaders } from '../../reducers/readers';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import { components } from "react-select"
@@ -22,7 +22,7 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
     const [borrow, setBorrow] = useState(defaultValue)
 
     useEffect(() => {
-        dispatch(loadReaders())
+        dispatch(searchReaders(''))
         dispatch(loadDsBorrows())
     }, [dispatch])
 

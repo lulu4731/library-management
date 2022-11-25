@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
 import { toastError, toastSuccess } from "../toast/toast";
+import store from '../store'
 
 export const loadReaders = createAsyncThunk(
     "readers/loadFReaders",
@@ -161,7 +162,6 @@ const readers = createSlice({
         readers: []
     },
     reducers: {
-
     },
     extraReducers: (builder) => {
         builder
@@ -179,6 +179,7 @@ const readers = createSlice({
                 }
             })
             .addCase(updateReaders.fulfilled, (state, action) => {
+                // console.log(store.getState().librarianReducer.librarian.reader)
                 if (action.payload.status === 200) {
                     state.readers = state.readers.map((item) =>
                         item.id_readers === action.payload.data.id_readers
@@ -186,6 +187,7 @@ const readers = createSlice({
                             : item
                     )
                     toastSuccess(action.payload.message)
+                    // store.getState().librarianReducer.librarian.reader = action.payload.data
                 } else {
                     toastError(action.payload.message)
                 }

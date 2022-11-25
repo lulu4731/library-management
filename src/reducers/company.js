@@ -89,7 +89,7 @@ export const deleteCompany = createAsyncThunk(
 const company = createSlice({
     name: 'company',
     initialState: {
-        company: []
+        company: [],
     },
     reducers: {
 

@@ -90,11 +90,12 @@ const HomePageReader = () => {
 
     return (
         <>
-            <Header titles={titles?.list.filter(item => item.love_status === true)} amount_card={orders?.length || 0} orders={orders} setOrders={saveLocalStorage}
+            <Header titles={titles?.listLove} amount_card={orders?.length || 0} orders={orders} setOrders={saveLocalStorage}
                 id_readers={reader?.id_readers}
                 load_orders={setOrders}
                 name_reader={reader?.first_name + ' ' + reader?.last_name}
                 amount_love={titles?.amount_love}
+                data={reader}
             />
             {
                 params.isbn !== undefined ? (
@@ -169,6 +170,9 @@ const HomePageReader = () => {
                                                                                 onClick={() => saveLocalStorage(item)}>
                                                                             </i>
                                                                         </Col>
+                                                                        {/* <Col>
+                                                                            <h4>{item?.amount_book === null ? 'Hết sách' : 'SL: ' + item?.amount_book}</h4>
+                                                                        </Col> */}
                                                                         <Col>
                                                                             <i className="fa-solid fa fa-heart fa-2x float-right" style={{ color: item.love_status ? '#f35539' : 'white' }}
                                                                                 onClick={() => dispatch(item.love_status ? deleteLoveTitle(item.isbn) : addLoveTitle(item.isbn))}>

@@ -29,31 +29,51 @@ const BorrowModal = ({ isOpen, onClose, orders, setOrders, id_readers, load_orde
         newBorrow['books'] = orders.map(item => {
             return { id_book: item.value, arrival_date: borrow.arrival_date.toISOString().split('T')[0] }
         })
-        const pay = {
-            name_reader,
-            amount: orders.reduce((previousValue, currentValue) => previousValue + (currentValue.price * 1), 0),
-            books: newBorrow.books
 
-        }
-        newBorrow['total_price'] = pay.amount
+        if (newBorrow.books.length <= 3) {
+            const pay = {
+                name_reader,
+                amount: orders.reduce((previousValue, currentValue) => previousValue + (currentValue.price * 1), 0),
+                books: newBorrow.books
 
-        localStorage.setItem(`borrow`, JSON.stringify(newBorrow))
+            }
+            newBorrow['total_price'] = pay.amount
 
-        if (pay.amount > 0) {
-            const data = await paymentBorrow(pay)
-            if (data.status === 200) {
-                window.location = data.link
+            localStorage.setItem(`borrow`, JSON.stringify(newBorrow))
+
+            if (pay.amount > 0) {
+                const data = await paymentBorrow(pay)
+                if (data.status === 200) {
+                    window.location = data.link
+                    onClose()
+                    localStorage.removeItem(`reader-order-${id_readers}`)
+                    setBorrow(defaultValue)
+                    load_orders([])
+                } else {
+                    toastError(data.message)
+                    if (data.data) {
+                        load_orders(orders.filter(item => item.value !== data.data.isbn))
+                        localStorage.setItem(`reader-order-${id_readers}`, JSON.stringify(orders.filter(item => item.value !== data.data.isbn)))
+                    }
+                }
             } else {
-                toastError(data.message)
+                const data = await dispatch(addBorrowsReader(newBorrow))
+                if (data.payload.code === 400) {
+                    load_orders(orders.filter(item => item.value !== data.payload.data.isbn))
+                    // const temps = orders.filter((item) => item.value !== data.payload.data.isbn)
+                    localStorage.setItem(`reader-order-${id_readers}`, JSON.stringify(orders.filter((item) => item.value !== data.payload.data.isbn)))
+                    // setOrders(temps)
+                }
+                if (data.payload.code === 201) {
+                    onClose()
+                    localStorage.removeItem(`reader-order-${id_readers}`)
+                    setBorrow(defaultValue)
+                    load_orders([])
+                }
             }
         } else {
-            dispatch(addBorrowsReader(newBorrow))
+            toastError('Bạn chỉ mượn tối đa được 3 quyển')
         }
-
-        onClose()
-        localStorage.removeItem(`reader-order-${id_readers}`)
-        setBorrow(defaultValue)
-        load_orders([])
     }
 
     const onDeleteDs = (data) => {
@@ -77,7 +97,7 @@ const BorrowModal = ({ isOpen, onClose, orders, setOrders, id_readers, load_orde
                 <Form.Group className='mb-4'>
                     <Row>
                         <Col md={5}>
-                            <Form.Label>Ngày đến nhận sách</Form.Label>
+                            <Form.Label>Ngày dự kiến đến nhận sách</Form.Label>
                             <DatePicker
                                 selected={borrow.arrival_date}
                                 onChange={(date) => onChangeValue(date, 'arrival_date')}

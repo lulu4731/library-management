@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 
@@ -30,6 +30,10 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
     const changePage = ({ selected }) => {
         setPageNumber(selected)
     }
+
+    // useEffect(() => {
+    //     changePage({ selected: 0 })
+    // }, [])
 
     // console.log(keyword)
     return (

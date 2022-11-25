@@ -10,6 +10,7 @@ const PendingModal = ({ isOpen, onClose, value }) => {
     const defaultValue = {
         id_borrow: 0,
         expired: new Date(),
+        arrival_date: new Date(),
         books: []
     }
 
@@ -28,7 +29,13 @@ const PendingModal = ({ isOpen, onClose, value }) => {
 
     const onChangeValue = (keyValue, keyName) => {
         const newBorrow = { ...borrow }
-        newBorrow[keyName] = keyValue
+        if (keyName === 'arrival_date') {
+            let date = new Date(keyValue)
+            newBorrow[keyName] = keyValue
+            newBorrow['expired'] = new Date(date.setDate(date.getDate() + 14))
+        } else {
+            newBorrow[keyName] = keyValue
+        }
 
         setBorrow(newBorrow)
     }
@@ -36,19 +43,42 @@ const PendingModal = ({ isOpen, onClose, value }) => {
     const onSubmit = () => {
         const newBorrow = { ...borrow }
         newBorrow['expired'] = borrow.expired.toISOString().split('T')[0]
+        newBorrow['arrival_date'] = borrow.arrival_date.toISOString().split('T')[0]
+        // console.log(newBorrow)
 
         dispatch(pendingBook(newBorrow))
         onClose()
     }
 
+    // console.log(borrow)
+
     return (
         <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title className='title-love'>
-                    {borrow.id_borrow === 0 ? 'THÊM PHIẾU MƯỢN SÁCH' : 'SỬA PHIẾU MƯỢN SÁCH'}
+                    {borrow.id_borrow === 0 ? 'DUYỆT PHIẾU MƯỢN SÁCH' : 'DUYỆT PHIẾU MƯỢN SÁCH'}
                 </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
+                <Form.Group className='pb-3'>
+                    <Row>
+                        <Col>
+                            <Form.Label>Ngày đến nhận sách</Form.Label>
+                            <DatePicker
+                                selected={borrow.arrival_date}
+                                onChange={(date) => onChangeValue(date, 'arrival_date')}
+                                dateFormat="dd/MM/yyyy"
+                                withPortal
+                                showYearDropdown
+                                scrollableYearDropdown={true}
+                                yearDropdownItemNumber={100}
+                                peekNextMonth
+                                showMonthDropdown
+                                dropdownMode="select"
+                            />
+                        </Col>
+                    </Row>
+                </Form.Group>
                 <Form.Group className='pb-3'>
                     <Row>
                         <Col>

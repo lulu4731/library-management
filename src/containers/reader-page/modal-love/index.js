@@ -7,7 +7,6 @@ import { saveDs } from '../../../utils/local_storage_order';
 
 const ModalLove = ({ isOpen, onClose, titles = [], orders, setOrders }) => {
     const dispatch = useDispatch()
-    console.log(titles)
 
     return (
         <>

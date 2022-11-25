@@ -17,7 +17,7 @@ const ProtectedRouteAdmin = ({ isAuthenticated }) => {
         return (
             <div className="spinner-container">
                 {
-                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/login' replace />
+                    isLoading ? <Spinner animation="border" variant='info' /> : <Navigate to='/' replace />
                 }
             </div>
         )

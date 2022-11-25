@@ -3,9 +3,9 @@ import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { authorsSelector, loadAuthors } from '../../reducers/authors';
-import { categorySelector, loadCategory } from '../../reducers/category';
-import { companySelector, loadCompany } from '../../reducers/company';
+import { authorsSelector, loadAuthors, searchAuthors } from '../../reducers/authors';
+import { categorySelector, loadCategory, searchCategory } from '../../reducers/category';
+import { companySelector, loadCompany, searchCompany } from '../../reducers/company';
 import { addTitle, updateTitle } from '../../reducers/title';
 import convertDate from '../../utils/convertDate';
 
@@ -30,9 +30,9 @@ const TitleModal = ({ isOpen, onClose, value }) => {
     const [ds, setDS] = useState(defaultValue)
 
     useEffect(() => {
-        dispatch(loadCompany())
-        dispatch(loadCategory())
-        dispatch(loadAuthors())
+        dispatch(searchCompany(''))
+        dispatch(searchCategory(''))
+        dispatch(searchAuthors(''))
     }, [dispatch])
 
     useEffect(() => {

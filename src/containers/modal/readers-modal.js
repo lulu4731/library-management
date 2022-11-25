@@ -130,7 +130,7 @@ const ReadersModal = ({ isOpen, onClose, value }) => {
                     <Row>
                         <Col>
                             <Form.Label>Địa chỉ</Form.Label>
-                            <Form.Control as="textarea" rows={4} required value={reader.address} onChange={(e) => onValueChange(e.target.value, 'address')} />
+                            <Form.Control as="textarea" rows={4} value={reader?.address || ''} onChange={(e) => onValueChange(e.target.value, 'address')} />
                         </Col>
                     </Row>
                 </Form.Group>

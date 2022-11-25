@@ -46,12 +46,20 @@ const ReadersPage = () => {
         },
         {
             name: "first_name",
-            label: "Họ",
+            label: "Họ và tên",
+            options: {
+                status: true,
+                customRender: (value) => {
+                    return (
+                        <p>{value.first_name + ' ' + value.last_name}</p>
+                    );
+                }
+            }
         },
-        {
-            name: "last_name",
-            label: "Tên",
-        },
+        // {
+        //     name: "last_name",
+        //     label: "Tên",
+        // },
         {
             name: "email",
             label: "Email",
@@ -100,7 +108,7 @@ const ReadersPage = () => {
                 customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value.readers_status === 0 ? 'success' : 'danger'}>{value.readers_status === 0 ? "Hoạt động" : value.readers_status === 1 ? "Khóa " + value.hours + " giờ" : 'Khóa vĩnh viễn'}</Badge>
+                            <Badge bg={value.readers_status === 0 ? "success" : value.readers_status === 1 ? "danger" : value.readers_status === 2 ? 'danger' : 'warning'}>{value.readers_status === 0 ? "Hoạt động" : value.readers_status === 1 ? "Khóa " + value.hours + " giờ" : value.readers_status === 2 ? 'Khóa vĩnh viễn' : 'Chờ duyệt'}</Badge>
                         </div>
                     );
                 }
@@ -189,7 +197,8 @@ const ReadersPage = () => {
         setItem({
             id_readers: data.id_readers,
             first_name: data.first_name,
-            last_name: data.last_name
+            last_name: data.last_name,
+            email: data.email
         })
         setIsOpenLock(true)
     }

@@ -6,7 +6,7 @@ import renewalDate from '../../utils/renewalDate';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 
 
-const PayModal = ({ isOpen, onClose, value }) => {
+const PayModal = ({ isOpen, onClose, value, hide = true }) => {
     const dispatch = useDispatch()
 
     const defaultValue = {
@@ -83,7 +83,9 @@ const PayModal = ({ isOpen, onClose, value }) => {
                                                 <Col className="mb-3">
                                                     <Form.Label className='ml-3'>Thao tác</Form.Label>
                                                     <Col>
-                                                        <Button variant='success' onClick={() => onSubmit(item.id_book)}>Trả sách</Button>
+                                                        {
+                                                            hide && <Button variant='success' onClick={() => onSubmit(item.id_book)}>Trả sách</Button>
+                                                        }
                                                         &nbsp; &nbsp;
                                                         {
                                                             item.number_renewal === 0 && <Button onClick={() => onRenewal(item.id_book, item.expired)}>Gia hạn</Button>
@@ -102,7 +104,9 @@ const PayModal = ({ isOpen, onClose, value }) => {
             </Offcanvas.Body>
             <Modal.Footer>
                 <Button variant='secondary' onClick={onClose}>Đóng</Button>
-                <Button variant="primary" onClick={onPayAll}>Trả tất cả</Button>
+                {
+                    hide && <Button variant="primary" onClick={onPayAll}>Trả tất cả</Button>
+                }
             </Modal.Footer>
         </Offcanvas>
     )

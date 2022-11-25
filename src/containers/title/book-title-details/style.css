@@ -226,5 +226,6 @@
     font-size: 1.5rem;
     top: 42%;
     left: 53%;
+	cursor: pointer;
     /* color: #fff; */
 }
