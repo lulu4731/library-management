@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { loadTitle, searchTitle, searchTitleLibrarian, titlesSelector } from '../../reducers/title';
+import { searchTitleLibrarian, titlesSelector } from '../../reducers/title';
 import Select from 'react-select';
 import { addReceipt, updateReceipt } from '../../reducers/receipt';
+import { toastError } from '../../toast/toast';
 
 const ReceiptModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -17,8 +18,8 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                     value: 0,
                     label: ''
                 },
-                number_book: '',
-                price: ''
+                number_book: 1,
+                price: 0
             }
         ]
     }
@@ -54,13 +55,15 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
     const onAdd = () => {
         let tempsReceipt = receipts.data.map(item => item.ds.value)
         let tempsDS = dsOptions
+        const check = receipts.data[tempsReceipt.length - 1]
+
         for (let i of tempsReceipt) {
             tempsDS = tempsDS.filter(item => item.value !== i)
         }
         setDsOptions(tempsDS)
-        console.log(tempsReceipt)
-        console.log(tempsDS)
-        if (tempsReceipt[tempsReceipt.length - 1] !== 0) {
+        // console.log()
+        // console.log(tempsDS)
+        if (tempsReceipt[tempsReceipt.length - 1] !== 0 && tempsDS.length > 0 && check.number_book > 0 && check.price > 0) {
             setReceipts({
                 ...receipts,
                 data: [...receipts.data, {
@@ -68,11 +71,13 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                         value: 0,
                         label: ''
                     },
-                    number_book: '',
+                    number_book: 1,
                     price: 0
 
                 }]
             })
+        } else {
+            toastError("Bạn hãy chọn đầu sách, số lượng sách và số tiền phải lớn hơn 0")
         }
     }
 
@@ -102,16 +107,22 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
 
     const onSubmit = (e) => {
         e.preventDefault()
-        if (receipts.id_receipt === 0) {
-            dispatch(addReceipt(receipts.data))
-        } else {
-            dispatch(updateReceipt({
-                id_receipt: receipts.id_receipt,
-                receipt: receipts.data
-            }))
-        }
 
-        onClose()
+        const check = receipts.data[receipts.data.length - 1]
+        if (check.ds.value !== 0 && check.ds.label !== '' && check.number_book > 0 && check.price > 0) {
+            if (receipts.id_receipt === 0) {
+                dispatch(addReceipt(receipts.data))
+            } else {
+                dispatch(updateReceipt({
+                    id_receipt: receipts.id_receipt,
+                    receipt: receipts.data
+                }))
+            }
+
+            onClose()
+        } else {
+            toastError("Bạn hãy chọn đầu sách, số lượng sách và số tiền phải lớn hơn 0")
+        }
     }
 
     return (
@@ -126,8 +137,10 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                     <Col md={4}><Form.Label>Chọn đầu sách</Form.Label></Col>
                     <Col md={2}><Form.Label>Số lượng</Form.Label></Col>
                     <Col><Form.Label>Giá</Form.Label></Col>
-                    <Col><Form.Label>Thành tiền</Form.Label></Col>
-                    <Col md={1}>
+                    <Col md={4}>
+                        <Row>
+                            <Col><Form.Label>Thành tiền</Form.Label></Col>
+                        </Row>
                     </Col>
                 </Row>
                 {
@@ -148,11 +161,17 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                                     <Col>
                                         <Form.Control type="tel" require="true" value={(+item.price).toLocaleString()} onChange={(e) => onChangeValue(index, e.target.value.replace(/\D/g, ''), 'price')} />
                                     </Col>
-                                    <Col>
-                                        <Form.Control type="text" disabled value={(item.price * item.number_book).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
-                                    </Col>
-                                    <Col md={1}>
-                                        <Button variant='link' className='text-decoration-none p-2 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
+
+                                    <Col md={4}>
+                                        <Row>
+                                            <Col md={9}>
+                                                <Form.Control type="text" disabled value={(item.price * item.number_book).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
+                                            </Col>
+                                            <Col>
+                                                <Button variant='link' className='text-decoration-none p-2 mr-3' onClick={() => onDelete(index)}><i className="fa-solid fa-x"></i></Button>
+
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                                 <br />
@@ -164,13 +183,14 @@ const ReceiptModal = ({ isOpen, onClose, value }) => {
                     <Col md={8}>
                         <Button variant='link' className='text-decoration-none' onClick={onAdd}><i className="fa-solid fa-plus"></i> Thêm đầu sách</Button>
                     </Col>
-                    <Col style={{ marginRight: '30px', marginLeft: '40px' }}>
+                    <Col>
                         <Form.Label>Tổng tiền</Form.Label>
                         <Form.Control type="text" disabled value={receipts.data.reduce(
                             (previousValue, currentValue) => previousValue + (currentValue.number_book * currentValue.price),
                             0
                         ).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
                     </Col>
+                    <Col md={1}></Col>
                 </Row>
             </Offcanvas.Body>
             <Modal.Footer>

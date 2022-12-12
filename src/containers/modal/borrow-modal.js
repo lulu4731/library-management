@@ -11,12 +11,14 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const titles = useSelector(dsBorrowsSelector)
+    console.log(value)
 
     const defaultValue = {
         id_borrow: 0,
         id_readers: {},
-        expired: new Date(),
-        books: []
+        expired: new Date((new Date()).setDate((new Date()).getDate() + 14)),
+        books: [],
+        total_price: 0
     }
 
     const [borrow, setBorrow] = useState(defaultValue)
@@ -49,6 +51,8 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
     const onChangeValue = (keyValue, keyName) => {
         const newBorrow = { ...borrow }
         newBorrow[keyName] = keyValue
+        newBorrow['total_price'] = newBorrow.books.reduce(
+            (previousValue, currentValue) => previousValue + (currentValue.price * 1), 0)
 
         setBorrow(newBorrow)
     }
@@ -61,11 +65,12 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
             return { id_book: item.value, expired: borrow.expired.toISOString().split('T')[0] }
         })
 
-        if (borrow.id_borrow === 0) {
-            dispatch(addBorrows(newBorrow))
-        } else {
-            dispatch(updateBorrows(newBorrow))
-        }
+        console.log(newBorrow)
+        // if (borrow.id_borrow === 0) {
+        //     dispatch(addBorrows(newBorrow))
+        // } else {
+        //     dispatch(updateBorrows(newBorrow))
+        // }
         onClose()
     }
 
@@ -153,6 +158,16 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
                                 components={{ Menu }}
                             />
                         </Col>
+                    </Row>
+                </Form.Group>
+                <Form.Group className='pb-3'>
+                    <Row>
+                        <Col>
+                            <Form.Label>Tổng tiền</Form.Label>
+                            <Form.Control type="text" disabled value={borrow.total_price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })} />
+                        </Col>
+                        {/* borrow.books.reduce(
+                                (previousValue, currentValue) => previousValue + (currentValue.price * 1), 0).toLocaleString('it-IT', {style: 'currency', currency: 'VND' }) */}
                     </Row>
                 </Form.Group>
             </Offcanvas.Body>

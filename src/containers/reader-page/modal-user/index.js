@@ -45,7 +45,7 @@ const ModalUser = ({ isOpen, onClose, data }) => {
         <>
             <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
                 <Offcanvas.Header closeButton className='pb-0'>
-                    {/* <Offcanvas.Title className='title-love'>
+                    <Offcanvas.Title className='title-love'>
                         <Card className="post-user-card"
                             style={{
                                 width: "100%",
@@ -53,17 +53,9 @@ const ModalUser = ({ isOpen, onClose, data }) => {
                                 backgroundColor: '#F0F8FF'
                             }}
                         >
-                            <Image
-                                src={"https://vaithuhayho.com/wp-content/uploads/2021/03/anh-avatar-dep-36.jpg"}
-                                roundedCircle
-                                style={{
-                                    width: "4rem",
-                                    height: "4rem",
-                                }}
-                            />
-                            &nbsp; Trang cá nhân
+                            Trang cá nhân
                         </Card>
-                    </Offcanvas.Title> */}
+                    </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body className='pt-0'>
                     <Card className="post-user-card"
@@ -142,7 +134,7 @@ const ModalUser = ({ isOpen, onClose, data }) => {
                                                     : 'Ngày trả: ' + convertTimesTamp(JSON.parse(item.books).find((book) => book.borrow_status === 0).expired)}
                                             </Card.Text>
                                             {
-                                                JSON.parse(item.books).find((book) => book.borrow_status === 0) ?
+                                                JSON.parse(item.books).find((book) => book.borrow_status === 0 && book.number_renewal === 0) ?
                                                     <OverlayTrigger
                                                         key={'bottom-eye'}
                                                         placement={'bottom'}
@@ -178,15 +170,6 @@ const ModalUser = ({ isOpen, onClose, data }) => {
                                             borderRadius: 17
                                         }}
                                     >
-                                        {/* <Image
-                                    src={item.img}
-                                    style={{
-                                        width: "10rem",
-                                        height: "8rem",
-                                        marginRight: "20px",
-                                        borderRadius: 15,
-                                    }}
-                                /> */}
                                         <Card.Body className="pt-0">
                                             <Card.Title style={{ marginTop: 10 }}>
                                                 {item.title}
@@ -197,14 +180,9 @@ const ModalUser = ({ isOpen, onClose, data }) => {
                                             <Card.Text>
                                                 &emsp;&emsp;Ngày đưa ra thông báo: {item.day} - {item.time}
                                             </Card.Text>
-                                            {/* <Card.Text>
-                                        Giá mượn
-                                    </Card.Text> */}
                                         </Card.Body>
                                         <Card.Footer
-                                            // onClick={() => onDeleteDs(item)}
                                             style={{ backgroundColor: '#f0f8ff', margin: 'auto', border: 0 }}>
-                                            {/* <i className="fa-regular fa-eye fa-2x"></i> */}
                                             <OverlayTrigger
                                                 key={'bottom-eye-read'}
                                                 placement={'left'}
@@ -225,7 +203,6 @@ const ModalUser = ({ isOpen, onClose, data }) => {
                 </Offcanvas.Body>
                 <Modal.Footer>
                     <Button variant='primary' onClick={() => setIsOpenChangePass(true)}>Thay đổi mật khẩu</Button>
-                    {/* <Button variant="primary" >Gửi phản hồi</Button> */}
                 </Modal.Footer>
             </Offcanvas>
             {

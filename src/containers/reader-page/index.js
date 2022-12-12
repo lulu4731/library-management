@@ -16,7 +16,7 @@ import Header from './Header'
 import BookTitleDetails from '../title/book-title-details'
 import Footer from './Footer'
 import { saveDs, saveOrderLocalStorage } from '../../utils/local_storage_order'
-import { addBorrowsReader } from '../../reducers/borrow'
+import { addBorrowsReader } from '../../reducers/librarian'
 
 
 const HomePageReader = () => {
@@ -33,18 +33,30 @@ const HomePageReader = () => {
     const [orders, setOrders] = useState([])
     const params = useParams()
     const [search] = useSearchParams()
-    const [code] = useState(search.get('resultCode'))
-
-    useEffect(() => {
-        if (code && +code === 0) {
-            dispatch(addBorrowsReader(JSON.parse((localStorage.getItem('borrow')))))
-            navigate('/readers/home')
-        }
-    }, [code, dispatch, navigate])
+    const [code, setCode] = useState(null)
+    search.get('resultCode')
 
     useEffect(() => {
         dispatch(checkLogin())
     }, [dispatch])
+
+    useEffect(() => {
+        if (search.get('resultCode') !== null) {
+            setCode(search.get('resultCode'))
+        }
+    }, [search])
+
+    useEffect(() => {
+        if (code !== null && +code === 0) {
+            dispatch(addBorrowsReader(JSON.parse((localStorage.getItem('borrow')))))
+            // localStorage.removeItem(`reader-order-${reader.id_readers}`)
+            setCode(null)
+            navigate('/readers/home')
+        } else if (code !== null && +code === 1006) {
+            setCode(null)
+            navigate('/readers/home')
+        }
+    }, [code, dispatch, navigate, reader.id_readers])
 
     useEffect(() => {
         dispatch(searchCategory(''))
@@ -69,6 +81,7 @@ const HomePageReader = () => {
     })
 
 
+    // console.log(reader)
     // const handleKeyDown = async (e) => {
     //     if (e.key === 'Enter') {
     //         dispatch(searchTitle({ keyword: keyword.replace(/\s+/g, ' ').trim(), category: select.value }))
@@ -132,10 +145,14 @@ const HomePageReader = () => {
                                                 height: 45,
                                                 width: 300,
                                             }),
-
+                                            menuPortal: (base) => ({
+                                                ...base,
+                                                zIndex: 99999,
+                                            })
                                         }}
                                         options={[...categoryOptions, { value: 'all', label: 'Tất cả' }]}
-                                        menuPlacement="top"
+                                        menuPlacement="auto"
+                                        menuPortalTarget={document.body}
                                         value={select}
                                         onChange={(value) => onChangeValue(value, 'select')}
                                     />
@@ -190,7 +207,7 @@ const HomePageReader = () => {
                                                                             ))
                                                                         }
                                                                     </h5>
-                                                                    <h5 style={{ textAlign: "justify" }}>Giới thiệu: {item.description}
+                                                                    <h5 style={{ textAlign: "justify" }}>Giới thiệu: {item?.description?.substring(0, 160) + "..."}
                                                                     </h5>
                                                                 </div>
                                                             </div>

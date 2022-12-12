@@ -3,9 +3,9 @@ import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { authorsSelector, loadAuthors, searchAuthors } from '../../reducers/authors';
-import { categorySelector, loadCategory, searchCategory } from '../../reducers/category';
-import { companySelector, loadCompany, searchCompany } from '../../reducers/company';
+import { authorsSelector, searchAuthors } from '../../reducers/authors';
+import { categorySelector, searchCategory } from '../../reducers/category';
+import { companySelector, searchCompany } from '../../reducers/company';
 import { addTitle, updateTitle } from '../../reducers/title';
 import convertDate from '../../utils/convertDate';
 
@@ -144,7 +144,7 @@ const TitleModal = ({ isOpen, onClose, value }) => {
                     <Row>
                         <Col>
                             <Form.Label>Giá mượn</Form.Label>
-                            <Form.Control type="text" value={ds?.price} onChange={(e) => onChangeValue(e.target.value, 'price')} />
+                            <Form.Control type="tel" value={(+ds?.price).toLocaleString()} onChange={(e) => onChangeValue(e.target.value.replace(/\D/g, ''), 'price')} />
                         </Col>
                         <Col>
                             <Form.Label>Số trang</Form.Label>

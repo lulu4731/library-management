@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 
-const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, page, header }) => {
+const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, page, header, spanTitle, spanToolbar }) => {
     const [pageNumber, setPageNumber] = useState(0)
     // const [keyword, setKeyword] = useState('')
     const todoPerPage = page || 10
     const pagesVisited = pageNumber * todoPerPage
 
-    const pageCount = Math.ceil(data.length / todoPerPage)
+    let pageCount = Math.ceil(data.length / todoPerPage)
 
     const display = data
         .slice(pagesVisited, pagesVisited + todoPerPage)
@@ -32,8 +32,8 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
     }
 
     // useEffect(() => {
-    //     changePage({ selected: 0 })
-    // }, [])
+    //     changePage({ selected: data.length > todoPerPage ?  pageNumber : 0})
+    // }, [data, pageNumber])
 
     // console.log(keyword)
     return (
@@ -44,8 +44,8 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
             <Table bordered hover className="table-info box-comments">
                 <thead>
                     <tr>
-                        <th colSpan={columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2 + 1} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>{title}</th>
-                        <th colSpan={columns.length / 2} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
+                        <th colSpan={spanTitle || columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2 + 1} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>{title}</th>
+                        <th colSpan={spanToolbar || columns.length / 2} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
                             {
                                 !header ? (
                                     <div className='search-table'>
@@ -54,7 +54,7 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
                                             <i className="fa-solid fa-magnifying-glass icon"></i>
                                         </label>
                                     </div>
-                                ) : header.customRender()
+                                ) : header.customRender(changePage)
                             }
                         </th>
                     </tr>

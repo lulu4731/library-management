@@ -37,6 +37,10 @@ const Book = () => {
     }
     const columns = [
         {
+            name: "id_book",
+            label: "Mã sách",
+        },
+        {
             name: "ds",
             label: "Thuộc đầu sách",
             options: {
@@ -76,7 +80,7 @@ const Book = () => {
                 customRender: (value) => {
                     return (
                         <div className='pb-0'>
-                            <Badge bg={value.id_status === 0 ? 'success' : value === 1 ? 'warning' : 'danger'}>{value.id_status === 0 ? 'Chưa được mượn' : value === 1 ? 'Đã đươc mượn' : 'Sách bị mất'}</Badge>
+                            <Badge bg={value.id_status === 0 ? 'success' : value.id_status === 1 ? 'warning' : 'danger'}>{value.id_status === 0 ? 'Chưa được mượn' : value.id_status === 1 ? 'Đã đươc mượn' : 'Sách bị mất'}</Badge>
                         </div>
                     );
                 }

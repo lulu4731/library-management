@@ -84,9 +84,8 @@ const PayModal = ({ isOpen, onClose, value, hide = true }) => {
                                                     <Form.Label className='ml-3'>Thao tác</Form.Label>
                                                     <Col>
                                                         {
-                                                            hide && <Button variant='success' onClick={() => onSubmit(item.id_book)}>Trả sách</Button>
+                                                            hide && <Button className={!hide ? '' : 'mr-3'} variant='success' onClick={() => onSubmit(item.id_book)}>Trả sách</Button>
                                                         }
-                                                        &nbsp; &nbsp;
                                                         {
                                                             item.number_renewal === 0 && <Button onClick={() => onRenewal(item.id_book, item.expired)}>Gia hạn</Button>
                                                         }

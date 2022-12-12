@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { hoveredSelector, setHovered } from '../../reducers/book'
@@ -9,10 +8,10 @@ const Sidebar = ({ toggle }) => {
     const dispatch = useDispatch()
     const hovered = useSelector(hoveredSelector)
     // const [hovered, setHovered] = useState(0)
-    const entering = (e) => {
-        e.children[0].style.border = 'rgb(119 106 207)';
-        e.children[1].style.backgroundColor = 'rgb(119 106 207)';
-    };
+    // const entering = (e) => {
+    //     e.children[0].style.border = 'rgb(119 106 207)';
+    //     e.children[1].style.backgroundColor = 'rgb(119 106 207)';
+    // };
 
     const [hide, setHide] = useState(false)
 
@@ -80,18 +79,18 @@ const Sidebar = ({ toggle }) => {
                 </li>
                 <li className={hovered === 10 ? 'hovered' : ''} onClick={() => dispatch(setHovered(10))}>
                     <Link to='/company'>
-                        <OverlayTrigger
+                        {/* <OverlayTrigger
                             delay={{ hide: 100, show: 100 }}
                             overlay={(props) => (
                                 <Tooltip {...props} id="button-tooltip">
                                     Nhà xuất bản
                                 </Tooltip>
                             )}
-                            placement="right"
+                            placement="bottom-end"
                             onEntering={entering}
-                        >
+                        > */}
                             <span className='icon'><i className="fa-solid fa-house ion-icon"></i></span>
-                        </OverlayTrigger>
+                        {/* </OverlayTrigger> */}
                         <span className='title' style={{ fontWeight: 'bold' }}>Nhà xuất bản</span>
                     </Link>
                 </li>

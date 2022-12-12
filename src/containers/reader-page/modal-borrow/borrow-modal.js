@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import { paymentBorrow } from '../../../utils/callerAPI';
 import { toastError } from '../../../toast/toast';
 import { useDispatch } from 'react-redux';
-import { addBorrowsReader } from '../../../reducers/borrow';
+import { addBorrowsReader } from '../../../reducers/librarian';
 
 const BorrowModal = ({ isOpen, onClose, orders, setOrders, id_readers, load_orders, name_reader }) => {
     const dispatch = useDispatch()

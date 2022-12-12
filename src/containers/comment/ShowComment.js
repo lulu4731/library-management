@@ -12,17 +12,10 @@ import { toastError } from "../../toast/toast"
 const ShowComment = () => {
     const dispatch = useDispatch()
     let comments = useSelector(commentSelector)
-    // const commentStatus = comments.filter((comment) => comment.status === 0)
     const { isbn } = useParams()
-    // console.log(isbn)
     const [content, setContent] = useState("")
     const [activeComment, setActiveComment] = useState(null)
     const user = useSelector(librarianSelector)
-    // console.log(user)
-
-    // if (user.id_account === 0 || user.id_role === 3) {
-    //     comments = comments.filter((comment) => comment.status === 0)
-    // }
 
     const isReplying = activeComment?.type === "replying"
     const isEditing = activeComment && activeComment.type === "editing"
@@ -47,10 +40,6 @@ const ShowComment = () => {
             toastError("Vui lòng đăng nhập để chat")
             return
         }
-        // else if (user.account_status !== 0) {
-        //     toastError("Tài khoản đã bị khóa, không thể chat!")
-        //     return
-        // }
         else {
             dispatch(addCommentParent({ isbn, content }))
             setContent("")
@@ -60,48 +49,12 @@ const ShowComment = () => {
         dispatch(deleteComment({ id_cmt, isbn, id_cmt_parent }))
     }
 
-    const hideCommentParent = (id_cmt, status) => {
-        // if (status === 0) {
-        //     const comment = {
-        //         id_post,
-        //         id_cmt,
-        //         new_status: 1
-        //     }
-        //     dispatch(hidePresentlyComment(comment))
-        // } else {
-        //     const comment = {
-        //         id_post,
-        //         id_cmt,
-        //         new_status: 0
-        //     }
-        //     dispatch(hidePresentlyComment(comment))
-        // }
-
-    }
 
     const addCmtChildren = (id_cmt_parent, content) => {
-        // if (user.account_status !== 0) {
-        //     toastError("Tài khoản đã bị khóa, không thể chat!")
-        //     return
-        // }
-        // const comment = {
-        //     id_post,
-        //     id_cmt_parent,
-        //     content,
-        // }
         dispatch(addCommentChildren({ isbn, id_cmt_parent, content }))
         setActiveComment(null)
     }
     const updateCommentParent = (id_cmt, content, id_cmt_parent) => {
-        // if (user.account_status !== 0) {
-        //     toastError("Tài khoản đã bị khóa, không thể chỉnh sửa chat!")
-        //     return
-        // }
-        // const comment = {
-        //     id_post,
-        //     id_cmt,
-        //     content,
-        // }
         dispatch(updateComment({ isbn, id_cmt, content, id_cmt_parent }))
         setActiveComment(null)
     }
@@ -120,9 +73,7 @@ const ShowComment = () => {
         <>
             {/* <ScrollToTop /> */}
             <Row>
-                {/* <Col xl={1}></Col> */}
                 <Col xl={12} lg={12} md={12} sm={12}>
-                    {/* <h4>Bình luận</h4> */}
                     <div className="box-comments">
                         <form onSubmit={onSubmitComment} className="form-comment">
                             <textarea
@@ -142,30 +93,13 @@ const ShowComment = () => {
                             >
                                 Bình luận
                             </button>
-                            {/* <input
-                                type="text"
-                                className="write-comment col-sm-12"
-                                placeholder="Viết bình luận..."
-                                name="content"
-                                onKeyPress={(e) => {
-                                    e.key === "Enter" && e.preventDefault()
-                                }}
-                                value={content}
-                                onChange={(event) =>
-                                    setContent(event.target.value)
-                                }
-                                style={{ height: "50px", padding: "10px" }}
-                            />*/}
-                            {/* <br /> */}
                         </form>
-                        {/* <br /> */}
                         <br />
                         {comments.length > 0 && comments.map((comment, index) => (
                             <div className="read-comment" key={index}>
                                 <Card
                                     style={{
                                         flexDirection: "row",
-                                        // width: "100%",
                                         boxShadow: 'none',
                                         border: "0",
                                         padding: "3px",
@@ -181,7 +115,6 @@ const ShowComment = () => {
                                         }}
                                     />
                                     <Card.Body style={{ padding: "0px" }}>
-                                        {/* <Row className="d-flex"> */}
                                         <Card.Title
                                             as={Link}
                                             to={`/authors/${comment.id_account}`}
@@ -198,12 +131,7 @@ const ShowComment = () => {
                                                 </i>
                                             </span>
                                         </Card.Title>
-                                        {/* </Row> */}
                                         <Card.Text
-                                        // className="d-flex"
-                                        // style={{
-                                        //     flexDirection: "column",
-                                        // }}
                                         >
                                             {isEditing &&
                                                 activeComment.id_cmt ===
@@ -251,11 +179,6 @@ const ShowComment = () => {
                                                         <Button variant="none">
                                                             <i
                                                                 className={comment.status === 0 ? "fas fa-eye-slash icon-size" : "fas fa-eye icon-size"}
-                                                            // onClick={() =>
-                                                            //     hideCommentParent(
-                                                            //         comment.id_cmt, comment.status
-                                                            //     )
-                                                            // }
                                                             ></i>
                                                         </Button>
                                                     </>
@@ -330,15 +253,14 @@ const ShowComment = () => {
                                                 )}
                                         </Card.Text>
                                         <ShowCommentChildren
+                                            key={comment.id_cmt}
                                             id_cmt_parent={comment.id_cmt}
-                                            // id_cmt={comment.id_cmt}
                                             isEditing={isEditing}
                                             activeComment={activeComment}
                                             setActiveComment={setActiveComment}
                                             id_readers={user.id_readers}
                                             role={user.role}
                                             commentChildren={comment.commentChildren}
-                                        // account_status={user.account_status}
                                         />
                                         <hr />
                                     </Card.Body>

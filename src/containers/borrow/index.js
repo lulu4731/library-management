@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { borrowsSelector, loadBorrows, searchBorrows } from '../../reducers/borrow';
-import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { borrowsSelector, searchBorrows } from '../../reducers/borrow';
+import { Badge, Button, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import BorrowModal from '../modal/borrow-modal';
 import PayModal from '../modal/pay-modal';
 import HomePage from '../../components/home/HomePage';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 import TableBootstrap from '../../components/table/table-bootstrap';
 import PendingModal from '../modal/pending-modal';
-import renewalDate from '../../utils/renewalDate';
+import Select from 'react-select'
 
 const Borrow = () => {
     const dispatch = useDispatch()
@@ -18,21 +18,55 @@ const Borrow = () => {
     const [isOpenPay, setIsOpenPay] = useState(false)
     const [isOpenPending, setIsOpenPending] = useState(false)
     const [keyword, setKeyword] = useState('')
+    const [select, setSelect] = useState({
+        value: 'all',
+        label: 'Tất cả'
+    })
 
     useEffect(() => {
-        dispatch(searchBorrows(keyword.replace(/\s+/g, ' ').trim()))
-    }, [dispatch, keyword])
+        dispatch(searchBorrows({ keyword: keyword.replace(/\s+/g, ' ').trim(), status: select.value }))
+    }, [dispatch, keyword, select.value])
 
+    const options = [
+        { value: 2, label: "Chờ duyệt" },
+        { value: 0, label: "Đang mượn" },
+        { value: 1, label: "Đã trả" },
+        { value: 'all', label: 'Tất cả' }
+    ]
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            padding: '2px 0px',
+            borderRadius: 20,
+            width: 250,
+            float: 'right'
+        }),
+    }
     const header =
     {
         customRender: () => {
             return (
-                <div className='search-table'>
-                    <label style={{ marginBottom: 0 }}>
-                        <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
-                        <i className="fa-solid fa-magnifying-glass icon"></i>
-                    </label>
-                </div>
+                <>
+                    <Row className='p-0'>
+                        <Col>
+                            <Select
+                                styles={customStyles}
+                                options={options}
+                                value={select}
+                                onChange={(value) => setSelect(value)}
+                            />
+                        </Col>
+                        <Col>
+                            <div className='search-table'>
+                                <label style={{ marginBottom: 0 }}>
+                                    <input type="text" placeholder='Tìm kiếm' value={keyword} onChange={e => setKeyword(e.target.value)} />
+                                    <i className="fa-solid fa-magnifying-glass icon"></i>
+                                </label>
+                            </div>
+                        </Col>
+                    </Row>
+                </>
             );
         }
     }
@@ -274,7 +308,8 @@ const Borrow = () => {
             id_borrow: data.id_borrow,
             id_readers: JSON.parse(data.reader),
             expired: new Date(convertTimesTamp(JSON.parse(data.books)[0].expired)),
-            books: JSON.parse(data.books).map(item => item.ds)
+            books: JSON.parse(data.books).map(item => item.ds),
+            total_price: +data.total_price
         })
 
         setIsOpenBorrow(true)
@@ -317,7 +352,9 @@ const Borrow = () => {
     return (
         <>
             <HomePage>
-                <TableBootstrap columns={columns} onOpen={onOpen} data={borrows} titleButton="Thêm phiếu mượn" title="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN" page={6} header={header} />
+                <TableBootstrap spanTitle={columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2} spanToolbar={columns.length / 2 + 1}
+                    columns={columns} onOpen={onOpen} data={borrows} titleButton="Thêm phiếu mượn" title="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN"
+                    page={6} header={header} />
                 {
                     isOpenBorrow && (<BorrowModal isOpen={isOpenBorrow} onClose={onClose} value={item} />)
                 }

@@ -30,10 +30,10 @@ const FeedbackPage = () => {
     }, [dispatch, search])
 
 
-    const onChangeStatus = (value) => {
-        setItem(value)
-        setIsOpen(true)
-    }
+    // const onChangeStatus = (value) => {
+    //     setItem(value)
+    //     setIsOpen(true)
+    // }
 
 
     const onEmail = (value) => {

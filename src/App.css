@@ -38,7 +38,14 @@ body::-webkit-scrollbar {
     background: #5e5eb7;
     border-left: 10px solid #5e5eb7;
     transition: 0.5s;
-    overflow: hidden;
+    /* overflow: hidden; */
+    overflow-x: hidden;
+    -ms-overflow-style: none; 
+  scrollbar-width: none; 
+  overflow-y: scroll; 
+}
+.navigation::-webkit-scrollbar {
+  display: none; 
 }
 
 .navigation ul {

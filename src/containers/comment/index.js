@@ -12,7 +12,7 @@ const Comment = () => {
     const [data, setData] = useState(comment)
     const [select, setSelect] = useState({
         value: -1,
-        label: 'All'
+        label: 'Tất cả'
     })
 
     useEffect(() => {

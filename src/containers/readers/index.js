@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReadersModal from '../modal/readers-modal'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteReaders, loadReaders, readersSelector, searchReaders, unLockReaders, updateReadersStatus } from '../../reducers/readers'
+import { deleteReaders, readersSelector, searchReaders, unLockReaders, updateReadersStatus } from '../../reducers/readers'
 import HomePage from '../../components/home/HomePage'
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import convertTimesTamp from '../../utils/convertTimesTamp'
@@ -56,10 +56,6 @@ const ReadersPage = () => {
                 }
             }
         },
-        // {
-        //     name: "last_name",
-        //     label: "Tên",
-        // },
         {
             name: "email",
             label: "Email",
@@ -188,7 +184,7 @@ const ReadersPage = () => {
     const onUpdate = (data) => {
         setItem({
             ...data,
-            date_of_birth: new Date(convertTimesTamp(data.date_of_birth))
+            date_of_birth: data.date_of_birth ? new Date(convertTimesTamp(data.date_of_birth)) : new Date("2012/01/01")
         })
         setIsOpen(true)
     }

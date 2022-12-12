@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import TitleModal from '../modal/title-modal';
-import { deleteTitle, loadTitle, searchTitleLibrarian, titlesSelector } from '../../reducers/title';
+import { deleteTitle, searchTitleLibrarian, titlesSelector } from '../../reducers/title';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import TableBootstrap from '../../components/table/table-bootstrap';

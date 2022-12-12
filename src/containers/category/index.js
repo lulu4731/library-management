@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { categorySelector, deleteCategory, loadCategory, searchCategory } from '../../reducers/category';
+import { categorySelector, deleteCategory, searchCategory } from '../../reducers/category';
 import CategoryModal from '../modal/category-modal';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';

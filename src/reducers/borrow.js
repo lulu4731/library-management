@@ -21,10 +21,10 @@ export const loadBorrows = createAsyncThunk(
 
 export const searchBorrows = createAsyncThunk(
     "borrows/searchBorrows",
-    async (keyword) => {
+    async (data) => {
         try {
             const response = await axios.get(
-                `http://localhost:8000/api/v0/book_borrow/search?k=${keyword}`
+                `http://localhost:8000/api/v0/book_borrow/search?k=${data.keyword}&c=${data.status}`
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }
@@ -155,22 +155,22 @@ export const pendingBook = createAsyncThunk(
     }
 )
 
-export const addBorrowsReader = createAsyncThunk(
-    "borrows/addBorrowsReader",
-    async (borrow) => {
-        try {
-            const response = await axios.post(
-                `http://localhost:8000/api/v0/book_borrow/reader`, borrow
-            )
-            if (response.status === 201) {
-                return await { ...response.data, status: response.status }
-            }
-        } catch (error) {
-            if (error.response.data) return error.response.data
-            else return { message: error.message }
-        }
-    }
-)
+// export const addBorrowsReader = createAsyncThunk(
+//     "borrows/addBorrowsReader",
+//     async (borrow) => {
+//         try {
+//             const response = await axios.post(
+//                 `http://localhost:8000/api/v0/book_borrow/reader`, borrow
+//             )
+//             if (response.status === 201) {
+//                 return await { ...response.data, status: response.status }
+//             }
+//         } catch (error) {
+//             if (error.response.data) return error.response.data
+//             else return { message: error.message }
+//         }
+//     }
+// )
 
 const borrows = createSlice({
     name: 'borrows',
@@ -207,15 +207,15 @@ const borrows = createSlice({
                     toastError(action.payload.message)
                 }
             })
-            .addCase(addBorrowsReader.fulfilled, (state, action) => {
-                if (action.payload.status === 201) {
-                    state.borrowsReaders.unshift(action.payload.data)
-                    toastSuccess(action.payload.message)
-                } else {
-                    toastError(action.payload.message)
-                    // console.log(action.payload.data)
-                }
-            })
+            // .addCase(addBorrowsReader.fulfilled, (state, action) => {
+            //     if (action.payload.status === 201) {
+            //         state.borrowsReaders.unshift(action.payload.data)
+            //         toastSuccess(action.payload.message)
+            //     } else {
+            //         toastError(action.payload.message)
+            //         // console.log(action.payload.data)
+            //     }
+            // })
             .addCase(returnBook.fulfilled, (state, action) => {
                 if (action.payload.status === 200) {
                     // console.log(state.borrows)

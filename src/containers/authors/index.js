@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import AuthorsModal from '../modal/authors-modal'
 import { useDispatch, useSelector } from 'react-redux';
-import { authorsSelector, deleteAuthors, loadAuthors, searchAuthors } from '../../reducers/authors';
+import { authorsSelector, deleteAuthors, searchAuthors } from '../../reducers/authors';
 import HomePage from '../../components/home/HomePage';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';

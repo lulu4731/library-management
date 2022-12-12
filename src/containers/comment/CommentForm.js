@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Row, Form } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 const CommentForm = ({
     handleSubmit,
     submitLabel,
@@ -15,7 +15,6 @@ const CommentForm = ({
         setContent("")
     }
     return (
-        // <Row>
         <Form onSubmit={onSubmit} className="form-comment">
             <textarea
                 type="text"
@@ -27,14 +26,12 @@ const CommentForm = ({
                 }}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-            // style={{ height: "120px", minHeight: "100px", maxHeight: "300px", padding: "10px", margin: "10px 0px", border: "2px solid #ccc", borderRadius: "5px", borderSizing: "border-box" }}
             />
             <button
                 className="button-comment ml-2"
                 disabled={isTextareaDisabled}
                 onClick={onSubmit}
             >
-                {/* <i className="fas fa-comment-dots"></i> */}
                 Bình luận
             </button>
             {hasCancelButton && (
@@ -42,12 +39,10 @@ const CommentForm = ({
                     className="button-comment"
                     onClick={handleCancel}
                 >
-                    {/* <i className="fas fa-window-close"></i> */}
                     Đóng
                 </button>
             )}
         </Form>
-        // </Row>
     )
 }
 

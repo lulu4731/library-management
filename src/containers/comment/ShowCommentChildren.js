@@ -1,17 +1,8 @@
-import React, { useEffect } from "react"
-import { Button, Card, Image, Row } from "react-bootstrap"
-import { useDispatch, useSelector } from "react-redux"
-import { Link } from "react-router-dom"
-// import {
-//     commentChildrenSelector,
-//     deleteComment,
-//     loadCommentChildren,
-//     updateComment,
-//     hidePresentlyComment
-// } from "../../reducers/Comment/comment"
+import React from "react"
+import { Button, Card, Image } from "react-bootstrap"
+import { useDispatch } from "react-redux"
 import { useParams } from "react-router"
 import CommentForm from "./CommentForm"
-import { toastError } from "../../toast/toast"
 import { deleteComment, updateComment } from "../../reducers/comment"
 
 const ShowCommentChildren = ({
@@ -25,48 +16,13 @@ const ShowCommentChildren = ({
     commentChildren
 }) => {
     const dispatch = useDispatch()
-    // console.log(id_cmt)
-    // const commentChildren = useSelector(commentChildrenSelector)
     const { isbn } = useParams()
-    // useEffect(() => {
-    //     dispatch(loadCommentChildren(id_post))
-    // }, [dispatch, id_post])
-
-    // const getReplies = commentChildren.filter(
-    //     (comment) =>
-    //         comment.id_cmt_parent === id_cmt_parent &&
-    //         comment.id_cmt !== id_cmt_parent
-    // )
-
-    const hideCommentChildren = (id_cmt, status) => {
-        // if (status === 0) {
-        //     const comment = {
-        //         id_post,
-        //         id_cmt,
-        //         new_status: 1
-        //     }
-        //     dispatch(hidePresentlyComment(comment))
-        // } else {
-        //     const comment = {
-        //         id_post,
-        //         id_cmt,
-        //         new_status: 0
-        //     }
-        //     dispatch(hidePresentlyComment(comment))
-        // }
-
-    }
 
     const deleteCommentChildren = (id_cmt) => {
         dispatch(deleteComment({ id_cmt, isbn, id_cmt_parent }))
     }
 
     const updateCommentChildren = (id_cmt, content) => {
-        // if (account_status !== 0) {
-        //     toastError("Tài khoản đã bị khóa, không thể chỉnh sửa chat!")
-        //     return
-        // }
-        // console.log({ isbn, id_cmt, content, id_cmt_parent })
         dispatch(updateComment({ isbn, id_cmt, content, id_cmt_parent }))
         setActiveComment(null)
     }
@@ -103,30 +59,16 @@ const ShowCommentChildren = ({
                             }}
                         />
                         <Card.Body style={{ padding: "0" }}>
-                            {/* <Row className="d-flex"> */}
                             <Card.Title
-                            // as={Link}
-                            // to={`/authors/${comment.id_account}`}
-                            // style={{
-                            //     textDecoration: "none",
-                            //     color: "black",
-                            //     display: "inline",
-                            // }}
                             >
                                 {comment.reader.first_name + " " + comment.reader.last_name}
-                                {/* <span style={{ color: "#2596be" }}>
-                                        @{comment.account_name}
-                                    </span> */}
                                 <span className="date-comment">
                                     <i>
                                         {comment.day} - {comment.time}
                                     </i>
                                 </span>
                             </Card.Title>
-                            {/* </Row> */}
                             <Card.Text
-                            // className="d-flex"
-                            // style={{ flexDirection: "column" }}
                             >
                                 {isEditing &&
                                     activeComment.id_cmt === comment.id_cmt ? (
@@ -155,11 +97,6 @@ const ShowCommentChildren = ({
                                             <Button variant="none">
                                                 <i
                                                     className={comment.status === 0 ? "fas fa-eye-slash fa-x" : "fas fa-eye fa-x"}
-                                                // onClick={() =>
-                                                //     hideCommentChildren(
-                                                //         comment.id_cmt, comment.status
-                                                //     )
-                                                // }
                                                 ></i>
                                             </Button>
                                         </>

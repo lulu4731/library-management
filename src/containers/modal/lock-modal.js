@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { banReaders, dieReaders } from '../../reducers/readers';
 import { toastError } from '../../toast/toast';
-import { sendEmail, sendEmailLock } from '../../utils/sendEmail'
+import { sendEmailLock } from '../../utils/sendEmail'
 
 const LockModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -17,7 +17,7 @@ const LockModal = ({ isOpen, onClose, value }) => {
             label: 'Khóa theo giờ',
             value: 1
         },
-        hours_lock: 0,
+        hours_lock: 1,
         reason: ''
     }
 

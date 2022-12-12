@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadReceipt, receiptsSelector, searchReceipt } from '../../reducers/receipt';
+import { receiptsSelector, searchReceipt } from '../../reducers/receipt';
 import ReceiptModal from '../modal/receipt_modal';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'

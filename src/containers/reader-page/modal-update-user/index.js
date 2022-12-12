@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
-import { useDispatch } from 'react-redux';
-import { addReaders, updateReaders } from '../../../reducers/readers';
 
 const ModalUpdateUser = ({ isOpen, onClose, value }) => {
-    const dispatch = useDispatch()
 
     const defaultValue = {
         id_readers: 0,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { companySelector, deleteCompany, loadCompany, searchCompany } from '../../reducers/company';
+import { companySelector, deleteCompany, searchCompany } from '../../reducers/company';
 import HomePage from '../../components/home/HomePage'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import CompanyModal from '../modal/company-modal';

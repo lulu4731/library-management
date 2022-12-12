@@ -111,6 +111,22 @@ export const updateLibrarian = createAsyncThunk(
     }
 )
 
+export const addBorrowsReader = createAsyncThunk(
+    "borrows/addBorrowsReader",
+    async (borrow) => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8000/api/v0/book_borrow/reader`, borrow
+            )
+            if (response.status === 201) {
+                return await { ...response.data, status: response.status }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
 // export const deleteReaders = createAsyncThunk(
 //     "readers/deleteReaders",
 //     async (id_readers) => {
@@ -233,6 +249,15 @@ const librarian = createSlice({
                     // toastSuccess(action.payload.message)
                 } else {
                     // toastError(action.payload.message)
+                }
+            })
+            .addCase(addBorrowsReader.fulfilled, (state, action) => {
+                if (action.payload.status === 201) {
+                    state.librarian.borrow.unshift(action.payload.data)
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                    // console.log(action.payload.data)
                 }
             })
     }
