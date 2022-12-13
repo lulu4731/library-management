@@ -34,7 +34,7 @@ const HomePageReader = () => {
     const params = useParams()
     const [search] = useSearchParams()
     const [code, setCode] = useState(null)
-    search.get('resultCode')
+    // search.get('resultCode')
 
     useEffect(() => {
         dispatch(checkLogin())

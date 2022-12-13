@@ -35,7 +35,6 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
     //     changePage({ selected: data.length > todoPerPage ?  pageNumber : 0})
     // }, [data, pageNumber])
 
-    // console.log(keyword)
     return (
         <>
             {
@@ -44,8 +43,8 @@ const TableBootstrap = ({ columns = [], data = [], title, titleButton, onOpen, p
             <Table bordered hover className="table-info box-comments">
                 <thead>
                     <tr>
-                        <th colSpan={spanTitle || columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2 + 1} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>{title}</th>
-                        <th colSpan={spanToolbar || columns.length / 2} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
+                        <th colSpan={spanTitle || (columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2 + 1)} scope="col" style={{ fontSize: 25, borderRight: 0, borderBottom: 0 }}>{title}</th>
+                        <th colSpan={spanToolbar ?? columns.length / 2} scope="col" style={{ borderLeft: 0, borderBottom: 0 }}>
                             {
                                 !header ? (
                                     <div className='search-table'>

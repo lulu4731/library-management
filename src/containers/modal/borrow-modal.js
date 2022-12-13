@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { loadReaders, readersSelector, searchReaders } from '../../reducers/readers';
+import { readersSelector, searchReaders } from '../../reducers/readers';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import { components } from "react-select"
 import { addBorrows, dsBorrowsSelector, loadDsBorrows, updateBorrows } from '../../reducers/borrow';
+import { paymentBorrowLibrarian } from '../../utils/callerAPI';
+import { toastError } from '../../toast/toast';
 
 const BorrowModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
     const readers = useSelector(readersSelector)
     const titles = useSelector(dsBorrowsSelector)
-    console.log(value)
+    // console.log(value)
 
     const defaultValue = {
         id_borrow: 0,
@@ -57,7 +59,14 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
         setBorrow(newBorrow)
     }
 
-    const onSubmit = () => {
+    const changeBorrow = (isbn, price) => {
+        const temps = { ...borrow }
+        temps['books'] = borrow.books.filter(item => item.value !== isbn)
+        temps['total_price'] = borrow.total_price - +price
+        setBorrow(temps)
+    }
+
+    const onSubmit = async () => {
         const newBorrow = { ...borrow }
         newBorrow['id_readers'] = borrow.id_readers.value
         delete newBorrow['expired']
@@ -65,13 +74,48 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
             return { id_book: item.value, expired: borrow.expired.toISOString().split('T')[0] }
         })
 
-        console.log(newBorrow)
-        // if (borrow.id_borrow === 0) {
-        //     dispatch(addBorrows(newBorrow))
-        // } else {
-        //     dispatch(updateBorrows(newBorrow))
-        // }
-        onClose()
+        const pay = {
+            name_reader: borrow.id_readers.label,
+            amount: borrow.total_price,
+            books: newBorrow.books,
+            id_readers: borrow.id_readers.value
+        }
+
+        if (borrow.id_borrow === 0) {
+            localStorage.setItem(`borrowLibrarian`, JSON.stringify(newBorrow))
+
+            if (pay.amount > 0) {
+                const response = await paymentBorrowLibrarian(pay)
+                if (response.status === 200) {
+                    window.location = response.link
+                    onClose()
+                } else {
+                    toastError(response.message)
+                    if (response.data) {
+                        // const temps = { ...borrow }
+                        // temps['books'] = borrow.books.filter(item => item.value !== data.data.isbn)
+                        // temps['total_price'] = borrow.total_price - +data.data.price
+                        // setBorrow(temps)
+                        changeBorrow(response.data.isbn, response.data.price)
+                    }
+                }
+            } else {
+                const response = await dispatch(addBorrows(newBorrow))
+
+                if (response.payload.code === 201) {
+                    onClose()
+                } else {
+                    // const temps = { ...borrow }
+                    // temps['books'] = borrow.books.filter(item => item.value !== response.payload.data.isbn)
+                    // temps['total_price'] = borrow.total_price - +response.payload.data.price
+                    // setBorrow(temps)
+                    changeBorrow(response.payload.data.isbn, response.payload.data.price)
+                }
+            }
+        } else {
+            dispatch(updateBorrows(newBorrow))
+        }
+        // onClose()
     }
 
     const styles = {

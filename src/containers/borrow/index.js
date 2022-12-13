@@ -23,6 +23,7 @@ const Borrow = () => {
         label: 'Tất cả'
     })
 
+    // console.log(borrows)
     useEffect(() => {
         dispatch(searchBorrows({ keyword: keyword.replace(/\s+/g, ' ').trim(), status: select.value }))
     }, [dispatch, keyword, select.value])
@@ -234,6 +235,18 @@ const Borrow = () => {
             }
         },
         {
+            name: "total_price",
+            label: "Tổng tiền",
+            options: {
+                status: true,
+                customRender: (value) => {
+                    return (
+                        <p>{value.total_price + ' VND'}</p>
+                    );
+                }
+            }
+        },
+        {
             name: "action",
             label: "Hành động",
             options: {
@@ -258,7 +271,7 @@ const Borrow = () => {
                                     <Button variant='warning mr-3' onClick={() => onPay(value)}><i className="fa-solid fa-book"></i></Button>
                                 </OverlayTrigger>
                                 {
-                                    !update_borrow && (
+                                    (!update_borrow && +value.total_price === 0) && (
                                         <OverlayTrigger
                                             key={'bottom-edit'}
                                             placement={'bottom'}
@@ -352,7 +365,7 @@ const Borrow = () => {
     return (
         <>
             <HomePage>
-                <TableBootstrap spanTitle={columns.length % 2 === 0 ? columns.length / 2 : columns.length / 2} spanToolbar={columns.length / 2 + 1}
+                <TableBootstrap spanTitle={2} spanToolbar={4}
                     columns={columns} onOpen={onOpen} data={borrows} titleButton="Thêm phiếu mượn" title="QUẢN LÝ DANH SÁCH PHIẾU MƯỢN"
                     page={6} header={header} />
                 {
