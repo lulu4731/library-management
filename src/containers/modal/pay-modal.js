@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Row, Col, Form, Badge, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
-import { renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
+import { lostBook, renewalBook, returnBook, returnBookAll } from '../../reducers/borrow';
 import renewalDate from '../../utils/renewalDate';
 import convertTimesTamp from '../../utils/convertTimesTamp';
 
@@ -49,10 +49,19 @@ const PayModal = ({ isOpen, onClose, value, hide = true }) => {
         onClose()
     }
 
+    const onLost = (item) => {
+        const lostBookData = {
+            id_book: item.id_book,
+            id_borrow: borrow.id_borrow
+        }
+
+        dispatch(lostBook(lostBookData))
+        onClose()
+    }
     return (
         <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title className='title-love'>TRẢ SÁCH/GIA HẠN</Offcanvas.Title>
+                <Offcanvas.Title className='title-love'>TRẢ SÁCH/GIA HẠN/ĐÁNH DẤU MẤT SÁCH</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Form.Group className='pb-3'>
@@ -72,11 +81,11 @@ const PayModal = ({ isOpen, onClose, value, hide = true }) => {
 
                                         item.borrow_status === 0 && (
                                             <Row key={index}>
-                                                <Col className="mb-3">
+                                                <Col className="mb-3" md={4}>
                                                     <Form.Label>Tên Sách</Form.Label>
                                                     <Form.Control disabled value={item.ds.label} />
                                                 </Col>
-                                                <Col className="mb-3">
+                                                <Col className="mb-3" md={3}>
                                                     <Form.Label>Hạn trả</Form.Label>
                                                     <Form.Control disabled value={convertTimesTamp(item.expired)} />
                                                 </Col>
@@ -87,8 +96,9 @@ const PayModal = ({ isOpen, onClose, value, hide = true }) => {
                                                             hide && <Button className={!hide ? '' : 'mr-3'} variant='success' onClick={() => onSubmit(item.id_book)}>Trả sách</Button>
                                                         }
                                                         {
-                                                            item.number_renewal === 0 && <Button onClick={() => onRenewal(item.id_book, item.expired)}>Gia hạn</Button>
+                                                            item.number_renewal === 0 && <Button className='mr-3' onClick={() => onRenewal(item.id_book, item.expired)}>Gia hạn</Button>
                                                         }
+                                                        <Button variant='danger' onClick={() => onLost(item)}>Mất sách</Button>
                                                     </Col>
                                                 </Col>
                                             </Row>

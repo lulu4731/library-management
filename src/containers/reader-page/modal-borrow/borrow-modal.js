@@ -91,7 +91,7 @@ const BorrowModal = ({ isOpen, onClose, orders, setOrders, id_readers, load_orde
     return (
         <Offcanvas show={isOpen} onHide={onClose} placement="end" scroll className="modal-love">
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title className='title-love'>GỬI PHẢN HỒI ĐẾN ADMIN</Offcanvas.Title>
+                <Offcanvas.Title className='title-love'>ĐĂNG KÝ MƯỢN SÁCH</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Form.Group className='mb-4'>

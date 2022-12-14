@@ -104,6 +104,23 @@ export const returnBook = createAsyncThunk(
     }
 )
 
+export const lostBook = createAsyncThunk(
+    "borrows/lostBook",
+    async (borrow) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/v0/book_borrow/lost-book`, borrow
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_borrow: borrow.id_borrow }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 export const returnBookAll = createAsyncThunk(
     "borrows/returnBookAll",
     async (borrow) => {
@@ -229,6 +246,30 @@ const borrows = createSlice({
                                     : item
                             )
                             item.books = JSON.stringify(books)
+                            return item
+                        } else {
+                            return item
+                        }
+                    })
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(lostBook.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    // console.log(state.borrows)
+                    state.borrows = state.borrows.map((item) => {
+                        // console.log(item)
+                        if (item.id_borrow === action.payload.id_borrow) {
+                            let temps = JSON.parse(item.books)
+                            let books = temps.map((item) =>
+                                item.id_book === action.payload.data.id_book
+                                    ? action.payload.data
+                                    : item
+                            )
+                            item.books = JSON.stringify(books)
+                            item.total_price_lost = action.payload.total_price_lost
                             return item
                         } else {
                             return item

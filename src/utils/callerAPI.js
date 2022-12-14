@@ -124,6 +124,21 @@ export const paymentBorrowLibrarian = async (borrow) => {
     }
 }
 
+export const paymentLostBook = async (borrow) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:8000/api/v0/payment/lost-book`,
+            borrow
+        )
+        if (response.status === 200) {
+            return await { ...response.data, status: response.status }
+        }
+    } catch (error) {
+        if (error.response.data) return error.response.data
+        else return { message: error.message }
+    }
+}
+
 export const addNotification = async (notification) => {
     try {
         const response = await axios.post(
