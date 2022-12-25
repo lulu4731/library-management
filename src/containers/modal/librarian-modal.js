@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import { addLibrarian, updateLibrarian } from '../../reducers/librarian';
+import { sendEmailCreateLibrary } from '../../utils/sendEmail';
 
 const LibrarianModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -43,7 +44,15 @@ const LibrarianModal = ({ isOpen, onClose, value }) => {
         delete newLibrarian['id_librarian']
         newLibrarian['date_of_birth'] = librarian.date_of_birth.toISOString().split('T')[0]
 
+
         if (librarian.id_librarian === 0) {
+            const data = {
+                to_name: newLibrarian.email,
+                real_name: newLibrarian.first_name + ' ' + newLibrarian.last_name,
+                email: newLibrarian.email
+            }
+
+            sendEmailCreateLibrary(data)
             dispatch(addLibrarian(newLibrarian))
         } else {
             dispatch(updateLibrarian({

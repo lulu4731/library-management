@@ -3,6 +3,7 @@ import { Button, Modal, Row, Col, Form, Offcanvas } from 'react-bootstrap'
 import { useDispatch } from 'react-redux';
 import DatePicker from "react-datepicker";
 import { pendingBook } from '../../../reducers/borrow';
+import { sendEmailPendingBorrow } from '../../../utils/sendEmail';
 
 const PendingModal = ({ isOpen, onClose, value }) => {
     const dispatch = useDispatch()
@@ -11,7 +12,11 @@ const PendingModal = ({ isOpen, onClose, value }) => {
         id_borrow: 0,
         expired: new Date(),
         arrival_date: new Date(),
-        books: []
+        books: [],
+        email: '',
+        real_name: '',
+        name_books: ''
+
     }
 
     const [borrow, setBorrow] = useState(defaultValue)
@@ -44,7 +49,22 @@ const PendingModal = ({ isOpen, onClose, value }) => {
         const newBorrow = { ...borrow }
         newBorrow['expired'] = borrow.expired.toISOString().split('T')[0]
         newBorrow['arrival_date'] = borrow.arrival_date.toISOString().split('T')[0]
-        // console.log(newBorrow)
+
+
+        const data = {
+            to_name: newBorrow.email,
+            real_name: newBorrow.real_name,
+            books: newBorrow.name_books,
+            arrival_date: newBorrow.arrival_date,
+            expired: newBorrow.expired,
+        }
+
+        sendEmailPendingBorrow(data)
+        // console.log(data)
+
+        delete newBorrow['real_name']
+        delete newBorrow['name_books']
+        delete newBorrow['email']
 
         dispatch(pendingBook(newBorrow))
         onClose()

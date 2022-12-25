@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet, useSearchParams } from 'react-router-dom';
 import { checkLogin, librarianSelector } from '../reducers/librarian';
-import { addBorrows } from '../reducers/borrow'
+import { addBorrows, payLostBook } from '../reducers/borrow'
 
 const ProtectedRoute = ({ isAuthenticated }) => {
     const [isLoading, setIsLoading] = useState(true)
@@ -24,8 +24,13 @@ const ProtectedRoute = ({ isAuthenticated }) => {
 
     useEffect(() => {
         if (code !== null && +code === 0) {
-            dispatch(addBorrows(JSON.parse((localStorage.getItem('borrowLibrarian')))))
-            localStorage.removeItem(`borrowLibrarian`)
+            if (JSON.parse((localStorage.getItem('borrowLibrarian')))) {
+                dispatch(addBorrows(JSON.parse((localStorage.getItem('borrowLibrarian')))))
+                localStorage.removeItem(`borrowLibrarian`)
+            } else {
+                dispatch(payLostBook(JSON.parse((localStorage.getItem('id_borrow')))))
+                localStorage.removeItem(`id_borrow`)
+            }
             // setCode(null)
         }
     }, [code, dispatch])

@@ -98,7 +98,9 @@ const PayModal = ({ isOpen, onClose, value, hide = true }) => {
                                                         {
                                                             item.number_renewal === 0 && <Button className='mr-3' onClick={() => onRenewal(item.id_book, item.expired)}>Gia hạn</Button>
                                                         }
-                                                        <Button variant='danger' onClick={() => onLost(item)}>Mất sách</Button>
+                                                        {
+                                                            hide && <Button variant='danger' onClick={() => onLost(item)}>Mất sách</Button>
+                                                        }
                                                     </Col>
                                                 </Col>
                                             </Row>

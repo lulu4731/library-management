@@ -82,7 +82,7 @@ const BookTitleDetails = ({ orders, setOrders }) => {
                                     <p className='title-book-details'>Nhà xuất bản: {JSON.parse(company).label}</p>
                                     <p className='title-book-details'>Số trang: {page}</p>
                                     <p className='title-book-details'>Năm xuất bản: {convertTimesTamp(publishing_year)}</p>
-                                    <p className='title-book-details'>Giới thiệu: {description}</p>
+                                    <p className='title-book-details'>Giới thiệu: {description.substring(0, 180) + "..."}</p>
                                     <Button className='mr-3 mt-3' onClick={() => saveLocalStorage(location.state)}>{orders.find(order => JSON.stringify(order) === JSON.stringify(saveDs(location.state))) ? "Xóa khỏi danh sách mượn" : "Thêm vào danh sách mượn"}</Button>
                                 </Col>
                             </Row>

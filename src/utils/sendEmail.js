@@ -46,3 +46,47 @@ export const sendEmailLock = (data) => {
             console.log("FAILED...", err)
         })
 }
+
+export const sendEmailPendingBorrow = (data) => {
+    // console.log(data)
+    const email = {
+        to_name: data.to_name,
+        real_name: data.real_name,
+        books: data.books,
+        arrival_date: data.arrival_date,
+        expired: data.expired,
+        reply_to: "",
+    }
+    send(
+        "service_25m1ohf",
+        "template_pending_borrow",
+        email,
+        "o2exrn3tssY_9taxR"
+    )
+        .then((response) => {
+            console.log("SUCCESS!", response.status, response.text)
+        })
+        .catch((err) => {
+            console.log("FAILED...", err)
+        })
+}
+
+export const sendEmailCreateLibrary = (data) => {
+    const email = {
+        to_name: data.to_name,
+        real_name: data.real_name,
+        email: data.email
+    }
+    send(
+        "service_25m1ohf",
+        "template_crete_librarian",
+        email,
+        "o2exrn3tssY_9taxR"
+    )
+        .then((response) => {
+            console.log("SUCCESS!", response.status, response.text)
+        })
+        .catch((err) => {
+            console.log("FAILED...", err)
+        })
+}

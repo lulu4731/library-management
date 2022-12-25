@@ -58,7 +58,7 @@ export const updateReceipt = createAsyncThunk(
     async (data) => {
         try {
             const response = await axios.put(
-                `http://localhost:8000/api/v0/receipt/${data.id_receipt}`, data.receipt
+                `http://localhost:8000/api/v0/receipt/${data.id_receipt}`, data
             )
             if (response.status === 200) {
                 return await { ...response.data, status: response.status }
@@ -88,20 +88,22 @@ const receipts = createSlice({
                 if (action.payload.status === 201) {
                     state.receipts.unshift(action.payload.data)
                     toastSuccess(action.payload.message)
-                }else {
+                } else {
                     toastError(action.payload.message)
                 }
             })
-        // .addCase(updateReceipt.fulfilled, (state, action) => {
-        //     if (action.payload.status === 200) {
-        //         state.readers = state.readers.map((item) =>
-        //             item.id_readers === action.payload.data.id_readers
-        //                 ? action.payload.data
-        //                 : item
-        //         )
-        //     }
-        // })
-
+            .addCase(updateReceipt.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.receipts = state.receipts.map((item) =>
+                        item.id_receipt === action.payload.data.id_receipt
+                            ? action.payload.data
+                            : item
+                    )
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
     }
 })
 

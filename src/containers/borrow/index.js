@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { borrowsSelector, searchBorrows } from '../../reducers/borrow';
+import { approvedBook, borrowsSelector, payLostBook, searchBorrows } from '../../reducers/borrow';
 import { Badge, Button, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import BorrowModal from '../modal/borrow-modal';
 import PayModal from '../modal/pay-modal';
@@ -30,6 +30,7 @@ const Borrow = () => {
 
     const options = [
         { value: 2, label: "Chờ duyệt" },
+        { value: 4, label: "Đã duyệt" },
         { value: 0, label: "Đang mượn" },
         { value: 1, label: "Đã trả" },
         { value: 3, label: "Sách bị mất" },
@@ -112,9 +113,12 @@ const Borrow = () => {
                     time.setDate(time.getDate() - 1)
                     const borrow_status = JSON.parse(value.books).find(item => +item.borrow_status === 0)
                     const borrow_status_pay = JSON.parse(value.books).find(item => +item.borrow_status === 1)
+                    const borrow_lost = JSON.parse(value.books).find(item => +item.borrow_status === 3)
+                    // const borrow_approved = JSON.parse(value.books).find(item => +item.borrow_status === 4)
 
                     if (+value.total_price_lost === 0) {
-                        if ((borrow_status || borrow_status_pay)) {
+
+                        if ((borrow_status || borrow_status_pay || borrow_lost)) {
                             const date_status = JSON.parse(value.books).find(item => time > new Date(convertTimesTamp(item.expired)))
                             return (
                                 <div className='pb-0' >
@@ -127,13 +131,29 @@ const Borrow = () => {
                                                 <span className="pr-2">{JSON.parse(value.books)[0].ds?.label}</span>
 
                                                 <ul className='mr-3 pl-4'>
-                                                    <li className={JSON.parse(value.books)[0].borrow_status === 0 ? 'text-left' : 'mb-2 text-left'}>Ngày hết hạn: {convertTimesTamp(JSON.parse(value.books)[0].expired)}</li>
+                                                    {/* <li className={JSON.parse(value.books)[0].borrow_status === 0 ? 'text-left' : 'mb-2 text-left'}>Ngày hết hạn: {convertTimesTamp(JSON.parse(value.books)[0].expired)}</li> */}
                                                     {
+                                                        JSON.parse(value.books)[0].borrow_status !== 3 && <li className={JSON.parse(value.books)[0].borrow_status === 0 ? 'text-left' : 'mb-2 text-left'}>Ngày hết hạn: {convertTimesTamp(JSON.parse(value.books)[0].expired)}</li>
+                                                    }
+                                                    {
+                                                        JSON.parse(value.books)[0].borrow_status === 3 && <li className='mb-2 text-left'>Trạng thái: Mất sách</li>
+                                                    }
+                                                    {/* {
                                                         JSON.parse(value.books)[0].date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(JSON.parse(value.books)[0].date_return_book)}</li>
+                                                    } */}
+                                                    {
+                                                        JSON.parse(value.books)[0].date_return_book !== null &&
+                                                        (
+                                                            JSON.parse(value.books)[0].borrow_status === 3 ? (<li className='mb-2 text-left'>Ngày báo mất sách: {convertTimesTamp(JSON.parse(value.books)[0].date_return_book)}</li>) :
+                                                                (<li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(JSON.parse(value.books)[0].date_return_book)}</li>)
+                                                        )
                                                     }
                                                     {/* <li className='text-left'>Trạng thái: {JSON.parse(value.books)[0].borrow_status === 0 ? 'Chưa trả' : JSON.parse(value.books)[0].borrow_status === 1 ? "Đã trả" : "Đã mất sách"}</li> */}
                                                     {
                                                         JSON.parse(value.books)[0].borrow_status === 1 && <li className='mt-2 text-left'>Thủ thư trả sách: {JSON.parse(value.books)[0].librarian_pay.first_name + " " + JSON.parse(value.books)[0].librarian_pay.last_name}</li>
+                                                    }
+                                                    {
+                                                        JSON.parse(value.books)[0].borrow_status === 3 && <li className='mt-2 text-left'>Thủ thư ghi nhận: {JSON.parse(value.books)[0]?.librarian_pay?.first_name + " " + JSON.parse(value.books)[0]?.librarian_pay?.last_name}</li>
                                                     }
                                                 </ul>
                                                 {JSON.parse(value.books).length >= 2 && (
@@ -151,13 +171,28 @@ const Borrow = () => {
                                                         <div key={index} className="dropdown-item-list">
                                                             {item?.ds.label}
                                                             <ul className='mr-3 pl-4'>
-                                                                <li className='mb-2 text-left'>Ngày hết hạn: {convertTimesTamp(item.expired)}</li>
+                                                                {/* <li className='mb-2 text-left'>Ngày hết hạn: {convertTimesTamp(item.expired)}</li> */}
                                                                 {
+                                                                    item.borrow_status !== 3 && <li className='mb-2 text-left'>Ngày hết hạn: {convertTimesTamp(item.expired)}</li>
+                                                                }
+                                                                {
+                                                                    item.borrow_status === 3 && <li className='mb-2 text-left'>Trạng thái: Mất sách</li>
+                                                                }
+                                                                {/* {
                                                                     item.date_return_book !== null && <li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(item.date_return_book)}</li>
+                                                                } */}
+                                                                {
+                                                                    item.date_return_book !== null && (
+                                                                        item.borrow_status === 3 ? (<li className='mb-2 text-left'>Ngày báo mất sách: {convertTimesTamp(item.date_return_book)}</li>) :
+                                                                            (<li className='mb-2 text-left'>Ngày trả sách: {convertTimesTamp(item.date_return_book)}</li>)
+                                                                    )
                                                                 }
                                                                 {/* <li className='text-left'>Trạng thái: {item.borrow_status === 0 ? 'Chưa trả' : item.borrow_status === 1 ? "Đã trả" : "Đã mất sách"}</li> */}
                                                                 {
                                                                     item.borrow_status === 1 && <li className='mt-2 text-left'>Thử thư trả sách: {item.librarian_pay.first_name + " " + item.librarian_pay.last_name}</li>
+                                                                }
+                                                                {
+                                                                    item.borrow_status === 3 && <li className='mt-2 text-left'>Thử thư ghi nhận: {item?.librarian_pay?.first_name + " " + item?.librarian_pay?.last_name}</li>
                                                                 }
                                                             </ul>
                                                         </div>
@@ -174,7 +209,7 @@ const Borrow = () => {
                                 <div className='pb-0' >
                                     <div className="d-flex droptop">
                                         {JSON.parse(value.books).length <= 0 ? null : (
-                                            <Badge bg={"secondary"}
+                                            <Badge bg={JSON.parse(value.books)[0].borrow_status === 2 ? "secondary" : 'info'}
                                                 className="d-flex align-items-center"
                                                 data-toggle={JSON.parse(value.books).length >= 2 ? 'dropdown' : ''}
                                             >
@@ -183,6 +218,9 @@ const Borrow = () => {
                                                 <ul className='mr-3 pl-4'>
                                                     {
                                                         JSON.parse(value.books)[0].borrow_status === 2 && <li className='mb-2 text-left'>Trạng thái: Chờ duyệt</li>
+                                                    }
+                                                    {
+                                                        JSON.parse(value.books)[0].borrow_status === 4 && <li className='mb-2 text-left'>Trạng thái: Đã duyệt</li>
                                                     }
                                                     {
                                                         JSON.parse(value.books)[0].arrival_date && <li className={JSON.parse(value.books)[0].borrow_status === 0 ? 'text-left' : 'text-left'}>Ngày đến lấy: {convertTimesTamp(JSON.parse(value.books)[0].arrival_date)}</li>
@@ -208,10 +246,13 @@ const Borrow = () => {
                                                             {item?.ds.label}
                                                             <ul className='mr-3 pl-4'>
                                                                 {
-                                                                    item.arrival_date && <li className='mb-2 text-left'>Ngày đến lấy: {convertTimesTamp(item.arrival_date)}</li>
+                                                                    item.borrow_status === 2 && <li className='mt-2 text-left'>Trạng thái: Chờ duyệt</li>
                                                                 }
                                                                 {
-                                                                    item.borrow_status === 2 && <li className='mt-2 text-left'>Trạng thái: Chờ duyệt</li>
+                                                                    item.borrow_status === 4 && <li className='mt-2 text-left'>Trạng thái: Đã duyệt</li>
+                                                                }
+                                                                {
+                                                                    item.arrival_date && <li className='mb-2 text-left'>Ngày đến lấy: {convertTimesTamp(item.arrival_date)}</li>
                                                                 }
                                                             </ul>
                                                         </div>
@@ -340,6 +381,7 @@ const Borrow = () => {
                     const borrow_status = JSON.parse(value.books).find(item => item.borrow_status === 0)
                     const update_borrow = JSON.parse(value.books).find(item => item.borrow_status === 1)
                     const pending_borrow = JSON.parse(value.books).find(item => item.borrow_status === 2)
+                    const approved_borrow = JSON.parse(value.books).find(item => item.borrow_status === 4)
                     const lost_borrow = JSON.parse(value.books).find(item => item.borrow_status === 3)
 
                     if (borrow_status) {
@@ -404,7 +446,23 @@ const Borrow = () => {
                                 </OverlayTrigger>
                             </div>
                         )
-                    } else if (lost_borrow) {
+                    } else if (approved_borrow) {
+                        return (
+                            <div className='pb-0'>
+                                <OverlayTrigger
+                                    key={'bottom-approved'}
+                                    placement={'bottom'}
+                                    overlay={
+                                        <Tooltip id={`tooltip-approved`}>
+                                            Xác nhận độc giả đã lấy sách
+                                        </Tooltip>
+                                    }
+                                >
+                                    <Button variant='warning mr-3' onClick={() => onApproved(value)}><i className="fa-solid fa-person-circle-check"></i></Button>
+                                </OverlayTrigger>
+                            </div>
+                        )
+                    } else if (lost_borrow && +value.total_price_lost > 0) {
                         return (
                             <div className='pb-0'>
                                 <OverlayTrigger
@@ -461,11 +519,21 @@ const Borrow = () => {
         setItem({
             id_borrow: data.id_borrow,
             books: JSON.parse(data.books).map(item => item.id_book),
+            name_books: JSON.parse(data.books).map(item => item.ds.label).join(' '),
+            email: JSON.parse(data.reader).label.slice((JSON.parse(data.reader).label.indexOf('(')) + 1, (JSON.parse(data.reader).label.length) - 1),
+            real_name: JSON.parse(data.reader).label.slice(0, (JSON.parse(data.reader).label.indexOf('(')) - 1),
             arrival_date: new Date(convertTimesTamp(JSON.parse(data.books)[0].arrival_date)),
             expired: new Date(date.setDate(date.getDate() + 14))
         })
 
         setIsOpenPending(true)
+    }
+
+    const onApproved = (data) => {
+        dispatch(approvedBook({
+            id_borrow: data.id_borrow,
+            books: JSON.parse(data.books).map(item => item.id_book)
+        }))
     }
 
     const onOpen = () => {
@@ -487,10 +555,13 @@ const Borrow = () => {
         }
         const response = await paymentLostBook(pay)
         if (response.status === 200) {
+            localStorage.setItem(`id_borrow`, JSON.stringify(data.id_borrow))
             window.location = response.link
             onClose()
         } else {
         }
+        // console.log(data)
+        // dispatch(payLostBook(data.id_borrow))
     }
     return (
         <>

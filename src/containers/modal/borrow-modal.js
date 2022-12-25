@@ -82,9 +82,9 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
         }
 
         if (borrow.id_borrow === 0) {
-            localStorage.setItem(`borrowLibrarian`, JSON.stringify(newBorrow))
 
             if (pay.amount > 0) {
+                localStorage.setItem(`borrowLibrarian`, JSON.stringify(newBorrow))
                 const response = await paymentBorrowLibrarian(pay)
                 if (response.status === 200) {
                     window.location = response.link
@@ -114,8 +114,9 @@ const BorrowModal = ({ isOpen, onClose, value }) => {
             }
         } else {
             dispatch(updateBorrows(newBorrow))
+            // onClose()
         }
-        // onClose()
+        onClose()
     }
 
     const styles = {

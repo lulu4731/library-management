@@ -36,7 +36,7 @@ export const ComponentToPrintReader = React.forwardRef((props, ref) => {
                     </Col>
                 </Row>
                 <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ SÁCH MÀ ĐỘC GIẢ ĐÃ MƯỢN</h4>
-                <Table striped bordered={true} hover>
+                <Table bordered={true}>
                     <thead>
                         <tr>
                             <th>Tên độc giả</th>

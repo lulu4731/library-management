@@ -35,7 +35,7 @@ export const ComponentToPrintDs = React.forwardRef((props, ref) => {
                     </Col>
                 </Row>
                 <h4 className="text-center mb-4 mt-4" style={{ fontWeight: 'bold' }}>THỐNG KÊ SỐ LƯỢNG SÁCH ĐƯỢC MƯỢN</h4>
-                <Table striped bordered={true} hover>
+                <Table bordered={true}>
                     <thead>
                         <tr>
                             <th>Tên sách</th>

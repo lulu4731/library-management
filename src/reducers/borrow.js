@@ -172,6 +172,40 @@ export const pendingBook = createAsyncThunk(
     }
 )
 
+export const approvedBook = createAsyncThunk(
+    "borrows/approvedBook",
+    async (borrow) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/v0/book_borrow/approved`, borrow
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_borrow: borrow.id_borrow }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
+export const payLostBook = createAsyncThunk(
+    "borrows/payLostBook",
+    async (id_borrow) => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:8000/api/v0/book_borrow/pay-lost-book/${id_borrow}`,
+            )
+            if (response.status === 200) {
+                return await { ...response.data, status: response.status, id_borrow }
+            }
+        } catch (error) {
+            if (error.response.data) return error.response.data
+            else return { message: error.message }
+        }
+    }
+)
+
 // export const addBorrowsReader = createAsyncThunk(
 //     "borrows/addBorrowsReader",
 //     async (borrow) => {
@@ -341,6 +375,39 @@ const borrows = createSlice({
                                     : item
                             )
                             item.books = JSON.stringify(books)
+                            return item
+                        } else {
+                            return item
+                        }
+                    })
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(payLostBook.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    // console.log(state.borrows)
+                    state.borrows = state.borrows.map((item) => {
+                        // console.log(item)
+                        if (item.id_borrow === action.payload.id_borrow) {
+                            item.total_price_lost = 0
+                            return item
+                        } else {
+                            return item
+                        }
+                    })
+                    toastSuccess(action.payload.message)
+                } else {
+                    toastError(action.payload.message)
+                }
+            })
+            .addCase(approvedBook.fulfilled, (state, action) => {
+                if (action.payload.status === 200) {
+                    state.borrows = state.borrows.map((item) => {
+                        if (item.id_borrow === action.payload.id_borrow) {
+                            item.books = action.payload.data.books
+                            item['librarian'] = action.payload.data.librarian
                             return item
                         } else {
                             return item
